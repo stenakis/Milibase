@@ -1,7 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/sailor.dart';
-import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
 
 class SailorWidgetMetavoles extends StatelessWidget {

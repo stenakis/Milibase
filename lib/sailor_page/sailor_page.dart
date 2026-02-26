@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/sailor.dart';
-import 'package:milibase/sailor_page/sailor_adeies/sailor_widget_adeies.dart';
-import 'package:milibase/sailor_page/sailor_widget_apomakrynseis.dart';
+import 'package:milibase/sailor_page/adeies/sailor_widget_adeies.dart';
+import 'package:milibase/sailor_page/apomakrynseis/sailor_widget_apomakrynseis.dart';
 import 'package:milibase/sailor_page/sailor_widget_info.dart';
 import 'package:milibase/sailor_page/sailor_widget_metavoles.dart';
 import 'package:milibase/sailor_page/sailor_widget_vardies.dart';
@@ -22,7 +22,9 @@ class _SailorPageState extends State<SailorPage> {
   Widget build(BuildContext context) {
     return NavigationView(
       pane: NavigationPane(
-        displayMode: PaneDisplayMode.open,
+        toggleable: false,
+        toggleButton: Container(),
+        displayMode: PaneDisplayMode.expanded,
         selected: selectedIndex,
         onChanged: (index) => setState(() => selectedIndex = index),
         header: Padding(

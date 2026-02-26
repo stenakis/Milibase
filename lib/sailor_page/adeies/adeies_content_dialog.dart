@@ -2,22 +2,23 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/adeies.dart';
 import 'package:milibase/objects/sailor.dart';
-import 'package:milibase/sailor_page/sailor_adeies/adeies_functions.dart';
+import 'package:milibase/sailor_page/adeies/adeies_functions.dart';
 
-class ShowContentDialog extends StatefulWidget {
-  const ShowContentDialog({super.key, required this.sailor});
+class ShowAdeiesDialog extends StatefulWidget {
+  const ShowAdeiesDialog({super.key, required this.sailor});
   final Sailor sailor;
   @override
-  State<ShowContentDialog> createState() => _ShowContentDialogState();
+  State<ShowAdeiesDialog> createState() => _ShowAdeiesDialogState();
 }
 
-class _ShowContentDialogState extends State<ShowContentDialog> {
+class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
   bool isLoading = false;
   final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeies Key');
   DateTime selectedStartDate = DateTime.now();
   DateTime selectedEndDate = DateTime.now();
   Adeia selectedAdeia = Adeia.kanoniki;
   String statusText = 'Προσθήκη Άδειας';
+  TextEditingController simaController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
@@ -46,6 +47,16 @@ class _ShowContentDialogState extends State<ShowContentDialog> {
             ),
           ),
           Gap(10),
+          if (selectedAdeia == Adeia.oikos_nosileias ||
+              selectedAdeia == Adeia.anarrotiki)
+            InfoLabel(
+              label: 'Σήμα',
+              child: SizedBox(
+                height: 40,
+                child: TextBox(placeholder: 'WAF', controller: simaController),
+              ),
+            ),
+          Gap(10),
           Row(
             children: [
               InfoLabel(
@@ -54,7 +65,6 @@ class _ShowContentDialogState extends State<ShowContentDialog> {
                   height: 40,
                   child: CalendarDatePicker(
                     isTodayHighlighted: false,
-
                     locale: Locale('el'),
                     placeholderText:
                         '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}',
@@ -75,9 +85,17 @@ class _ShowContentDialogState extends State<ShowContentDialog> {
                 child: SizedBox(
                   height: 40,
                   child: CalendarDatePicker(
+                    isTodayHighlighted: false,
                     locale: Locale('el'),
                     placeholderText:
                         '${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}',
+                    onSelectionChanged: (CalendarSelectionData data) {
+                      if (data.selectedDates.isNotEmpty) {
+                        setState(() {
+                          selectedEndDate = data.selectedDates.first;
+                        });
+                      }
+                    },
                   ),
                 ),
               ),
@@ -90,7 +108,6 @@ class _ShowContentDialogState extends State<ShowContentDialog> {
           child: const Text('Άκυρο'),
           onPressed: () {
             Navigator.pop(context, 'User deleted file');
-            // Delete file here
           },
         ),
         isLoading
@@ -114,6 +131,7 @@ class _ShowContentDialogState extends State<ShowContentDialog> {
                         dateStart: selectedStartDate,
                         dateEnd: selectedEndDate,
                         sailorId: widget.sailor.id,
+                        sima: simaController.text,
                       ),
                     );
                     Navigator.pop(context, 'success');

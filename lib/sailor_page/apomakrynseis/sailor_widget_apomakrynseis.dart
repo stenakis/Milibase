@@ -1,65 +1,50 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
-import 'package:milibase/objects/adeies.dart';
+import 'package:intl/intl.dart';
+import 'package:milibase/objects/apomakrynseis.dart';
 import 'package:milibase/objects/sailor.dart';
-import 'package:milibase/sailor_page/sailor_adeies/adeies_content_dialog.dart';
-import 'package:milibase/sailor_page/sailor_adeies/adeies_functions.dart';
+import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_content_dialog.dart';
+import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_functions.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
 
-class SailorWidgetAdeies extends StatefulWidget {
-  const SailorWidgetAdeies({super.key, required this.sailor});
+class SailorWidgetApomakrynseis extends StatefulWidget {
+  const SailorWidgetApomakrynseis({super.key, required this.sailor});
   final Sailor sailor;
 
   @override
-  State<SailorWidgetAdeies> createState() => _SailorWidgetAdeiesState();
+  State<SailorWidgetApomakrynseis> createState() =>
+      _SailorWidgetApomakrynseisState();
 }
 
-class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
-  late Future<List<Adeies>> _future, _kanoniki, _aimodotiki;
+class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
+  late Future<List<Apomakrynseis>> _future;
   final FlyoutController flyoutController = FlyoutController();
   bool isLoading = false;
   void setFuture() {
     _future = Supabase.instance.client
-        .from('Adeies')
+        .from('Apomakrynseis')
         .select()
         .eq('Sailor_id', widget.sailor.id)
-        .then((data) => data.map((json) => Adeies.fromJson(json)).toList());
+        .then(
+          (data) => data.map((json) => Apomakrynseis.fromJson(json)).toList(),
+        );
   }
 
-  late int daysKanoniki;
+  int daysApospasi = 45;
+  int daysDiathesi = 15;
+
   @override
   void initState() {
-    if (widget.sailor.servingMonths == 6) {
-      daysKanoniki = 9;
-    } else if (widget.sailor.servingMonths == 9) {
-      daysKanoniki = 15;
-    } else {
-      daysKanoniki = 18;
-    }
     setFuture();
-    _kanoniki = Supabase.instance.client
-        .from('Adeies')
-        .select()
-        .eq('Sailor_id', widget.sailor.id)
-        .eq('Type', Adeia.kanoniki.enumType)
-        .then((data) => data.map((json) => Adeies.fromJson(json)).toList());
-    _aimodotiki = Supabase.instance.client
-        .from('Adeies')
-        .select()
-        .eq('Sailor_id', widget.sailor.id)
-        .eq('Type', Adeia.aimodotiki.enumType)
-        .then((data) => data.map((json) => Adeies.fromJson(json)).toList());
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Future.wait([_future, _kanoniki, _aimodotiki]),
+      future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: ProgressRing());
@@ -67,29 +52,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          final List<Adeies> adeies = snapshot.data![0];
-          bool hasKanoniki = adeies.any((item) => item.type == Adeia.kanoniki);
-          bool hasAimodotiki = adeies.any(
-            (item) => item.type == Adeia.aimodotiki,
-          );
-          int totalKanonikiDays = 0;
-          int totalAimodotikiDays = 0;
-          if (hasKanoniki) {
-            final List<Adeies> kanonikes = snapshot.data![1];
-            for (var row in kanonikes) {
-              DateTime start = row.dateStart;
-              DateTime end = row.dateEnd;
-              totalKanonikiDays += end.difference(start).inDays + 1;
-            }
-          }
-          if (hasAimodotiki) {
-            final List<Adeies> aimodotikes = snapshot.data![2];
-            for (var row in aimodotikes) {
-              DateTime start = row.dateStart;
-              DateTime end = row.dateEnd;
-              totalAimodotikiDays += end.difference(start).inDays + 1;
-            }
-          }
+          final List<Apomakrynseis> apomakrynseis = snapshot.data!;
           return Column(
             mainAxisSize: .min,
             crossAxisAlignment: .start,
@@ -99,81 +62,136 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                 child: Row(
                   children: [
                     Text(
-                      'Άδειες',
+                      'Απομακρύνσεις',
                       style: FluentTheme.of(context).typography.title,
                     ),
                     Gap(10),
-                    Row(
-                      crossAxisAlignment: .start,
-                      children: [
-                        if (hasKanoniki)
-                          Container(
-                            padding: .symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: secColor,
-                              borderRadius: .all(.circular(5)),
-                            ),
-                            child: Text(
-                              'Κανονική: $totalKanonikiDays/$daysKanoniki ημέρες',
-                            ),
-                          ),
-                        Gap(10),
-                        if (hasAimodotiki)
-                          Container(
-                            padding: .symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: secColor,
-                              borderRadius: .all(.circular(5)),
-                            ),
-                            child: Text(
-                              'Αιμοδοτική: $totalAimodotikiDays ημέρες',
-                            ),
-                          ),
-                      ],
-                    ),
-                    Spacer(),
-                    FilledButton(
-                      child: Row(
-                        children: [
-                          Icon(FluentIcons.add),
-                          Gap(5),
-                          Text('Νέα Άδεια'),
-                        ],
+                    Expanded(
+                      child: SizedBox(
+                        height: 30,
+                        child: ListView(
+                          scrollDirection: .horizontal,
+                          children: [
+                            ...Apomakrynsi.values.map((apomakrynsiType) {
+                              final totalDays = apomakrynseis
+                                  .where((item) => item.type == apomakrynsiType)
+                                  .fold<int>(
+                                    0,
+                                    (sum, item) =>
+                                        sum +
+                                        item.dateEnd
+                                            .difference(item.dateStart)
+                                            .inDays +
+                                        1,
+                                  );
+                              if (totalDays == 0) {
+                                return const SizedBox.shrink();
+                              }
+                              final labelText =
+                                  apomakrynsiType == Apomakrynsi.diathesi
+                                  ? '${apomakrynsiType.label}: $totalDays/$daysDiathesi ημέρες'
+                                  : '${apomakrynsiType.label}: $totalDays/$daysApospasi ημέρες';
+
+                              return Container(
+                                margin: .only(right: 5),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: secColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(labelText),
+                              );
+                            }),
+                          ],
+                        ),
                       ),
-                      onPressed: () => showContentDialog(context),
                     ),
+                    Gap(10),
+                    apomakrynseis.isEmpty
+                        ? SizedBox.shrink()
+                        : FilledButton(
+                            child: Row(
+                              children: [
+                                Icon(FluentIcons.add),
+                                Gap(5),
+                                Text('Νέα Απομάκρυνση'),
+                              ],
+                            ),
+                            onPressed: () => showContentDialog(context),
+                          ),
                   ],
                 ),
               ),
-              Row(
-                crossAxisAlignment: .start,
-                children: [
-                  Gap(padding * 2),
-                  Expanded(
-                    child: Text('Τύπος', style: TextStyle(fontWeight: .bold)),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Ημερομηνία Έναρξης',
-                      style: TextStyle(fontWeight: .bold),
+              apomakrynseis.isEmpty
+                  ? Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Δεν υπάρχουν καταχωρημένες απομακρύνσεις',
+                            textAlign: .center,
+                          ),
+                          Gap(10),
+                          FilledButton(
+                            child: Row(
+                              mainAxisSize: .min,
+                              children: [
+                                Icon(FluentIcons.add),
+                                Gap(5),
+                                Text('Νέα Απομάκρυνση'),
+                              ],
+                            ),
+                            onPressed: () => showContentDialog(context),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Row(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Gap(padding * 2),
+                        Expanded(
+                          child: Text(
+                            'Τύπος',
+                            style: TextStyle(fontWeight: .bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Ημερομηνία Έναρξης',
+                            style: TextStyle(fontWeight: .bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Ημερομηνία Λήξης',
+                            style: TextStyle(fontWeight: .bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Υπηρεσία',
+                            style: TextStyle(fontWeight: .bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Σήμα',
+                            style: TextStyle(fontWeight: .bold),
+                          ),
+                        ),
+                        Gap(padding * 2),
+                      ],
                     ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Ημερομηνία Λήξης',
-                      style: TextStyle(fontWeight: .bold),
-                    ),
-                  ),
-                  Gap(padding * 2),
-                ],
-              ),
               Gap(5),
               Expanded(
                 child: ListView(
                   padding: .symmetric(horizontal: padding),
-                  children: adeies
+                  children: apomakrynseis
                       .map(
-                        (adeia) => Container(
+                        (apomakrynsi) => Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: .circular(5),
@@ -185,25 +203,33 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                           ),
                           child: Row(
                             children: [
-                              Expanded(flex: 1, child: Text(adeia.type.label)),
+                              Expanded(
+                                flex: 1,
+                                child: Text(apomakrynsi.type.label),
+                              ),
                               Expanded(
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                    'dd MMMM yyyy',
+                                    'dd/MM/yyyy',
                                     'el',
-                                  ).format(adeia.dateStart),
+                                  ).format(apomakrynsi.dateStart),
                                 ),
                               ),
                               Expanded(
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                    'dd MMMM yyyy',
+                                    'dd/MM/yyyy',
                                     'el',
-                                  ).format(adeia.dateEnd),
+                                  ).format(apomakrynsi.dateEnd),
                                 ),
                               ),
+                              Expanded(
+                                flex: 1,
+                                child: Text(apomakrynsi.ypiresia),
+                              ),
+                              Expanded(flex: 1, child: Text(apomakrynsi.sima)),
                               FlyoutTarget(
                                 controller: flyoutController,
                                 child: IconButton(
@@ -226,7 +252,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                'Διαγραφή άδειας;',
+                                                'Διαγραφή απομάκρυνσης;',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -238,7 +264,9 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                                     isLoading = true;
                                                   });
                                                   try {
-                                                    await deleteAdeia(adeia.id);
+                                                    await deleteApomakrynsi(
+                                                      apomakrynsi.id,
+                                                    );
                                                     setState(() {
                                                       isLoading = false;
                                                     });
@@ -309,7 +337,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
   void showContentDialog(BuildContext context) async {
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => ShowContentDialog(sailor: widget.sailor),
+      builder: (context) => ShowApomakrynseisDialog(sailor: widget.sailor),
     );
     if (result == 'success') setState(() => setFuture());
   }

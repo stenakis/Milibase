@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart' hide CalendarView;
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
@@ -42,32 +43,18 @@ class _VardiesPageState extends State<VardiesPage> {
     final lastWeek = weeks.last;
 
     setState(() {
-      weeks.add(lastWeek.add(const Duration(days: 7)));
+      if (weeks.isNotEmpty) {
+        weeks.add(lastWeek.add(const Duration(days: 7)));
+      }
     });
   }
 
-  String dayName(int weekday) {
-    const names = ["ΔΕΥ", "ΤΡΙ", "ΤΕΤ", "ΠΕΜ", "ΠΑΡ", "ΣΑΒ", "ΚΥΡ"];
-    return names[weekday - 1];
-  }
+  void removeWeek() {
+    final lastWeek = weeks.last;
 
-  String monthTitle(DateTime date) {
-    const months = [
-      "Ιανουάριος",
-      "Φεβρουάριος",
-      "Μάρτιος",
-      "Απρίλιος",
-      "Μάιος",
-      "Ιούνιος",
-      "Ιούλιος",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    return "${months[date.month - 1]} ${date.year}";
+    setState(() {
+      weeks.remove(lastWeek);
+    });
   }
 
   bool isSameDay(DateTime a, DateTime b) {
@@ -77,6 +64,7 @@ class _VardiesPageState extends State<VardiesPage> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
+      padding: .all(padding),
       content: FutureBuilder(
         future: _future,
         builder: (context, snapshot) {
@@ -94,9 +82,18 @@ class _VardiesPageState extends State<VardiesPage> {
                 if (index == weeks.length) {
                   return Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Button(
-                      onPressed: generateNextWeek,
-                      child: const Text("Generate Next Week"),
+                    child: Row(
+                      children: [
+                        Button(
+                          onPressed: generateNextWeek,
+                          child: const Text("Generate Next Week"),
+                        ),
+                        Gap(10),
+                        Button(
+                          onPressed: removeWeek,
+                          child: const Text("Remove Week"),
+                        ),
+                      ],
                     ),
                   );
                 }
@@ -123,7 +120,7 @@ class _VardiesPageState extends State<VardiesPage> {
                       Padding(
                         padding: .symmetric(vertical: padding),
                         child: Text(
-                          monthTitle(weekStart),
+                          DateFormat('MMMM yyyy', 'el').format(weekStart),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -141,6 +138,7 @@ class _VardiesPageState extends State<VardiesPage> {
                               setState(() => selectedDate = date);
                             },
                             child: Container(
+                              margin: .symmetric(horizontal: 5),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -160,7 +158,13 @@ class _VardiesPageState extends State<VardiesPage> {
                                     child: Row(
                                       mainAxisAlignment: .center,
                                       children: [
-                                        Text(dayName(date.weekday)),
+                                        Text(
+                                          DateFormat(
+                                            'E',
+                                            'el',
+                                          ).format(date).toUpperCase(),
+                                        ),
+
                                         Gap(5),
                                         Text(
                                           date.day.toString(),
