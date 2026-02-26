@@ -61,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage.withPadding(
-      padding: .all(padding),
       content: Column(
         crossAxisAlignment: .start,
         children: [
