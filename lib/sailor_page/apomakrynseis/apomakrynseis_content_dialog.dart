@@ -77,7 +77,6 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 child: SizedBox(
                   height: 40,
                   child: CalendarDatePicker(
-                    isTodayHighlighted: false,
                     locale: Locale('el'),
                     placeholderText:
                         '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}',
@@ -98,7 +97,6 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 child: SizedBox(
                   height: 40,
                   child: CalendarDatePicker(
-                    isTodayHighlighted: false,
                     locale: Locale('el'),
                     placeholderText:
                         '${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}',

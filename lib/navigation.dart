@@ -31,10 +31,8 @@ class _NavigationState extends State<Navigation> {
           children: [
             Text('Milibase', style: FluentTheme.of(context).typography.title),
             Spacer(),
-
             Button(
               onPressed: () {
-                // This pushes the new page INSIDE the Pane body
                 _mainInnerKey.currentState?.push(
                   FluentPageRoute(
                     builder: (context) {
