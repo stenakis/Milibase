@@ -3,10 +3,10 @@ import 'package:gap/gap.dart';
 import 'package:milibase/navigation.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/sailor_page.dart';
+import 'package:milibase/styles/colors.dart';
 import 'package:milibase/styles/typography.dart';
 import 'package:milibase/variables.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:milibase/styles/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,9 +64,26 @@ class _MyHomePageState extends State<MyHomePage> {
       content: Column(
         crossAxisAlignment: .start,
         children: [
-          Text(
-            'Κατάλογος Ν/Δ',
-            style: FluentTheme.of(context).typography.titleLarge,
+          Row(
+            children: [
+              Text(
+                'Κατάλογος Ν/Δ',
+                style: FluentTheme.of(context).typography.titleLarge,
+              ),
+              Spacer(),
+              FilledButton(
+                child: Row(
+                  mainAxisSize: .min,
+                  children: [
+                    Icon(FluentIcons.add),
+                    Gap(5),
+                    Text('Προσθήκη Ν/Δ'),
+                  ],
+                ),
+                onPressed: () {},
+                //showNdDialog(context),
+              ),
+            ],
           ),
           Gap(padding),
           Padding(

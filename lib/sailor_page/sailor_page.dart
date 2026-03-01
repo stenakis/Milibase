@@ -3,8 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/adeies/sailor_widget_adeies.dart';
 import 'package:milibase/sailor_page/apomakrynseis/sailor_widget_apomakrynseis.dart';
+import 'package:milibase/sailor_page/metavoles/sailor_widget_metavoles.dart';
 import 'package:milibase/sailor_page/sailor_widget_info.dart';
-import 'package:milibase/sailor_page/sailor_widget_metavoles.dart';
 import 'package:milibase/sailor_page/sailor_widget_vardies.dart';
 import 'package:milibase/variables.dart';
 

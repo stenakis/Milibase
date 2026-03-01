@@ -2,7 +2,8 @@ import 'package:intl/intl.dart';
 
 enum Apomakrynsi {
   diathesi,
-  apospasi;
+  apospasi,
+  metathesi;
 
   static Apomakrynsi fromString(String value) {
     return Apomakrynsi.values.firstWhere(
@@ -15,6 +16,7 @@ enum Apomakrynsi {
     return {
           Apomakrynsi.apospasi: 'Απόσπαση',
           Apomakrynsi.diathesi: 'Διάθεση',
+          Apomakrynsi.metathesi: 'Μετάθεση',
         }[this] ??
         'Απόσπαση';
   }
@@ -23,6 +25,7 @@ enum Apomakrynsi {
     return {
           Apomakrynsi.apospasi: 'apospasi',
           Apomakrynsi.diathesi: 'diathesi',
+          Apomakrynsi.metathesi: 'metathesi',
         }[this] ??
         'apospasi';
   }
