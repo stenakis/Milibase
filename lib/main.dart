@@ -106,7 +106,38 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: ProgressRing());
                 }
+
                 if (snapshot.hasError) {
+                  final error = snapshot.error.toString();
+                  if (error.contains('SocketException') ||
+                      error.contains('Failed host lookup')) {
+                    return Center(
+                      child: Column(
+                        crossAxisAlignment: .center,
+                        mainAxisAlignment: .center,
+                        children: [
+                          Text(
+                            'Failed to connect to the server. Please check your internet connection.\nServer message: SocketException',
+                            textAlign: TextAlign.center,
+                          ),
+                          Gap(10),
+                          Button(
+                            child: Text('Retry'),
+                            onPressed: () => setState(() {
+                              _future = Supabase.instance.client
+                                  .from('Sailors')
+                                  .select()
+                                  .then(
+                                    (data) => data
+                                        .map((json) => Sailor.fromJson(json))
+                                        .toList(),
+                                  );
+                            }),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   final sailors = snapshot.data!;

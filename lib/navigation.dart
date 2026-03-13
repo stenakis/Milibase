@@ -18,7 +18,7 @@ class _NavigationState extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
-      padding: EdgeInsets.zero,
+      padding: .zero,
       content: Navigator(
         key: _mainInnerKey,
         onGenerateRoute: (settings) {
