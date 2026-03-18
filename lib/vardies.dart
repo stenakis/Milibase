@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart' hide CalendarView;
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:milibase/create_vardia.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
@@ -14,6 +15,7 @@ class VardiesPage extends StatefulWidget {
 }
 
 class _VardiesPageState extends State<VardiesPage> {
+  late List<List<Sailor>> vardies = [];
   late Future<List<Sailor>> _future;
   @override
   void initState() {
@@ -80,27 +82,24 @@ class _VardiesPageState extends State<VardiesPage> {
               itemCount: weeks.length + 1,
               itemBuilder: (context, index) {
                 if (index == weeks.length) {
-                  return Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Button(
-                          onPressed: generateNextWeek,
-                          child: const Text("Generate Next Week"),
-                        ),
-                        Gap(10),
-                        Button(
-                          onPressed: removeWeek,
-                          child: const Text("Remove Week"),
-                        ),
-                      ],
-                    ),
+                  return Row(
+                    children: [
+                      Button(
+                        onPressed: generateNextWeek,
+                        child: const Text("Generate Next Week"),
+                      ),
+                      Gap(10),
+                      Button(
+                        onPressed: removeWeek,
+                        child: const Text("Remove Week"),
+                      ),
+                    ],
                   );
                 }
                 final weekStart = weeks[index];
                 final days = generateWeekDays(weekStart);
 
-                /// Check if we need to show month header
+                // Check if we need to show month header
                 bool showMonthHeader = false;
 
                 if (index == 0) {
@@ -113,7 +112,7 @@ class _VardiesPageState extends State<VardiesPage> {
                 }
 
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     /// MONTH HEADER
                     if (showMonthHeader)
@@ -127,6 +126,13 @@ class _VardiesPageState extends State<VardiesPage> {
                           ),
                         ),
                       ),
+                    Button(
+                      onPressed: () => setState(() {
+                        vardies = createVardies(sailors);
+                      }),
+                      child: Text('Δημιουργία βάρδιας'),
+                    ),
+                    Gap(10),
 
                     /// WEEK ROW
                     Row(
@@ -147,6 +153,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                     : null,
                               ),
                               child: Column(
+                                crossAxisAlignment: .start,
                                 children: [
                                   Container(
                                     padding: .symmetric(
@@ -156,7 +163,6 @@ class _VardiesPageState extends State<VardiesPage> {
                                     width: double.infinity,
                                     color: secColor,
                                     child: Row(
-                                      mainAxisAlignment: .center,
                                       children: [
                                         Text(
                                           DateFormat(
@@ -175,8 +181,22 @@ class _VardiesPageState extends State<VardiesPage> {
                                       ],
                                     ),
                                   ),
-                                  Gap(10),
-                                  ...sailors.map((sailor) => Text(sailor.name)),
+                                  Gap(7),
+                                  Padding(
+                                    padding: .symmetric(horizontal: 12),
+                                    child: vardies.isNotEmpty
+                                        ? Column(
+                                            crossAxisAlignment: .start,
+                                            children: vardies[index]
+                                                .map(
+                                                  (sailor) =>
+                                                      Text(sailor.surname),
+                                                )
+                                                .toList(),
+                                          )
+                                        : Text('Home'),
+                                  ),
+
                                   Gap(10),
                                 ],
                               ),

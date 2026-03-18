@@ -91,10 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
               mainAxisAlignment: .spaceBetween,
               children: [
-                Text('Ονοματεπώνυμο'),
-                Text('ΑΓΜ'),
-                Text('Βαθμός/Ειδικότητα'),
-                Text('Τηλέφωνο'),
+                Expanded(child: Text('Ονοματεπώνυμο')),
+                Expanded(child: Text('ΑΓΜ')),
+                Expanded(child: Text('Βαθμός/Ειδικότητα')),
+                Expanded(child: Text('Τηλέφωνο')),
               ],
             ),
           ),
@@ -148,6 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return HoverButton(
                         builder: (context, states) {
                           return Container(
+                            margin: .symmetric(vertical: 5),
                             decoration: BoxDecoration(
                               borderRadius: .circular(5),
                               color: Colors.white,
@@ -159,12 +160,18 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Row(
                               mainAxisAlignment: .spaceBetween,
                               children: [
-                                Text('${sailor.surname} ${sailor.name}'),
-                                Text(sailor.agm),
-                                Text(
-                                  '${sailor.rank.label} (${sailor.specialty.label})',
+                                Expanded(
+                                  child: Text(
+                                    '${sailor.surname} ${sailor.name}',
+                                  ),
                                 ),
-                                Text(sailor.mobile),
+                                Expanded(child: Text(sailor.agm)),
+                                Expanded(
+                                  child: Text(
+                                    '${sailor.rank.label} (${sailor.specialty.label})',
+                                  ),
+                                ),
+                                Expanded(child: Text(sailor.mobile)),
                               ],
                             ),
                           );

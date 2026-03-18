@@ -5,6 +5,7 @@ import 'package:milibase/sailor_page/adeies/sailor_widget_adeies.dart';
 import 'package:milibase/sailor_page/apomakrynseis/sailor_widget_apomakrynseis.dart';
 import 'package:milibase/sailor_page/metavoles/sailor_widget_metavoles.dart';
 import 'package:milibase/sailor_page/sailor_widget_info.dart';
+import 'package:milibase/sailor_page/sailor_widget_settings.dart';
 import 'package:milibase/sailor_page/sailor_widget_vardies.dart';
 import 'package:milibase/variables.dart';
 
@@ -74,6 +75,13 @@ class _SailorPageState extends State<SailorPage> {
             title: Text('Βάρδιες'),
             icon: WindowsIcon(WindowsIcons.bookmarks),
             body: SailorWidgetVardies(sailor: widget.sailor),
+          ),
+        ],
+        footerItems: [
+          PaneItem(
+            title: Text('Ρυθμίσεις'),
+            icon: WindowsIcon(WindowsIcons.settings),
+            body: SailorWidgetSettings(sailor: widget.sailor),
           ),
         ],
       ),

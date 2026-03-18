@@ -2,8 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/variables.dart';
 
-class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class AboutPage extends StatelessWidget {
           crossAxisAlignment: .start,
           children: [
             Text(
-              'Σχετικά',
+              'Ρυθμίσεις',
               style: FluentTheme.of(context).typography.titleLarge,
             ),
             Gap(padding),

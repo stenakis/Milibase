@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/metavoles.dart';
 import 'package:milibase/objects/sailor.dart';
-
 import 'metavoles_functions.dart';
 
 class ShowMetavolesDialog extends StatefulWidget {

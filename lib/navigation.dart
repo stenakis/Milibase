@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
-import 'package:milibase/about.dart';
+import 'package:milibase/settings.dart';
 import 'package:milibase/main.dart';
 import 'package:milibase/vardies.dart';
 import 'package:milibase/variables.dart';
@@ -85,7 +85,7 @@ class _NavigationState extends State<Navigation> {
                 _mainInnerKey.currentState?.push(
                   FluentPageRoute(
                     builder: (context) {
-                      return const AboutPage();
+                      return const SettingsPage();
                     },
                   ),
                 );
@@ -95,9 +95,9 @@ class _NavigationState extends State<Navigation> {
                 child: Center(
                   child: Row(
                     children: [
-                      const WindowsIcon(WindowsIcons.info, size: 24),
+                      const WindowsIcon(WindowsIcons.settings, size: 24),
                       Gap(10),
-                      const Text('Σχετικά', style: TextStyle(fontSize: 10)),
+                      const Text('Ρυθμίσεις', style: TextStyle(fontSize: 10)),
                     ],
                   ),
                 ),

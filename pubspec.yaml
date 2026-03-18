@@ -16,7 +16,6 @@ dependencies:
   gap: ^3.0.1
   google_fonts: ^8.0.2
   intl: ^0.20.2
-  kalender: ^0.15.0
 
 dev_dependencies:
   flutter_test:
