@@ -13,9 +13,18 @@ class SettingsPage extends StatelessWidget {
         content: Column(
           crossAxisAlignment: .start,
           children: [
-            Text(
-              'Ρυθμίσεις',
-              style: FluentTheme.of(context).typography.titleLarge,
+            Row(
+              children: [
+                IconButton(
+                  icon: WindowsIcon(WindowsIcons.chrome_back, size: 24),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Gap(10),
+                Text(
+                  'Ρυθμίσεις',
+                  style: FluentTheme.of(context).typography.titleLarge,
+                ),
+              ],
             ),
             Gap(padding),
             Text('Έκδοση 0.1'),

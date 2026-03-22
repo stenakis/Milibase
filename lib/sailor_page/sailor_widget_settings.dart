@@ -1,8 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:milibase/navigation.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/variables.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../main.dart';
 
 class SailorWidgetSettings extends StatefulWidget {
   const SailorWidgetSettings({super.key, required this.sailor});
@@ -46,12 +48,12 @@ class _SailorWidgetSettingsState extends State<SailorWidgetSettings> {
                     setState(() {
                       isLoading = true;
                     });
-                    final supabase = Supabase.instance.client;
-                    await supabase
-                        .from('Sailors')
-                        .delete()
-                        .eq('id', widget.sailor.id);
-                    Navigator.pop(context, 'success');
+                    await (db.delete(
+                      db.tableSailors,
+                    )..where((t) => t.id.equals(widget.sailor.id))).go();
+                    mainInnerKey.currentState?.popUntil(
+                      (route) => route.isFirst,
+                    );
                     setState(() {
                       isLoading = false;
                     });

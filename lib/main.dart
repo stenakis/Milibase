@@ -4,6 +4,7 @@ import 'package:milibase/katalogos_nd.dart';
 import 'package:milibase/navigation.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/styles/typography.dart';
+import 'package:milibase/variables.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'db/init_db.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       locale: const Locale('el'),
       title: 'Milibase',
       theme: FluentThemeData(
-        accentColor: Colors.blue,
+        accentColor: primary.toAccentColor(),
         brightness: Brightness.light,
         scaffoldBackgroundColor: background,
         typography: getInterTypography(Brightness.light),

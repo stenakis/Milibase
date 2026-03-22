@@ -137,7 +137,7 @@ class _SailorPageState extends State<SailorPage> {
                               child: Column(
                                 mainAxisAlignment: .center,
                                 children: [
-                                  WindowsIcon(WindowsIcons.remove),
+                                  WindowsIcon(WindowsIcons.update_restore),
                                   Gap(10),
                                   Text('Μεταβολές'),
                                 ],
@@ -173,7 +173,7 @@ class _SailorPageState extends State<SailorPage> {
                 top: 10,
                 left: 10,
                 child: IconButton(
-                  icon: WindowsIcon(WindowsIcons.chrome_back, size: 20),
+                  icon: WindowsIcon(WindowsIcons.chrome_back, size: 24),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
