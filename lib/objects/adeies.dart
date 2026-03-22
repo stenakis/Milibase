@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 enum Adeia {
   kanoniki,
   aimodotiki,
@@ -57,23 +55,22 @@ class Adeies {
     this.sima,
   });
 
-  Map<String, dynamic> toJson() => {
-    'Type': type.enumType,
-    'Date_Start': DateFormat('yyyy-MM-dd').format(dateStart),
-    'Date_End': DateFormat('yyyy-MM-dd').format(dateEnd),
-    'Sailor_id': sailorId,
-    'Sima': sima,
-  };
+  static DateTime _parseDate(dynamic date) {
+    if (date is int) {
+      return DateTime.fromMillisecondsSinceEpoch(date);
+    }
+    return DateTime.parse(date.toString());
+  }
 
   // Parse the String from Supabase back into a Dart DateTime
   factory Adeies.fromJson(Map<String, dynamic> json) {
     return Adeies(
       id: json['id'],
-      type: Adeia.fromString(json['Type']),
-      dateStart: DateTime.parse(json['Date_Start']),
-      dateEnd: DateTime.parse(json['Date_End']),
-      sailorId: json['Sailor_id'],
-      sima: json['Sima'],
+      type: Adeia.fromString(json['type']),
+      dateStart: _parseDate(json['dateStart']),
+      dateEnd: _parseDate(json['dateEnd']),
+      sailorId: json['sailorId'],
+      sima: json['sima'],
     );
   }
 }

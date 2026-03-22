@@ -23,7 +23,16 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: const Text('Νέα Απομάκρυνση'),
+      title: Row(
+        children: [
+          const Text('Νέα Απομάκρυνση'),
+          Spacer(),
+          IconButton(
+            icon: WindowsIcon(WindowsIcons.chrome_close),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,20 +124,8 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
         ],
       ),
       actions: [
-        Button(
-          child: const Text('Άκυρο'),
-          onPressed: () {
-            Navigator.pop(context, 'User deleted file');
-          },
-        ),
         isLoading
-            ? Row(
-                children: [
-                  Expanded(child: Text(statusText)),
-                  isLoading ? Container() : Gap(10),
-                  isLoading ? Container() : ProgressRing(),
-                ],
-              )
+            ? Row(children: [ProgressRing(), Gap(10), Text(statusText)])
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {

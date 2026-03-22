@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/metavoles.dart';
 import 'package:milibase/objects/sailor.dart';
+
 import 'metavoles_functions.dart';
 
 class ShowMetavolesDialog extends StatefulWidget {
@@ -24,7 +25,16 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: const Text('Νέα Μεταβολή'),
+      title: Row(
+        children: [
+          const Text('Νέα Μεταβολή'),
+          Spacer(),
+          IconButton(
+            icon: WindowsIcon(WindowsIcons.chrome_close),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,20 +123,8 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
         ],
       ),
       actions: [
-        Button(
-          child: const Text('Άκυρο'),
-          onPressed: () {
-            Navigator.pop(context, 'User deleted file');
-          },
-        ),
         isLoading
-            ? Row(
-                children: [
-                  Expanded(child: Text(statusText)),
-                  isLoading ? Container() : Gap(10),
-                  isLoading ? Container() : ProgressRing(),
-                ],
-              )
+            ? Row(children: [ProgressRing(), Gap(10), Text(statusText)])
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {

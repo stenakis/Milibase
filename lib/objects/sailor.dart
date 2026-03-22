@@ -1,4 +1,3 @@
-import 'package:milibase/objects/adeies.dart';
 import 'package:milibase/objects/rank.dart';
 import 'package:milibase/objects/specialty.dart';
 
@@ -9,7 +8,6 @@ class Sailor {
   final String agm;
   final Rank rank;
   final Specialty specialty;
-  final List<Adeies> adeies;
   final String address;
   final String mobile;
   final String landline;
@@ -34,46 +32,49 @@ class Sailor {
     required this.dateRemoval,
     required this.rank,
     required this.servingMonths,
-    required this.adeies,
   });
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'Surname': surname,
-    'Name': name,
-    'AGM': agm,
-    'Rank': rank,
-    'Specialty': specialty,
-    'Address': address,
-    'Mobile': mobile,
-    'Landline': landline,
-    'Education': education,
-    'Adeies': adeies,
-    'Serving_Months': servingMonths,
-    'Date_Arrival': dateArrival,
-    'Date_Insert': dateInsert,
-    'Date_Removal': dateRemoval,
+    'surname': surname,
+    'name': name,
+    'agm': agm,
+    'rank': rank,
+    'specialty': specialty,
+    'address': address,
+    'mobile': mobile,
+    'landline': landline,
+    'education': education,
+    'servingMonths': servingMonths,
+    'dateArrival': dateArrival,
+    'dateInsert': dateInsert,
+    'dateRemoval': dateRemoval,
   };
 
   factory Sailor.fromJson(Map<String, dynamic> json) {
     return Sailor(
-      id: json['id'] as String,
-      name: json['Name'] as String,
-      surname: json['Surname'] as String,
-      agm: json['AGM'] as String,
-      rank: Rank.fromString(json['Rank']),
-      adeies: (json['adeies'] as List? ?? [])
-          .map((item) => Adeies.fromJson(item))
-          .toList(),
-      specialty: Specialty.fromString(json['Specialty']),
-      address: json['Address'] as String,
-      mobile: json['Mobile'] as String,
-      landline: json['Landline'] as String,
-      servingMonths: json['Serving_Months'] as int,
-      education: json['Education'] as String,
-      dateArrival: DateTime.tryParse(json['Date_Arrival']) as DateTime,
-      dateInsert: DateTime.tryParse(json['Date_Insert']) as DateTime,
-      dateRemoval: DateTime.tryParse(json['Date_Removal']) as DateTime,
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      surname: json['surname']?.toString() ?? '',
+      agm: json['agm']?.toString() ?? '',
+      rank: Rank.fromString(json['rank']?.toString() ?? ''),
+      specialty: Specialty.fromString(json['specialty']?.toString() ?? ''),
+      address: json['address']?.toString() ?? '',
+      mobile: json['mobile']?.toString() ?? '',
+      landline: json['landline']?.toString() ?? '',
+      education: json['education']?.toString() ?? '',
+      // Use 'as num?' to safely handle any number type before converting to int
+      servingMonths: (json['servingMonths'] as num?)?.toInt() ?? 0,
+      // Safely parse dates
+      dateArrival:
+          DateTime.tryParse(json['dateArrival']?.toString() ?? '') ??
+          DateTime.now(),
+      dateInsert:
+          DateTime.tryParse(json['dateInsert']?.toString() ?? '') ??
+          DateTime.now(),
+      dateRemoval:
+          DateTime.tryParse(json['dateRemoval']?.toString() ?? '') ??
+          DateTime.now(),
     );
   }
 }

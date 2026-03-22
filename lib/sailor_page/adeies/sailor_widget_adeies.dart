@@ -1,13 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:milibase/objects/adeies.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/adeies/adeies_content_dialog.dart';
 import 'package:milibase/sailor_page/adeies/adeies_functions.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
+
+import '../../main.dart';
 
 class SailorWidgetAdeies extends StatefulWidget {
   const SailorWidgetAdeies({super.key, required this.sailor});
@@ -22,11 +23,12 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
   final FlyoutController flyoutController = FlyoutController();
   bool isLoading = false;
   void setFuture() {
-    _future = Supabase.instance.client
-        .from('Adeies')
-        .select()
-        .eq('Sailor_id', widget.sailor.id)
-        .then((data) => data.map((json) => Adeies.fromJson(json)).toList());
+    _future =
+        (db.select(
+          db.tableAdeies,
+        )..where((t) => t.sailorId.equals(widget.sailor.id))).get().then(
+          (rows) => rows.map((row) => Adeies.fromJson(row.toJson())).toList(),
+        );
   }
 
   late int daysKanoniki;
@@ -253,7 +255,9 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                                     isLoading = true;
                                                   });
                                                   try {
-                                                    await deleteAdeia(adeia.id);
+                                                    await deleteAdeia(
+                                                      adeia.id!,
+                                                    );
                                                     setState(() {
                                                       isLoading = false;
                                                     });

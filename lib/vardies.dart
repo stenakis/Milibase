@@ -5,7 +5,8 @@ import 'package:milibase/create_vardia.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'main.dart';
 
 class VardiesPage extends StatefulWidget {
   const VardiesPage({super.key});
@@ -19,10 +20,9 @@ class _VardiesPageState extends State<VardiesPage> {
   late Future<List<Sailor>> _future;
   @override
   void initState() {
-    _future = Supabase.instance.client
-        .from('Sailors')
-        .select()
-        .then((data) => data.map((json) => Sailor.fromJson(json)).toList());
+    _future = db.select(db.tableSailors).get().then((rows) {
+      return rows.map((row) => Sailor.fromJson(row.toJson())).toList();
+    });
     weeks.add(getStartOfWeek(DateTime.now())); // first week
     super.initState();
   }

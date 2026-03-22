@@ -22,7 +22,16 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: const Text('Νέα Άδεια'),
+      title: Row(
+        children: [
+          const Text('Νέα Άδεια'),
+          Spacer(),
+          IconButton(
+            icon: WindowsIcon(WindowsIcons.chrome_close),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,20 +111,8 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
         ],
       ),
       actions: [
-        Button(
-          child: const Text('Άκυρο'),
-          onPressed: () {
-            Navigator.pop(context, 'User deleted file');
-          },
-        ),
         isLoading
-            ? Row(
-                children: [
-                  Expanded(child: Text(statusText)),
-                  isLoading ? Container() : Gap(10),
-                  isLoading ? Container() : ProgressRing(),
-                ],
-              )
+            ? Row(children: [ProgressRing(), Gap(10), Text(statusText)])
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {

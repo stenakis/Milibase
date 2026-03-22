@@ -3,8 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/variables.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../main.dart';
 import '../../objects/metavoles.dart';
 import 'metavoles_content_dialog.dart';
 import 'metavoles_functions.dart';
@@ -22,11 +22,13 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
   final FlyoutController flyoutController = FlyoutController();
   bool isLoading = false;
   void setFuture() {
-    _future = Supabase.instance.client
-        .from('Metavoles')
-        .select()
-        .eq('Sailor_id', widget.sailor.id)
-        .then((data) => data.map((json) => Metavoles.fromJson(json)).toList());
+    _future =
+        (db.select(
+          db.tableMetavoles,
+        )..where((t) => t.sailorId.equals(widget.sailor.id))).get().then(
+          (rows) =>
+              rows.map((row) => Metavoles.fromJson(row.toJson())).toList(),
+        );
   }
 
   @override
@@ -196,7 +198,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                                                   });
                                                   try {
                                                     await deleteMetavoli(
-                                                      metavoli.id,
+                                                      metavoli.id!,
                                                     );
                                                     setState(() {
                                                       isLoading = false;

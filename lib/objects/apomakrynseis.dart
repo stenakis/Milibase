@@ -51,23 +51,30 @@ class Apomakrynseis {
   });
 
   Map<String, dynamic> toJson() => {
-    'Type': type.enumType,
-    'Date_Start': DateFormat('yyyy-MM-dd').format(dateStart),
-    'Date_End': DateFormat('yyyy-MM-dd').format(dateEnd),
-    'Sailor_id': sailorId,
-    'Ypiresia': ypiresia,
-    'Sima': sima,
+    'type': type.enumType,
+    'dateStart': DateFormat('yyyy-MM-dd').format(dateStart),
+    'dateEnd': DateFormat('yyyy-MM-dd').format(dateEnd),
+    'sailorId': sailorId,
+    'ypiresia': ypiresia,
+    'sima': sima,
   };
+
+  static DateTime _parseDate(dynamic date) {
+    if (date is int) {
+      return DateTime.fromMillisecondsSinceEpoch(date);
+    }
+    return DateTime.parse(date.toString());
+  }
 
   factory Apomakrynseis.fromJson(Map<String, dynamic> json) {
     return Apomakrynseis(
       id: json['id'],
-      type: Apomakrynsi.fromString(json['Type']),
-      dateStart: DateTime.parse(json['Date_Start']),
-      dateEnd: DateTime.parse(json['Date_End']),
-      sailorId: json['Sailor_id'],
-      ypiresia: json['Ypiresia'],
-      sima: json['Sima'],
+      type: Apomakrynsi.fromString(json['type']),
+      dateStart: _parseDate(json['dateStart']),
+      dateEnd: _parseDate(json['dateEnd']),
+      sailorId: json['sailorId'],
+      ypiresia: json['ypiresia'],
+      sima: json['sima'],
     );
   }
 }

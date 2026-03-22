@@ -16,12 +16,21 @@ dependencies:
   gap: ^3.0.1
   google_fonts: ^8.0.2
   intl: ^0.20.2
+  sqlite3: ^3.2.0
+  sqflite_common_ffi: ^2.4.0+2
+  path_provider: ^2.1.5
+  drift: ^2.32.0
+  drift_flutter: ^0.3.0
+  uuid: ^4.5.3
+  bitsdojo_window: ^0.1.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
+  drift_dev: ^2.32.0
+  build_runner: ^2.13.1
 flutter:
   uses-material-design: true
 

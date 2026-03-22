@@ -7,7 +7,8 @@ import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_content_dialog.
 import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_functions.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../main.dart';
 
 class SailorWidgetApomakrynseis extends StatefulWidget {
   const SailorWidgetApomakrynseis({super.key, required this.sailor});
@@ -23,12 +24,12 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
   final FlyoutController flyoutController = FlyoutController();
   bool isLoading = false;
   void setFuture() {
-    _future = Supabase.instance.client
-        .from('Apomakrynseis')
-        .select()
-        .eq('Sailor_id', widget.sailor.id)
-        .then(
-          (data) => data.map((json) => Apomakrynseis.fromJson(json)).toList(),
+    _future =
+        (db.select(
+          db.tableApomakrynseis,
+        )..where((t) => t.sailorId.equals(widget.sailor.id))).get().then(
+          (rows) =>
+              rows.map((row) => Apomakrynseis.fromJson(row.toJson())).toList(),
         );
   }
 
@@ -149,7 +150,8 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                       ),
                     )
                   : Row(
-                      crossAxisAlignment: .start,
+                      crossAxisAlignment: .end,
+
                       children: [
                         Gap(padding * 2),
                         Expanded(
@@ -265,7 +267,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                                                   });
                                                   try {
                                                     await deleteApomakrynsi(
-                                                      apomakrynsi.id,
+                                                      apomakrynsi.id!,
                                                     );
                                                     setState(() {
                                                       isLoading = false;
