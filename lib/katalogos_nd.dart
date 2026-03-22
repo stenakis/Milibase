@@ -4,7 +4,6 @@ import 'package:milibase/create_nd.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/sailor_page.dart';
 import 'package:milibase/variables.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'main.dart';
 
@@ -92,16 +91,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
                         Gap(10),
                         Button(
                           child: Text('Retry'),
-                          onPressed: () => setState(() {
-                            _future = Supabase.instance.client
-                                .from('Sailors')
-                                .select()
-                                .then(
-                                  (data) => data
-                                      .map((json) => Sailor.fromJson(json))
-                                      .toList(),
-                                );
-                          }),
+                          onPressed: () => _refreshData(),
                         ),
                       ],
                     ),
