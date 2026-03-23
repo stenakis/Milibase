@@ -3,7 +3,9 @@ enum Specialty {
   dioik,
   t_syn,
   diax,
-  t_hn;
+  t_hn,
+  hn_hy,
+  hl;
 
   static Specialty fromString(String value) {
     return Specialty.values.firstWhere(
@@ -19,6 +21,8 @@ enum Specialty {
           Specialty.t_syn: 'Τ/ΣΥΝ',
           Specialty.diax: 'ΔΙΑΧ',
           Specialty.t_hn: 'Τ/ΗΝ',
+          Specialty.hn_hy: 'ΗΝ/ΗΥ',
+          Specialty.hl: 'ΗΛ',
         }[this] ??
         'Τ/ΗΝ';
   }

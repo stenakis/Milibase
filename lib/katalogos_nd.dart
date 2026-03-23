@@ -23,10 +23,8 @@ class _KatalogosNdState extends State<KatalogosNd> {
   }
 
   void _refreshData() {
-    setState(() {
-      _future = db.select(db.tableSailors).get().then((rows) {
-        return rows.map((row) => Sailor.fromJson(row.toJson())).toList();
-      });
+    _future = db.select(db.tableSailors).get().then((rows) {
+      return rows.map((row) => Sailor.fromJson(row.toJson())).toList();
     });
   }
 
@@ -42,13 +40,19 @@ class _KatalogosNdState extends State<KatalogosNd> {
               style: FluentTheme.of(context).typography.titleLarge,
             ),
             Spacer(),
+            IconButton(
+              icon: WindowsIcon(WindowsIcons.update_restore),
+              onPressed: () => setState(() {
+                _refreshData();
+              }),
+            ),
+            Gap(10),
             FilledButton(
               child: Row(
                 mainAxisSize: .min,
                 children: [Icon(FluentIcons.add), Gap(5), Text('Προσθήκη Ν/Δ')],
               ),
               onPressed: () => showCreateNDDialog(context),
-
               //showNdDialog(context),
             ),
           ],
@@ -155,10 +159,13 @@ class _KatalogosNdState extends State<KatalogosNd> {
   }
 
   void showCreateNDDialog(BuildContext context) async {
-    final result = await showDialog<String>(
+    await showDialog<String>(
       context: context,
       builder: (context) => ShowCreateNdDialog(),
     );
-    if (result == 'success') _refreshData();
+
+    setState(() {
+      _refreshData();
+    });
   }
 }

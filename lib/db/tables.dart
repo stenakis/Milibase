@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:milibase/objects/adeies.dart';
-import 'package:milibase/objects/apomakrynseis.dart';
-import 'package:milibase/objects/metavoles.dart';
-import 'package:milibase/objects/specialty.dart';
+import '../objects/adeies.dart';
+import '../objects/apomakrynseis.dart';
+import '../objects/metavoles.dart';
+import '../objects/specialty.dart';
 import 'package:uuid/uuid.dart';
 
 import '../objects/rank.dart';

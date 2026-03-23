@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart' hide CalendarView;
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/create_vardia.dart';
@@ -120,7 +120,7 @@ class _VardiesPageState extends State<VardiesPage> {
                         padding: .symmetric(vertical: padding),
                         child: Text(
                           DateFormat('MMMM yyyy', 'el').format(weekStart),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),

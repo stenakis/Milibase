@@ -1,8 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
-import 'package:milibase/objects/metavoles.dart';
 import 'package:milibase/objects/sailor.dart';
-
+import '../../objects/metavoles.dart';
 import 'metavoles_functions.dart';
 
 class ShowMetavolesDialog extends StatefulWidget {
@@ -140,7 +139,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                           date: selectedDate,
                           sailorId: widget.sailor.id,
                           sima: simaController.text,
-                          duration: selectedMetavoli == .meiomeni
+                          duration: selectedMetavoli == Metavoli.meiomeni
                               ? selectedDuration
                               : null,
                         ),

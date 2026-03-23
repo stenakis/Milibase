@@ -1,5 +1,5 @@
-import 'package:milibase/objects/rank.dart';
-import 'package:milibase/objects/specialty.dart';
+import '../objects/rank.dart';
+import '../objects/specialty.dart';
 
 class Sailor {
   final String id;
@@ -18,7 +18,7 @@ class Sailor {
   final DateTime dateRemoval;
 
   Sailor({
-    required this.id,
+    this.id = '',
     required this.name,
     required this.surname,
     required this.agm,

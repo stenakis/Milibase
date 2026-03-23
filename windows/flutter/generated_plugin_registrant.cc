@@ -7,8 +7,11 @@
 #include "generated_plugin_registrant.h"
 
 #include <bitsdojo_window_windows/bitsdojo_window_plugin.h>
+#include <open_folder/open_folder_plugin_c_api.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   BitsdojoWindowPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("BitsdojoWindowPlugin"));
+  OpenFolderPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("OpenFolderPluginCApi"));
 }

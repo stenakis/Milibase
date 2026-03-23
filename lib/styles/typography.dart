@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:milibase/styles/colors.dart';
 
-Typography getInterTypography(Brightness brightness) {
+Typography getTypography(Brightness brightness) {
   final Color color = brightness == Brightness.light
       ? Colors.black
       : Colors.white;
@@ -16,8 +16,7 @@ Typography getInterTypography(Brightness brightness) {
       fontWeight: FontWeight.bold,
       color: mainColor,
     ),
-    titleLarge: GoogleFonts.inter(fontSize: 40, fontWeight: FontWeight.bold),
-    display: GoogleFonts.inter(fontSize: 68, fontWeight: FontWeight.bold),
+    titleLarge: GoogleFonts.inter(fontSize: 35, fontWeight: FontWeight.bold),
   );
 }
 

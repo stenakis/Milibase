@@ -4,6 +4,7 @@ import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/adeies/sailor_widget_adeies.dart';
 import 'package:milibase/sailor_page/apomakrynseis/sailor_widget_apomakrynseis.dart';
 import 'package:milibase/sailor_page/metavoles/sailor_widget_metavoles.dart';
+import 'package:milibase/sailor_page/sailor_page_preview.dart';
 import 'package:milibase/sailor_page/sailor_widget_info.dart';
 import 'package:milibase/sailor_page/sailor_widget_settings.dart';
 import 'package:milibase/variables.dart';
@@ -60,7 +61,7 @@ class _SailorPageState extends State<SailorPage> {
                         children: [
                           Button(
                             onPressed: () => setState(() {
-                              screen = SailorWidgetInfo(sailor: widget.sailor);
+                              screen = SailorPagePreview();
                             }),
                             child: Container(
                               padding: .all(10),

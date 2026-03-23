@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:milibase/objects/adeies.dart';
+import '../../objects/adeies.dart';
 
 import '../../db/init_db.dart';
 import '../../main.dart';

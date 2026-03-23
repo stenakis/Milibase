@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         accentColor: primary.toAccentColor(),
         brightness: Brightness.light,
         scaffoldBackgroundColor: background,
-        typography: getInterTypography(Brightness.light),
+        typography: getTypography(Brightness.light),
         visualDensity: VisualDensity.standard,
         navigationPaneTheme: NavigationPaneThemeData(
           backgroundColor: Colors.white,

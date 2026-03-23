@@ -1,14 +1,16 @@
-import 'package:drift/native.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:milibase/db/add_nd.dart';
-import 'package:milibase/variables.dart';
-
+import 'package:intl/intl.dart';
+import 'db/add_nd.dart';
+import 'objects/sailor.dart';
+import 'variables.dart';
 import 'objects/rank.dart';
 import 'objects/specialty.dart';
 
 class ShowCreateNdDialog extends StatefulWidget {
-  const ShowCreateNdDialog({super.key});
+  final Sailor? sailor;
+  const ShowCreateNdDialog({super.key, this.sailor});
 
   @override
   State<ShowCreateNdDialog> createState() => _ShowCreateNdDialogState();
@@ -20,28 +22,48 @@ final monthsKey = GlobalKey<ComboBoxState>(debugLabel: 'Months Key 1');
 
 class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
   bool isLoading = false;
-  late TextEditingController _controller;
+  late TextEditingController surnameController,
+      nameController,
+      agmController,
+      addressController,
+      mobileController,
+      landlineController,
+      educationController;
   late Rank selectedRank;
   late Specialty selectedSpecialty;
   late int servingMonths;
   late DateTime? selectedArrivalDate;
   late DateTime? selectedEntryDate;
   late DateTime? selectedRemovalDate;
+  final validateKey = GlobalKey<FormState>();
   late DateTime now = DateTime.now();
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
-    selectedSpecialty = .diax;
-    selectedRank = .naftis;
-    servingMonths = 12;
-    selectedArrivalDate = now;
-    selectedEntryDate = now;
-    selectedRemovalDate = DateTime(
-      now.year,
-      now.month + servingMonths,
-      now.day,
+    surnameController = TextEditingController(
+      text: widget.sailor?.surname ?? "",
     );
+    nameController = TextEditingController(text: widget.sailor?.name ?? "");
+    agmController = TextEditingController(text: widget.sailor?.agm ?? "");
+    addressController = TextEditingController(
+      text: widget.sailor?.address ?? "",
+    );
+    mobileController = TextEditingController(text: widget.sailor?.mobile ?? "");
+    landlineController = TextEditingController(
+      text: widget.sailor?.landline ?? "",
+    );
+    educationController = TextEditingController(
+      text: widget.sailor?.education ?? "",
+    );
+    selectedSpecialty = widget.sailor?.specialty ?? .diax;
+    selectedRank = widget.sailor?.rank ?? .naftis;
+    servingMonths = widget.sailor?.servingMonths ?? 12;
+    selectedArrivalDate = widget.sailor?.dateArrival ?? now;
+    selectedEntryDate = widget.sailor?.dateInsert ?? now;
+
+    selectedRemovalDate =
+        widget.sailor?.dateRemoval ??
+        DateTime(now.year, now.month + servingMonths, now.day);
   }
 
   @override
@@ -52,7 +74,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
       ),
       title: Row(
         children: [
-          const Text('Προσθήκη Ν/Δ'),
+          Text(widget.sailor == null ? 'Προσθήκη Ν/Δ' : 'Επεξεργασία Ν/Δ'),
           Spacer(),
           IconButton(
             icon: WindowsIcon(WindowsIcons.chrome_close),
@@ -60,161 +82,203 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
           ),
         ],
       ),
-      content: ListView(
-        shrinkWrap: true,
-        children: [
-          Row(
-            crossAxisAlignment: .start,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InfoLabel(
-                            label: 'Επώνυμο',
-                            child: SizedBox(
-                              height: 40,
-                              child: TextBox(
-                                controller: _controller,
-                                placeholder: '',
+      content: Form(
+        key: validateKey,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Gap(10),
+            Row(
+              crossAxisAlignment: .start,
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InfoLabel(
+                              label: 'Επώνυμο',
+                              child: TextFormBox(
+                                controller: surnameController,
+                                placeholder: widget.sailor?.surname ?? '',
+                                validator: (text) {
+                                  if (text == null || text.isEmpty) {
+                                    return 'Παρακαλώ συμπληρώστε επίθετο';
+                                  }
+                                  return null;
+                                },
                               ),
                             ),
                           ),
-                        ),
-                        Gap(padding),
-                        Expanded(
-                          child: InfoLabel(
-                            label: 'Όνομα',
-                            child: SizedBox(
-                              height: 40,
-                              child: TextBox(placeholder: ''),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Gap(padding),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InfoLabel(
-                            label: 'ΑΓΜ',
-                            child: SizedBox(
-                              height: 40,
-                              child: TextBox(
-                                keyboardType: TextInputType.number,
-                                placeholder: '',
+                          Gap(padding),
+                          Expanded(
+                            child: InfoLabel(
+                              label: 'Όνομα',
+                              child: TextFormBox(
+                                controller: nameController,
+                                placeholder: widget.sailor?.name ?? '',
+                                validator: (text) {
+                                  if (text == null || text.isEmpty) {
+                                    return 'Παρακαλώ συμπληρώστε όνομα';
+                                  }
+                                  return null;
+                                },
                               ),
                             ),
                           ),
-                        ),
-                        Gap(padding),
-                        InfoLabel(
-                          label: 'Βαθμός',
-                          child: SizedBox(
-                            height: 40,
-                            child: ComboBox<Rank>(
-                              value: selectedRank,
-                              key: rankKey,
-                              onChanged: (Rank? newValue) {
-                                setState(() {
-                                  selectedRank = newValue!;
-                                });
-                              },
-                              items: Rank.values.map((Rank e) {
-                                return ComboBoxItem<Rank>(
-                                  value: e,
-                                  child: Text(e.label),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                        Gap(padding),
-                        InfoLabel(
-                          label: 'Ειδικότητα',
-                          child: SizedBox(
-                            height: 40,
-                            child: ComboBox<Specialty>(
-                              isExpanded: false,
-                              value: selectedSpecialty,
-                              key: specialtyKey,
-                              onChanged: (Specialty? newSpecialty) {
-                                setState(() {
-                                  selectedSpecialty = newSpecialty!;
-                                });
-                              },
-                              items: Specialty.values.map((Specialty e) {
-                                return ComboBoxItem<Specialty>(
-                                  value: e,
-                                  child: Text(e.label),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Gap(padding),
-                    InfoLabel(
-                      label: 'Διεύθυνση',
-                      child: SizedBox(
-                        height: 40,
-                        child: TextBox(placeholder: ''),
+                        ],
                       ),
-                    ),
-                    Gap(padding),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InfoLabel(
-                            label: 'Κινητό Τηλέφωνο',
-                            child: SizedBox(
-                              height: 40,
-                              child: TextBox(placeholder: ''),
+                      Gap(padding),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InfoLabel(
+                              label: 'ΑΓΜ',
+                              child: TextFormBox(
+                                controller: agmController,
+                                maxLength: 5,
+                                placeholder: widget.sailor?.agm ?? '',
+                                validator: (text) {
+                                  if (text == null || text.isEmpty) {
+                                    return 'Παρακαλώ συμπληρώστε ΑΓΜ';
+                                  }
+                                  return null;
+                                },
+                              ),
                             ),
                           ),
+                          Gap(padding),
+                          InfoLabel(
+                            label: 'Βαθμός',
+                            child: SizedBox(
+                              height: 40,
+                              child: ComboBox<Rank>(
+                                value: selectedRank,
+                                key: rankKey,
+                                onChanged: (Rank? newValue) {
+                                  setState(() {
+                                    selectedRank = newValue!;
+                                  });
+                                },
+                                items: Rank.values.map((Rank e) {
+                                  return ComboBoxItem<Rank>(
+                                    value: e,
+                                    child: Text(e.label),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                          Gap(padding),
+                          InfoLabel(
+                            label: 'Ειδικότητα',
+                            child: SizedBox(
+                              height: 40,
+                              child: ComboBox<Specialty>(
+                                isExpanded: false,
+                                value: selectedSpecialty,
+                                key: specialtyKey,
+                                onChanged: (Specialty? newSpecialty) {
+                                  setState(() {
+                                    selectedSpecialty = newSpecialty!;
+                                  });
+                                },
+                                items: Specialty.values.map((Specialty e) {
+                                  return ComboBoxItem<Specialty>(
+                                    value: e,
+                                    child: Text(e.label),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Gap(padding),
+                      InfoLabel(
+                        label: 'Διεύθυνση',
+                        child: TextFormBox(
+                          controller: addressController,
+                          placeholder: widget.sailor?.address ?? '',
+                          validator: (text) {
+                            if (text == null || text.isEmpty) {
+                              return 'Παρακαλώ συμπληρώστε διεύθυνση';
+                            }
+                            return null;
+                          },
                         ),
+                      ),
 
-                        Gap(padding),
-                        Expanded(
-                          child: InfoLabel(
-                            label: 'Σταθερό Τηλέφωνο',
-                            child: SizedBox(
-                              height: 40,
-                              child: TextBox(placeholder: ''),
+                      Gap(padding),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InfoLabel(
+                              label: 'Κινητό τηλέφωνο',
+                              child: TextFormBox(
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp("[0-9]"),
+                                  ),
+                                ],
+                                controller: mobileController,
+                                placeholder: widget.sailor?.mobile ?? '',
+                                validator: (text) {
+                                  if (text == null || text.isEmpty) {
+                                    return 'Παρακαλώ συμπληρώστε κινητό';
+                                  }
+                                  return null;
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Gap(padding),
-                    InfoLabel(
-                      label: 'Γνώσεις / Πτυχίο',
-                      child: SizedBox(
-                        height: 40,
-                        child: TextBox(placeholder: ''),
+                          Gap(padding),
+                          Expanded(
+                            child: InfoLabel(
+                              label: 'Σταθερό τηλέφωνο',
+                              child: TextFormBox(
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp("[0-9]"),
+                                  ),
+                                ],
+                                controller: landlineController,
+                                placeholder: widget.sailor?.landline ?? '',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      Gap(padding),
+                      InfoLabel(
+                        label: 'Γνώσεις / Πτυχίο',
+                        child: TextFormBox(
+                          controller: educationController,
+                          placeholder: widget.sailor?.education ?? '',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Gap(padding * 2),
-
-              Column(
-                crossAxisAlignment: .start,
-                children: [
-                  InfoLabel(
-                    label: 'Κατάταξη',
-                    child: SizedBox(
-                      height: 40,
+                Gap(padding * 2),
+                Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    InfoLabel(
+                      label: 'Κατάταξη',
                       child: CalendarDatePicker(
                         isTodayHighlighted: false,
                         locale: Locale('el'),
-                        placeholderText: '${now.day}/${now.month}/${now.year}',
+                        placeholderText: DateFormat(
+                          'dd/MM/yyyy',
+                        ).format(selectedEntryDate!),
                         onSelectionChanged: (change) => setState(() {
+                          selectedEntryDate = DateTime(
+                            change.startDate!.year,
+                            change.startDate!.month,
+                            change.startDate!.day,
+                          );
                           selectedRemovalDate = DateTime(
                             change.startDate!.year,
                             change.startDate!.month + servingMonths,
@@ -223,31 +287,37 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         }),
                       ),
                     ),
-                  ),
-
-                  Gap(10),
-
-                  InfoLabel(
-                    label: 'Άφιξη στην Υπηρεσία',
-                    child: SizedBox(
-                      height: 40,
+                    Gap(10),
+                    InfoLabel(
+                      label: 'Άφιξη στην Υπηρεσία',
                       child: CalendarDatePicker(
                         locale: Locale('el'),
-                        placeholderText: '${now.day}/${now.month}/${now.year}',
+                        placeholderText: DateFormat(
+                          'dd/MM/yyyy',
+                        ).format(selectedArrivalDate!),
+                        onSelectionChanged: (change) => setState(() {
+                          selectedArrivalDate = DateTime(
+                            change.startDate!.year,
+                            change.startDate!.month,
+                            change.startDate!.day,
+                          );
+                        }),
                       ),
                     ),
-                  ),
-                  Gap(10),
-                  InfoLabel(
-                    label: 'Μήνες Υπηρεσίας',
-                    child: SizedBox(
-                      height: 40,
+                    Gap(10),
+                    InfoLabel(
+                      label: 'Μήνες Υπηρεσίας',
                       child: ComboBox<int>(
                         value: servingMonths,
                         key: monthsKey,
                         onChanged: (int? newMonths) {
                           setState(() {
                             servingMonths = newMonths!;
+                            selectedRemovalDate = DateTime(
+                              selectedEntryDate!.year,
+                              selectedEntryDate!.month + newMonths,
+                              selectedEntryDate!.day,
+                            );
                           });
                         },
                         items: [
@@ -266,106 +336,100 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         ],
                       ),
                     ),
-                  ),
-                  Gap(10),
-                  InfoLabel(
-                    label: 'Απόλυση',
-                    child: SizedBox(
-                      height: 40,
+                    Gap(10),
+                    InfoLabel(
+                      label: 'Απόλυση',
                       child: CalendarDatePicker(
                         isTodayHighlighted: false,
                         locale: Locale('el'),
-                        placeholderText: '${now.day}/${now.month}/${now.year}',
+                        placeholderText: DateFormat(
+                          'dd/MM/yyyy',
+                        ).format(selectedRemovalDate!),
+                        onSelectionChanged: (change) => setState(() {
+                          selectedRemovalDate = DateTime(
+                            change.startDate!.year,
+                            change.startDate!.month,
+                            change.startDate!.day,
+                          );
+                        }),
                       ),
                     ),
-                  ),
-                  Gap(padding * 4),
-                  isLoading
-                      ? Row(
-                          children: [
-                            ProgressRing(),
-                            Gap(10),
-                            Text('Καταχώρηση...'),
-                          ],
-                        )
-                      : FilledButton(
-                          child: Row(
+                    Gap(padding * 4),
+                    isLoading
+                        ? Row(
                             children: [
-                              WindowsIcon(WindowsIcons.add),
+                              ProgressRing(),
                               Gap(10),
-                              Text('Υποβολή'),
+                              Text('Καταχώρηση...'),
                             ],
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            try {
-                              addND();
-                              setState(() {
-                                isLoading = false;
-                              });
-                              Navigator.pop(context, 'success');
-                            } on SqliteException catch (e) {
-                              await displayInfoBar(
-                                context,
-                                duration: Duration(seconds: 5),
-                                builder: (context, close) {
-                                  String errorText =
-                                      e.extendedResultCode == 1555
-                                      ? 'A sailor with this ID already exists!'
-                                      : e.extendedResultCode.toString();
-                                  return InfoBar(
-                                    title: Text(errorText),
-                                    content: Text(
-                                      e.extendedResultCode.toString(),
-                                    ),
-                                    action: IconButton(
-                                      icon: const WindowsIcon(
-                                        WindowsIcons.error,
-                                      ),
-                                      onPressed: close,
-                                    ),
-                                    severity: InfoBarSeverity.error,
+                          )
+                        : FilledButton(
+                            child: Row(
+                              children: [
+                                WindowsIcon(WindowsIcons.add),
+                                Gap(10),
+                                Text('Υποβολή'),
+                              ],
+                            ),
+                            onPressed: () async {
+                              if (validateKey.currentState!.validate()) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                try {
+                                  final newSailor = Sailor(
+                                    id: widget.sailor?.id ?? '',
+                                    name: nameController.text,
+                                    surname: surnameController.text,
+                                    agm: agmController.text,
+                                    specialty: selectedSpecialty,
+                                    address: addressController.text,
+                                    mobile: mobileController.text,
+                                    landline: landlineController.text,
+                                    education: educationController.text,
+                                    dateArrival: selectedArrivalDate!,
+                                    dateInsert: selectedEntryDate!,
+                                    dateRemoval: selectedRemovalDate!,
+                                    rank: selectedRank,
+                                    servingMonths: servingMonths,
                                   );
-                                },
-                              );
-                              // Handle specific SQLite errors
-                              print(
-                                'SQLite Error Code: ${e.extendedResultCode}',
-                              );
-                              print('Message: ${e.message}');
 
-                              if (e.extendedResultCode == 1555) {
-                                // Unique constraint failed code
-                                print('A sailor with this ID already exists!');
-                              }
-                            } catch (error) {
-                              await displayInfoBar(
-                                context,
-                                duration: Duration(seconds: 5),
-                                builder: (context, close) {
-                                  return InfoBar(
-                                    title: const Text('An error occurred:'),
-                                    content: Text(error.toString()),
-                                    action: IconButton(
-                                      icon: const WindowsIcon(
-                                        WindowsIcons.error,
-                                      ),
-                                      onPressed: close,
-                                    ),
-                                    severity: InfoBarSeverity.error,
+                                  addND(newSailor);
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pop(
+                                    context,
+                                    widget.sailor != null ? newSailor : null,
                                   );
-                                },
-                              );
-                            }
-                          },
-                        ),
-                ],
-              ),
-            ],
-          ),
-        ],
+                                } catch (error) {
+                                  await displayInfoBar(
+                                    context,
+                                    duration: Duration(seconds: 5),
+                                    builder: (context, close) {
+                                      return InfoBar(
+                                        title: const Text('An error occurred:'),
+                                        content: Text(error.toString()),
+                                        action: IconButton(
+                                          icon: const WindowsIcon(
+                                            WindowsIcons.error,
+                                          ),
+                                          onPressed: close,
+                                        ),
+                                        severity: InfoBarSeverity.error,
+                                      );
+                                    },
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,24 +1,28 @@
+import 'package:drift/drift.dart';
+
+import '../objects/sailor.dart';
 import '../main.dart';
 import 'init_db.dart';
 
-void addND() async {
+void addND(Sailor sailor) async {
   await db
       .into(db.tableSailors)
-      .insert(
+      .insertOnConflictUpdate(
         TableSailorsCompanion.insert(
-          surname: 'Στενάκης',
-          name: 'Ευάγγελος',
-          agm: '96422',
-          specialty: .t_hn,
-          mobile: '698',
-          landline: '213',
-          address: 'sdfaf',
-          education: 'adfadsf',
-          rank: .diopos,
-          servingMonths: 9,
-          dateArrival: DateTime.now(),
-          dateInsert: DateTime.now(),
-          dateRemoval: DateTime.now(),
+          id: Value(sailor.id),
+          surname: sailor.surname,
+          name: sailor.name,
+          agm: sailor.agm,
+          specialty: sailor.specialty,
+          mobile: sailor.mobile,
+          landline: sailor.landline,
+          address: sailor.address,
+          education: sailor.education,
+          rank: sailor.rank,
+          servingMonths: sailor.servingMonths,
+          dateArrival: sailor.dateArrival,
+          dateInsert: sailor.dateInsert,
+          dateRemoval: sailor.dateRemoval,
         ),
       );
 }

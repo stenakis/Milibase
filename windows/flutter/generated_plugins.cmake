@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_windows
+  open_folder
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

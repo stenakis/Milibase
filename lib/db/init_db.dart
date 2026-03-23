@@ -6,14 +6,14 @@ import 'package:milibase/db/tables.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-
 import '../objects/adeies.dart';
 import '../objects/apomakrynseis.dart';
 import '../objects/metavoles.dart';
 import '../objects/rank.dart';
 import '../objects/specialty.dart';
-
 part 'init_db.g.dart';
+
+String dbLocation = 'Φόρτωση...';
 
 @DriftDatabase(
   tables: [TableAdeies, TableMetavoles, TableSailors, TableApomakrynseis],
@@ -32,6 +32,7 @@ LazyDatabase _openConnection() {
 
     // THIS LINE IS YOUR BEST FRIEND:
     print('DATABASE PATH: ${file.path}');
+    dbLocation = dbFolder.path;
 
     return NativeDatabase.createInBackground(file);
   });

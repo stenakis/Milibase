@@ -1,10 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
+import 'package:milibase/create_nd.dart';
 import 'package:milibase/objects/rank.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/objects/specialty.dart';
 import 'package:milibase/variables.dart';
-
 import '../main.dart';
 
 class SailorWidgetInfo extends StatefulWidget {
@@ -20,7 +21,6 @@ final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Rank Key');
 final monthsKey = GlobalKey<ComboBoxState>(debugLabel: 'Months Key');
 
 class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
-  late TextEditingController _controller;
   late Rank selectedRank;
   late Specialty selectedSpecialty;
   late int servingMonths;
@@ -29,12 +29,22 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
   late DateTime? selectedRemovalDate;
   late DateTime now = DateTime.now();
   late Future<Sailor> _future;
+  late Sailor _currentSailor;
+
+  void setFuture() {
+    _future =
+        (db.select(db.tableSailors)
+              ..where((t) => t.id.equals(_currentSailor.id)))
+            .getSingle()
+            .then((row) => Sailor.fromJson(row.toJson()));
+  }
+
   @override
   void initState() {
-    _controller = TextEditingController();
-    selectedSpecialty = widget.sailor.specialty;
-    selectedRank = widget.sailor.rank;
-    servingMonths = widget.sailor.servingMonths;
+    _currentSailor = widget.sailor;
+    selectedSpecialty = _currentSailor.specialty;
+    selectedRank = _currentSailor.rank;
+    servingMonths = _currentSailor.servingMonths;
     selectedArrivalDate = now;
     selectedEntryDate = now;
     selectedRemovalDate = DateTime(
@@ -42,11 +52,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
       now.month + servingMonths,
       now.day,
     );
-    _future =
-        (db.select(db.tableSailors)
-              ..where((t) => t.id.equals(widget.sailor.id)))
-            .getSingle()
-            .then((row) => Sailor.fromJson(row.toJson()));
+    setFuture();
 
     super.initState();
   }
@@ -64,37 +70,55 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
         } else if (snapshot.hasData) {
           final sailor = snapshot.data!;
           return ListView(
-            padding: .all(padding),
+            padding: .all(padding + 10),
             children: [
-              Text('Στοιχεία', style: FluentTheme.of(context).typography.title),
-              Gap(padding),
+              Row(
+                children: [
+                  Text(
+                    'Στοιχεία',
+                    style: FluentTheme.of(context).typography.title,
+                  ),
+                  Spacer(),
+                  FilledButton(
+                    child: Row(
+                      children: [
+                        WindowsIcon(WindowsIcons.edit),
+                        Gap(10),
+                        Text('Επεξεργασία'),
+                      ],
+                    ),
+                    onPressed: () => showContentDialog(context),
+                  ),
+                ],
+              ),
+              Gap(padding * 2),
               Row(
                 crossAxisAlignment: .start,
                 children: [
                   Expanded(
                     child: Column(
+                      crossAxisAlignment: .start,
                       children: [
                         Row(
                           children: [
-                            Expanded(
-                              child: InfoLabel(
-                                label: 'Επώνυμο',
-                                child: SizedBox(
-                                  height: 40,
-                                  child: TextBox(
-                                    controller: _controller,
-                                    placeholder: sailor.surname,
-                                  ),
+                            InfoLabel(
+                              label: 'Επώνυμο',
+                              child: Text(
+                                sailor.surname,
+                                style: TextStyle(
+                                  fontWeight: .bold,
+                                  fontSize: 24,
                                 ),
                               ),
                             ),
-                            Gap(padding),
-                            Expanded(
-                              child: InfoLabel(
-                                label: 'Όνομα',
-                                child: SizedBox(
-                                  height: 40,
-                                  child: TextBox(placeholder: sailor.name),
+                            Gap(padding * 2),
+                            InfoLabel(
+                              label: 'Όνομα',
+                              child: Text(
+                                sailor.name,
+                                style: TextStyle(
+                                  fontWeight: .bold,
+                                  fontSize: 24,
                                 ),
                               ),
                             ),
@@ -103,60 +127,24 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         Gap(padding),
                         Row(
                           children: [
-                            Expanded(
-                              child: InfoLabel(
-                                label: 'ΑΓΜ',
-                                child: SizedBox(
-                                  height: 40,
-                                  child: TextBox(
-                                    keyboardType: TextInputType.number,
-                                    placeholder: sailor.agm,
-                                  ),
+                            InfoLabel(
+                              label: 'ΑΓΜ',
+                              child: Text(
+                                sailor.agm,
+                                style: TextStyle(
+                                  fontWeight: .bold,
+                                  fontSize: 24,
                                 ),
                               ),
                             ),
-                            Gap(padding),
+                            Gap(padding * 2),
                             InfoLabel(
                               label: 'Βαθμός',
-                              child: SizedBox(
-                                height: 40,
-                                child: ComboBox<Rank>(
-                                  value: selectedRank,
-                                  key: rankKey,
-                                  onChanged: (Rank? newValue) {
-                                    setState(() {
-                                      selectedRank = newValue!;
-                                    });
-                                  },
-                                  items: Rank.values.map((Rank e) {
-                                    return ComboBoxItem<Rank>(
-                                      value: e,
-                                      child: Text(e.label),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                            Gap(padding),
-                            InfoLabel(
-                              label: 'Ειδικότητα',
-                              child: SizedBox(
-                                height: 40,
-                                child: ComboBox<Specialty>(
-                                  isExpanded: false,
-                                  value: selectedSpecialty,
-                                  key: specialtyKey,
-                                  onChanged: (Specialty? newSpecialty) {
-                                    setState(() {
-                                      selectedSpecialty = newSpecialty!;
-                                    });
-                                  },
-                                  items: Specialty.values.map((Specialty e) {
-                                    return ComboBoxItem<Specialty>(
-                                      value: e,
-                                      child: Text(e.label),
-                                    );
-                                  }).toList(),
+                              child: Text(
+                                '${sailor.rank.label} (${sailor.specialty.label})',
+                                style: TextStyle(
+                                  fontWeight: .bold,
+                                  fontSize: 24,
                                 ),
                               ),
                             ),
@@ -164,44 +152,46 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         ),
                         Gap(padding),
                         InfoLabel(
-                          label: 'Διεύθυνση',
-                          child: SizedBox(
-                            height: 40,
-                            child: TextBox(placeholder: sailor.address),
+                          label: 'Κινητό Τηλέφωνο',
+                          child: Text(
+                            sailor.mobile,
+                            style: TextStyle(fontWeight: .bold, fontSize: 24),
                           ),
+                        ),
+
+                        Gap(padding),
+                        Row(
+                          crossAxisAlignment: .end,
+                          children: [
+                            Text('Σταθερό Τηλέφωνο: '),
+                            Text(
+                              sailor.landline,
+                              style: TextStyle(fontWeight: .bold, fontSize: 16),
+                            ),
+                          ],
                         ),
                         Gap(padding),
                         Row(
+                          crossAxisAlignment: .end,
                           children: [
-                            Expanded(
-                              child: InfoLabel(
-                                label: 'Κινητό Τηλέφωνο',
-                                child: SizedBox(
-                                  height: 40,
-                                  child: TextBox(placeholder: sailor.mobile),
-                                ),
-                              ),
-                            ),
-
-                            Gap(padding),
-                            Expanded(
-                              child: InfoLabel(
-                                label: 'Σταθερό Τηλέφωνο',
-                                child: SizedBox(
-                                  height: 40,
-                                  child: TextBox(placeholder: sailor.landline),
-                                ),
-                              ),
+                            Text('Διεύθυνση: '),
+                            Text(
+                              sailor.address,
+                              style: TextStyle(fontWeight: .bold, fontSize: 16),
                             ),
                           ],
                         ),
+
                         Gap(padding),
-                        InfoLabel(
-                          label: 'Γνώσεις / Πτυχίο',
-                          child: SizedBox(
-                            height: 40,
-                            child: TextBox(placeholder: sailor.education),
-                          ),
+                        Row(
+                          crossAxisAlignment: .end,
+                          children: [
+                            Text('Γνώσεις / Πτυχίο: '),
+                            Text(
+                              sailor.education,
+                              style: TextStyle(fontWeight: .bold, fontSize: 16),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -211,78 +201,44 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                     crossAxisAlignment: .start,
                     children: [
                       InfoLabel(
-                        label: 'Κατάταξη',
-                        child: SizedBox(
-                          height: 40,
-                          child: CalendarDatePicker(
-                            isTodayHighlighted: false,
-                            locale: Locale('el'),
-                            placeholderText:
-                                '${sailor.dateInsert.day}/${sailor.dateInsert.month}/${sailor.dateInsert.year}',
-                            onSelectionChanged: (change) => setState(() {
-                              selectedRemovalDate = DateTime(
-                                change.startDate!.year,
-                                change.startDate!.month + servingMonths,
-                                change.startDate!.day,
-                              );
-                            }),
-                          ),
+                        label: 'Μήνες Υπηρεσίας',
+                        child: Text(
+                          sailor.servingMonths.toString(),
+                          style: TextStyle(fontWeight: .bold, fontSize: 18),
                         ),
                       ),
-
                       Gap(padding),
                       InfoLabel(
-                        label: 'Μήνες Υπηρεσίας',
-                        child: SizedBox(
-                          height: 40,
-                          child: ComboBox<int>(
-                            value: servingMonths,
-                            key: monthsKey,
-                            onChanged: (int? newMonths) {
-                              setState(() {
-                                servingMonths = newMonths!;
-                              });
-                            },
-                            items: [
-                              ComboBoxItem<int>(
-                                value: 6,
-                                child: Text(6.toString()),
-                              ),
-                              ComboBoxItem<int>(
-                                value: 9,
-                                child: Text(9.toString()),
-                              ),
-                              ComboBoxItem<int>(
-                                value: 12,
-                                child: Text(12.toString()),
-                              ),
-                            ],
-                          ),
+                        label: 'Κατάταξη',
+                        child: Text(
+                          locale: .new('el'),
+                          DateFormat(
+                            'EEE dd MMM yy',
+                            'el',
+                          ).format(_currentSailor.dateInsert),
+                          style: TextStyle(fontWeight: .bold, fontSize: 18),
                         ),
                       ),
                       Gap(padding),
                       InfoLabel(
                         label: 'Άφιξη στην Υπηρεσία',
-                        child: SizedBox(
-                          height: 40,
-                          child: CalendarDatePicker(
-                            locale: Locale('el'),
-                            placeholderText:
-                                '${sailor.dateArrival.day}/${sailor.dateArrival.month}/${sailor.dateArrival.year}',
-                          ),
+                        child: Text(
+                          DateFormat(
+                            'EEE dd MMM yy',
+                            'el',
+                          ).format(_currentSailor.dateArrival),
+                          style: TextStyle(fontWeight: .bold, fontSize: 18),
                         ),
                       ),
                       Gap(padding),
                       InfoLabel(
                         label: 'Απόλυση',
-                        child: SizedBox(
-                          height: 40,
-                          child: CalendarDatePicker(
-                            isTodayHighlighted: false,
-                            locale: Locale('el'),
-                            placeholderText:
-                                '${sailor.dateRemoval.day}/${sailor.dateRemoval.month}/${sailor.dateRemoval.year}',
-                          ),
+                        child: Text(
+                          DateFormat(
+                            'EEE dd MMM yy',
+                            'el',
+                          ).format(_currentSailor.dateRemoval),
+                          style: TextStyle(fontWeight: .bold, fontSize: 18),
                         ),
                       ),
                     ],
@@ -296,5 +252,19 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
         }
       },
     );
+  }
+
+  void showContentDialog(BuildContext context) async {
+    final result = await showDialog<Sailor>(
+      context: context,
+      builder: (context) => ShowCreateNdDialog(sailor: _currentSailor),
+    );
+
+    if (result != null) {
+      setFuture();
+      setState(() {
+        _currentSailor = result;
+      });
+    }
   }
 }
