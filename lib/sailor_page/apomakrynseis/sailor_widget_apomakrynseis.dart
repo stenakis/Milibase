@@ -114,10 +114,9 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                                 decoration: BoxDecoration(
                                   color:
                                       apomakrynsiType == .apospasi &&
-                                              totalDays + daysDiathesi >
-                                                  daysApospasi ||
+                                              totalDays > daysApospasi ||
                                           apomakrynsiType == .diathesi &&
-                                              totalDays + daysApospasi >
+                                              totalDays  >
                                                   daysDiathesi
                                       ? Colors.orange.withOpacity(0.3)
                                       : secColor,
@@ -268,7 +267,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                    'dd/MM/yyyy',
+                                    'EEE dd MMM yy',
                                     'el',
                                   ).format(apomakrynsi.dateStart),
                                 ),
@@ -277,7 +276,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                    'dd/MM/yyyy',
+                                    'EEE dd MMM yy',
                                     'el',
                                   ).format(apomakrynsi.dateEnd),
                                 ),
@@ -324,14 +323,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                                                     await deleteApomakrynsi(
                                                       apomakrynsi.id!,
                                                     );
-                                                    if (apomakrynsi.type ==
-                                                        .apospasi) {
-                                                      daysApospasi = 0;
-                                                    } else if (apomakrynsi
-                                                            .type ==
-                                                        .diathesi) {
-                                                      daysDiathesi = 0;
-                                                    }
+
                                                     setState(() {
                                                       isLoading = false;
                                                     });

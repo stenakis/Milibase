@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 enum Metavoli {
   meiomeni,
+  exagora,
   ekkremei;
 
   static Metavoli fromString(String value) {
@@ -15,16 +16,9 @@ enum Metavoli {
     return {
           Metavoli.meiomeni: 'Μειωμένη Θητεία',
           Metavoli.ekkremei: 'Εκκρεμότητα',
+          Metavoli.exagora: 'Εξαγορά'
         }[this] ??
         'Μειωμένη Θητεία';
-  }
-
-  String get enumType {
-    return {
-          Metavoli.meiomeni: 'meiomeni',
-          Metavoli.ekkremei: 'ekkremei',
-        }[this] ??
-        'meiomeni';
   }
 }
 
@@ -44,14 +38,6 @@ class Metavoles {
     required this.sima,
     this.duration,
   });
-
-  Map<String, dynamic> toJson() => {
-    'type': type.enumType,
-    'date': DateFormat('yyyy-MM-dd').format(date),
-    'sailorId': sailorId,
-    'sima': sima,
-    'duration': duration,
-  };
 
   static DateTime _parseDate(dynamic date) {
     if (date is int) {

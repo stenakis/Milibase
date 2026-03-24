@@ -19,7 +19,7 @@ class SailorWidgetAdeies extends StatefulWidget {
 }
 
 class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
-  final adeiaKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeia Key');
+  final _adeiaKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeia Key');
   late Future<List<Adeies>> _future;
   final FlyoutController flyoutController = FlyoutController();
   Adeia? selectedAdeia;
@@ -80,6 +80,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                     Gap(padding),
                     Expanded(
                       child: Wrap(
+                        alignment: .start,
                         spacing: 5,
                         runSpacing: 5,
                         children: [
@@ -102,7 +103,6 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                             final labelText = adeiaType == .kanoniki
                                 ? '${adeiaType.label}: $totalDays/$daysKanoniki ημέρες'
                                 : '${adeiaType.label}: $totalDays $days';
-
                             return Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 10,
@@ -183,12 +183,15 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
-                        Expanded(
-                          child: Text(
-                            'Σήμα',
-                            style: TextStyle(fontWeight: .bold),
+                        if (selectedAdeia == .oikos_nosileias ||
+                            selectedAdeia == .anarrotiki ||
+                            selectedAdeia == null)
+                          Expanded(
+                            child: Text(
+                              'Σήμα',
+                              style: TextStyle(fontWeight: .bold),
+                            ),
                           ),
-                        ),
                         ComboBox<Adeia>(
                           placeholder: Row(
                             children: [
@@ -199,7 +202,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                           ),
                           isExpanded: false,
                           value: selectedAdeia,
-                          key: adeiaKey,
+                          key: _adeiaKey,
                           onChanged: (Adeia? adeia) {
                             setState(() {
                               selectedAdeia = adeia!;
@@ -251,8 +254,8 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                    'dd MMMM yyyy',
-                                    'el',
+                                     'EEE dd MMM yy',
+                            'el',
                                   ).format(adeia.dateStart),
                                 ),
                               ),
@@ -260,8 +263,8 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                    'dd MMMM yyyy',
-                                    'el',
+                                      'EEE dd MMM yy',
+                            'el',
                                   ).format(adeia.dateEnd),
                                 ),
                               ),

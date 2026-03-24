@@ -34,14 +34,14 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
           ),
         ],
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InfoLabel(
-            label: 'Τύπος',
-            child: SizedBox(
-              height: 40,
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: 'Τύπος',
               child: ComboBox<Metavoli>(
                 isExpanded: true,
                 value: selectedMetavoli,
@@ -56,13 +56,10 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                 }).toList(),
               ),
             ),
-          ),
-          Gap(10),
-          if (selectedMetavoli == .meiomeni)
-            InfoLabel(
-              label: 'Διάρκεια',
-              child: SizedBox(
-                height: 40,
+            Gap(10),
+            if (selectedMetavoli == .meiomeni)
+              InfoLabel(
+                label: 'Διάρκεια',
                 child: ComboBox<int>(
                   isExpanded: true,
                   value: selectedDuration,
@@ -78,33 +75,27 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                   ],
                 ),
               ),
-            ),
-          Gap(10),
-          Form(
-            key: _formKey,
-            child: InfoLabel(
+            Gap(10),
+            InfoLabel(
               label: 'Σήμα',
-              child: SizedBox(
-                height: 40,
-                child: TextFormBox(
-                  placeholder: 'WAF',
-                  controller: simaController,
-                  validator: (text) {
-                    if (text == null || text.length < 4) {
-                      return 'Παρακαλώ συμπληρώστε το σήμα';
-                    }
-                    return null;
-                  },
+              child: TextFormBox(
+                prefix: Padding(
+                  padding: .only(left: 10),
+                  child: Text('WAF'),
                 ),
+                controller: simaController,
+                validator: (text) {
+                  if (text == '') {
+                    return 'Παρακαλώ συμπληρώστε το σήμα';
+                  }
+                  return null;
+                },
               ),
             ),
-          ),
-          Gap(10),
-
-          InfoLabel(
-            label: 'Ημερομηνία',
-            child: SizedBox(
-              height: 40,
+            Gap(10),
+        
+            InfoLabel(
+              label: 'Ημερομηνία',
               child: CalendarDatePicker(
                 locale: Locale('el'),
                 placeholderText:
@@ -118,8 +109,8 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                 },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         isLoading
@@ -131,14 +122,13 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                     setState(() {
                       isLoading = true;
                     });
-
                     try {
                       await addNewMetavoli(
                         Metavoles(
                           type: selectedMetavoli,
                           date: selectedDate,
                           sailorId: widget.sailor.id,
-                          sima: simaController.text,
+                          sima: 'WAF ${simaController.text}',
                           duration: selectedMetavoli == Metavoli.meiomeni
                               ? selectedDuration
                               : null,

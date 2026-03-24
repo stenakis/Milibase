@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
-import 'package:milibase/create_nd.dart';
+import 'package:milibase/sailor_page/create_nd.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/sailor_page.dart';
 import 'package:milibase/variables.dart';

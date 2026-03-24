@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/variables.dart';
-
 import '../../main.dart';
 import '../../objects/metavoles.dart';
 import 'metavoles_content_dialog.dart';
@@ -18,8 +17,10 @@ class SailorWidgetMetavoles extends StatefulWidget {
 }
 
 class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
+    final _metavoliKey = GlobalKey<ComboBoxState>(debugLabel: 'Metavoli Key');
   late Future<List<Metavoles>> _future;
   final FlyoutController flyoutController = FlyoutController();
+  Metavoli? selectedMetavoli;
   bool isLoading = false;
   void setFuture() {
     _future =
@@ -49,6 +50,11 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final List<Metavoles> metavoles = snapshot.data!;
+          final List<Metavoles> selectedList = selectedMetavoli == null
+              ? metavoles
+              : metavoles.where((metavoli) => metavoli.type == selectedMetavoli).toList();
+          final sortedMetavoles = selectedList.toList()
+            ..sort((a, b) => a.date.compareTo(b.date));
           return Column(
             mainAxisSize: .min,
             crossAxisAlignment: .start,
@@ -101,7 +107,6 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       ),
                     )
                   : Row(
-                      crossAxisAlignment: .start,
                       children: [
                         Gap(padding * 2),
                         Expanded(
@@ -122,14 +127,49 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
-                        Gap(padding * 2),
+                          ComboBox<Metavoli>(
+                          placeholder: Row(
+                            children: [
+                              WindowsIcon(WindowsIcons.filter),
+                              Gap(5),
+                              Text(selectedMetavoli?.label ?? 'Όλες'),
+                            ],
+                          ),
+                          isExpanded: false,
+                          value: selectedMetavoli,
+                          key: _metavoliKey,
+                          onChanged: (Metavoli? metavoli) {
+                            setState(() {
+                              selectedMetavoli = metavoli!;
+                            });
+                          },
+                          items:
+                              (Metavoli.values.toList()..sort(
+                                    (a, b) => a.label.compareTo(b.label),
+                                  ))
+                                  .map((Metavoli e) {
+                                    return ComboBoxItem<Metavoli>(
+                                      value: e,
+                                      child: Text(e.label),
+                                    );
+                                  })
+                                  .toList(),
+                        ),
+                         if (selectedMetavoli != null)
+                          IconButton(
+                            onPressed: () => setState(() {
+                              selectedMetavoli = null;
+                            }),
+                            icon: WindowsIcon(WindowsIcons.clear),
+                          ),
+                        Gap(padding),
                       ],
                     ),
               Gap(5),
               Expanded(
                 child: ListView(
                   padding: .symmetric(horizontal: padding),
-                  children: metavoles
+                  children: sortedMetavoles
                       .map(
                         (metavoli) => Container(
                           decoration: BoxDecoration(
@@ -157,8 +197,8 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                    'dd/MM/yyyy',
-                                    'el',
+                                    'EEE dd MMM yy',
+                            'el',
                                   ).format(metavoli.date),
                                 ),
                               ),
@@ -185,7 +225,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               const Text(
-                                                'Διαγραφή απομάκρυνσης;',
+                                                'Διαγραφή μεταβολής;',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),

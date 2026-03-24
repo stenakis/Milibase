@@ -14,6 +14,7 @@ class ShowApomakrynseisDialog extends StatefulWidget {
 class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
   bool isLoading = false;
   final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Apomakrynseis Key');
+  final _formKey = GlobalKey<FormState>();
   DateTime selectedStartDate = DateTime.now();
   DateTime selectedEndDate = DateTime.now();
   Apomakrynsi selectedApomakrynsi = Apomakrynsi.apospasi;
@@ -33,14 +34,14 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
           ),
         ],
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InfoLabel(
-            label: 'Τύπος',
-            child: SizedBox(
-              height: 40,
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: 'Τύπος',
               child: ComboBox<Apomakrynsi>(
                 isExpanded: true,
                 value: selectedApomakrynsi,
@@ -58,33 +59,42 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 }).toList(),
               ),
             ),
-          ),
-          Gap(10),
-          InfoLabel(
-            label: 'Υπηρεσία',
-            child: SizedBox(
-              height: 40,
-              child: TextBox(
+            Gap(10),
+            InfoLabel(
+              label: 'Υπηρεσία',
+              child: TextFormBox(
                 placeholder: 'Εισαγωγή υπηρεσίας',
                 controller: ypiresiaController,
+                validator: (text) {
+                  if (text == '') {
+                    return 'Παρακαλώ συμπληρώστε την υπηρεσία';
+                  }
+                  return null;
+                },
               ),
             ),
-          ),
-          Gap(10),
-          InfoLabel(
-            label: 'Σήμα',
-            child: SizedBox(
-              height: 40,
-              child: TextBox(placeholder: 'WAF', controller: simaController),
+            Gap(10),
+            InfoLabel(
+              label: 'Σήμα',
+              child: TextFormBox(
+                prefix: Padding(
+                  padding: .only(left: 10),
+                  child: Text('WAF'),
+                ),
+                controller: simaController,
+                validator: (text) {
+                  if (text == '') {
+                    return 'Παρακαλώ συμπληρώστε το σήμα';
+                  }
+                  return null;
+                },
+              ),
             ),
-          ),
-          Gap(10),
-          Row(
-            children: [
-              InfoLabel(
-                label: 'Έναρξη',
-                child: SizedBox(
-                  height: 40,
+            Gap(10),
+            Row(
+              children: [
+                InfoLabel(
+                  label: 'Έναρξη',
                   child: CalendarDatePicker(
                     locale: Locale('el'),
                     placeholderText:
@@ -99,12 +109,9 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                     },
                   ),
                 ),
-              ),
-              Gap(10),
-              InfoLabel(
-                label: 'Λήξη',
-                child: SizedBox(
-                  height: 40,
+                Gap(10),
+                InfoLabel(
+                  label: 'Λήξη',
                   child: CalendarDatePicker(
                     locale: Locale('el'),
                     placeholderText:
@@ -118,10 +125,10 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                     },
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
         isLoading
@@ -129,6 +136,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
                   setState(() {
                     isLoading = true;
                   });
@@ -164,6 +172,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                       isLoading = false;
                     });
                   }
+                    }
                 },
               ),
       ],

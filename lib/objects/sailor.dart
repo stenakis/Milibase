@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import '../objects/rank.dart';
 import '../objects/specialty.dart';
 
@@ -34,23 +36,6 @@ class Sailor {
     required this.servingMonths,
   });
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'surname': surname,
-    'name': name,
-    'agm': agm,
-    'rank': rank,
-    'specialty': specialty,
-    'address': address,
-    'mobile': mobile,
-    'landline': landline,
-    'education': education,
-    'servingMonths': servingMonths,
-    'dateArrival': dateArrival,
-    'dateInsert': dateInsert,
-    'dateRemoval': dateRemoval,
-  };
-
   factory Sailor.fromJson(Map<String, dynamic> json) {
     return Sailor(
       id: json['id']?.toString() ?? '',
@@ -63,18 +48,13 @@ class Sailor {
       mobile: json['mobile']?.toString() ?? '',
       landline: json['landline']?.toString() ?? '',
       education: json['education']?.toString() ?? '',
-      // Use 'as num?' to safely handle any number type before converting to int
       servingMonths: (json['servingMonths'] as num?)?.toInt() ?? 0,
-      // Safely parse dates
       dateArrival:
-          DateTime.tryParse(json['dateArrival']?.toString() ?? '') ??
-          DateTime.now(),
+          DateTime.fromMicrosecondsSinceEpoch(json['dateArrival'].toInt() *1000),
       dateInsert:
-          DateTime.tryParse(json['dateInsert']?.toString() ?? '') ??
-          DateTime.now(),
+           DateTime.fromMicrosecondsSinceEpoch(json['dateInsert'].toInt() *1000),
       dateRemoval:
-          DateTime.tryParse(json['dateRemoval']?.toString() ?? '') ??
-          DateTime.now(),
+         DateTime.fromMicrosecondsSinceEpoch(json['dateRemoval'].toInt() *1000)
     );
   }
 }

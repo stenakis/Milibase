@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-import 'db/add_nd.dart';
-import 'objects/sailor.dart';
-import 'variables.dart';
-import 'objects/rank.dart';
-import 'objects/specialty.dart';
+import '../db/add_nd.dart';
+import '../objects/sailor.dart';
+import '../variables.dart';
+import '../objects/rank.dart';
+import '../objects/specialty.dart';
 
 class ShowCreateNdDialog extends StatefulWidget {
   final Sailor? sailor;
@@ -59,14 +59,11 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
     selectedSpecialty = widget.sailor?.specialty ?? .diax;
     selectedRank = widget.sailor?.rank ?? .naftis;
     servingMonths = widget.sailor?.servingMonths ?? 12;
-    selectedArrivalDate = widget.sailor != null
-        ? widget.sailor!.dateArrival
-        : now;
-    selectedEntryDate = widget.sailor != null ? widget.sailor!.dateInsert : now;
-
-    selectedRemovalDate = widget.sailor != null
-        ? widget.sailor!.dateRemoval
-        : DateTime(now.year, now.month + servingMonths, now.day);
+    selectedArrivalDate = widget.sailor?.dateArrival ?? now;
+    selectedEntryDate = widget.sailor?.dateInsert ?? now;
+    selectedRemovalDate =
+        widget.sailor?.dateRemoval ??
+        DateTime(now.year, now.month + servingMonths, now.day);
   }
 
   @override
@@ -159,23 +156,20 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                           Gap(padding),
                           InfoLabel(
                             label: 'Βαθμός',
-                            child: SizedBox(
-                              height: 40,
-                              child: ComboBox<Rank>(
-                                value: selectedRank,
-                                key: rankKey,
-                                onChanged: (Rank? newValue) {
-                                  setState(() {
-                                    selectedRank = newValue!;
-                                  });
-                                },
-                                items: Rank.values.map((Rank e) {
-                                  return ComboBoxItem<Rank>(
-                                    value: e,
-                                    child: Text(e.label),
-                                  );
-                                }).toList(),
-                              ),
+                            child: ComboBox<Rank>(
+                              value: selectedRank,
+                              key: rankKey,
+                              onChanged: (Rank? newValue) {
+                                setState(() {
+                                  selectedRank = newValue!;
+                                });
+                              },
+                              items: Rank.values.map((Rank e) {
+                                return ComboBoxItem<Rank>(
+                                  value: e,
+                                  child: Text(e.label),
+                                );
+                              }).toList(),
                             ),
                           ),
                           Gap(padding),
