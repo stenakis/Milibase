@@ -5,7 +5,6 @@ import 'package:milibase/create_nd.dart';
 import 'package:milibase/objects/rank.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/objects/specialty.dart';
-import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
 import '../main.dart';
 

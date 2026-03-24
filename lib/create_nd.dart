@@ -33,9 +33,9 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
   late Rank selectedRank;
   late Specialty selectedSpecialty;
   late int servingMonths;
-  late DateTime? selectedArrivalDate;
-  late DateTime? selectedEntryDate;
-  late DateTime? selectedRemovalDate;
+  late DateTime selectedArrivalDate;
+  late DateTime selectedEntryDate;
+  late DateTime selectedRemovalDate;
   final validateKey = GlobalKey<FormState>();
   late DateTime now = DateTime.now();
   @override
@@ -59,12 +59,14 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
     selectedSpecialty = widget.sailor?.specialty ?? .diax;
     selectedRank = widget.sailor?.rank ?? .naftis;
     servingMonths = widget.sailor?.servingMonths ?? 12;
-    selectedArrivalDate = widget.sailor?.dateArrival ?? now;
-    selectedEntryDate = widget.sailor?.dateInsert ?? now;
+    selectedArrivalDate = widget.sailor != null
+        ? widget.sailor!.dateArrival
+        : now;
+    selectedEntryDate = widget.sailor != null ? widget.sailor!.dateInsert : now;
 
-    selectedRemovalDate =
-        widget.sailor?.dateRemoval ??
-        DateTime(now.year, now.month + servingMonths, now.day);
+    selectedRemovalDate = widget.sailor != null
+        ? widget.sailor!.dateRemoval
+        : DateTime(now.year, now.month + servingMonths, now.day);
   }
 
   @override
@@ -279,7 +281,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         locale: Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
-                        ).format(selectedEntryDate!),
+                        ).format(selectedEntryDate),
                         onSelectionChanged: (change) => setState(() {
                           selectedEntryDate = DateTime(
                             change.startDate!.year,
@@ -301,7 +303,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         locale: Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
-                        ).format(selectedArrivalDate!),
+                        ).format(selectedArrivalDate),
                         onSelectionChanged: (change) => setState(() {
                           selectedArrivalDate = DateTime(
                             change.startDate!.year,
@@ -321,9 +323,9 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                           setState(() {
                             servingMonths = newMonths!;
                             selectedRemovalDate = DateTime(
-                              selectedEntryDate!.year,
-                              selectedEntryDate!.month + newMonths,
-                              selectedEntryDate!.day,
+                              selectedEntryDate.year,
+                              selectedEntryDate.month + newMonths,
+                              selectedEntryDate.day,
                             );
                           });
                         },
@@ -351,7 +353,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         locale: Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
-                        ).format(selectedRemovalDate!),
+                        ).format(selectedRemovalDate),
                         onSelectionChanged: (change) => setState(() {
                           selectedRemovalDate = DateTime(
                             change.startDate!.year,
@@ -396,9 +398,9 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                     mobile: mobileController.text,
                                     landline: landlineController.text,
                                     education: educationController.text,
-                                    dateArrival: selectedArrivalDate!,
-                                    dateInsert: selectedEntryDate!,
-                                    dateRemoval: selectedRemovalDate!,
+                                    dateArrival: selectedArrivalDate,
+                                    dateInsert: selectedEntryDate,
+                                    dateRemoval: selectedRemovalDate,
                                     rank: selectedRank,
                                     servingMonths: servingMonths,
                                   );
