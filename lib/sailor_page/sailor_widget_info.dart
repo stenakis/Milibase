@@ -5,6 +5,7 @@ import 'package:milibase/create_nd.dart';
 import 'package:milibase/objects/rank.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/objects/specialty.dart';
+import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
 import '../main.dart';
 
@@ -69,6 +70,11 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final sailor = snapshot.data!;
+          final int dateUntilRemoval = DateTime(
+            _currentSailor.dateRemoval.year,
+            _currentSailor.dateRemoval.month,
+            _currentSailor.dateRemoval.day,
+          ).difference(now).inDays;
           return ListView(
             padding: .all(padding + 10),
             children: [
@@ -240,6 +246,10 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                           ).format(_currentSailor.dateRemoval),
                           style: TextStyle(fontWeight: .bold, fontSize: 18),
                         ),
+                      ),
+                      Text(
+                        '$dateUntilRemoval μέρες μέχρι την απόλυση',
+                        style: TextStyle(color: primary),
                       ),
                     ],
                   ),

@@ -20,8 +20,12 @@ class SailorWidgetApomakrynseis extends StatefulWidget {
 }
 
 class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
+  final apomakrynsiKey = GlobalKey<ComboBoxState>(
+    debugLabel: 'Apomakrynsi Key',
+  );
   late Future<List<Apomakrynseis>> _future;
   final FlyoutController flyoutController = FlyoutController();
+  Apomakrynsi? selectedApomakrynsi;
   bool isLoading = false;
   void setFuture() {
     _future =
@@ -54,6 +58,13 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final List<Apomakrynseis> apomakrynseis = snapshot.data!;
+          final List<Apomakrynseis> selectedList = selectedApomakrynsi == null
+              ? apomakrynseis
+              : apomakrynseis
+                    .where((adeia) => adeia.type == selectedApomakrynsi)
+                    .toList();
+          final sortedApomakrynseis = selectedList.toList()
+            ..sort((a, b) => a.dateStart.compareTo(b.dateStart));
           return Column(
             mainAxisSize: .min,
             crossAxisAlignment: .start,
@@ -61,19 +72,21 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
               Padding(
                 padding: .all(padding),
                 child: Row(
+                  crossAxisAlignment: .start,
                   children: [
                     Text(
                       'Απομακρύνσεις',
                       style: FluentTheme.of(context).typography.title,
                     ),
                     Gap(10),
+
                     Expanded(
-                      child: SizedBox(
-                        height: 30,
-                        child: ListView(
-                          scrollDirection: .horizontal,
-                          children: [
-                            ...Apomakrynsi.values.map((apomakrynsiType) {
+                      child: Wrap(
+                        spacing: 5,
+                        runSpacing: 5,
+                        children: [
+                          ...Apomakrynsi.values.map((apomakrynsiType) {
+                            if (apomakrynsiType != .metathesi) {
                               final totalDays = apomakrynseis
                                   .where((item) => item.type == apomakrynsiType)
                                   .fold<int>(
@@ -88,8 +101,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                               if (totalDays == 0) {
                                 return const SizedBox.shrink();
                               }
-                              final labelText =
-                                  apomakrynsiType == Apomakrynsi.diathesi
+                              final labelText = apomakrynsiType == .diathesi
                                   ? '${apomakrynsiType.label}: $totalDays/$daysDiathesi ημέρες'
                                   : '${apomakrynsiType.label}: $totalDays/$daysApospasi ημέρες';
 
@@ -100,14 +112,24 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                                   vertical: 5,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: secColor,
+                                  color:
+                                      apomakrynsiType == .apospasi &&
+                                              totalDays + daysDiathesi >
+                                                  daysApospasi ||
+                                          apomakrynsiType == .diathesi &&
+                                              totalDays + daysApospasi >
+                                                  daysDiathesi
+                                      ? Colors.orange.withOpacity(0.3)
+                                      : secColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Text(labelText),
                               );
-                            }),
-                          ],
-                        ),
+                            } else {
+                              return SizedBox.shrink();
+                            }
+                          }),
+                        ],
                       ),
                     ),
                     Gap(10),
@@ -150,8 +172,6 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                       ),
                     )
                   : Row(
-                      crossAxisAlignment: .end,
-
                       children: [
                         Gap(padding * 2),
                         Expanded(
@@ -162,13 +182,13 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                         ),
                         Expanded(
                           child: Text(
-                            'Ημερομηνία Έναρξης',
+                            'Έναρξη',
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
                         Expanded(
                           child: Text(
-                            'Ημερομηνία Λήξης',
+                            'Λήξη',
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
@@ -184,14 +204,49 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
-                        Gap(padding * 2),
+                        ComboBox<Apomakrynsi>(
+                          placeholder: Row(
+                            children: [
+                              WindowsIcon(WindowsIcons.filter),
+                              Gap(5),
+                              Text(selectedApomakrynsi?.label ?? 'Όλες'),
+                            ],
+                          ),
+                          isExpanded: false,
+                          value: selectedApomakrynsi,
+                          key: apomakrynsiKey,
+                          onChanged: (Apomakrynsi? apomakrynsi) {
+                            setState(() {
+                              selectedApomakrynsi = apomakrynsi!;
+                            });
+                          },
+                          items:
+                              (Apomakrynsi.values.toList()..sort(
+                                    (a, b) => a.label.compareTo(b.label),
+                                  ))
+                                  .map((Apomakrynsi e) {
+                                    return ComboBoxItem<Apomakrynsi>(
+                                      value: e,
+                                      child: Text(e.label),
+                                    );
+                                  })
+                                  .toList(),
+                        ),
+                        if (selectedApomakrynsi != null)
+                          IconButton(
+                            onPressed: () => setState(() {
+                              selectedApomakrynsi = null;
+                            }),
+                            icon: WindowsIcon(WindowsIcons.clear),
+                          ),
+                        Gap(padding),
                       ],
                     ),
               Gap(5),
               Expanded(
                 child: ListView(
                   padding: .symmetric(horizontal: padding),
-                  children: apomakrynseis
+                  children: sortedApomakrynseis
                       .map(
                         (apomakrynsi) => Container(
                           decoration: BoxDecoration(
@@ -269,6 +324,14 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                                                     await deleteApomakrynsi(
                                                       apomakrynsi.id!,
                                                     );
+                                                    if (apomakrynsi.type ==
+                                                        .apospasi) {
+                                                      daysApospasi = 0;
+                                                    } else if (apomakrynsi
+                                                            .type ==
+                                                        .diathesi) {
+                                                      daysDiathesi = 0;
+                                                    }
                                                     setState(() {
                                                       isLoading = false;
                                                     });

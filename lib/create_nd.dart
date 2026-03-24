@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import 'db/add_nd.dart';
 import 'objects/sailor.dart';
 import 'variables.dart';
@@ -137,6 +138,11 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                               label: 'ΑΓΜ',
                               child: TextFormBox(
                                 controller: agmController,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp("[0-9]"),
+                                  ),
+                                ],
                                 maxLength: 5,
                                 placeholder: widget.sailor?.agm ?? '',
                                 validator: (text) {
@@ -173,24 +179,26 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                           Gap(padding),
                           InfoLabel(
                             label: 'Ειδικότητα',
-                            child: SizedBox(
-                              height: 40,
-                              child: ComboBox<Specialty>(
-                                isExpanded: false,
-                                value: selectedSpecialty,
-                                key: specialtyKey,
-                                onChanged: (Specialty? newSpecialty) {
-                                  setState(() {
-                                    selectedSpecialty = newSpecialty!;
-                                  });
-                                },
-                                items: Specialty.values.map((Specialty e) {
-                                  return ComboBoxItem<Specialty>(
-                                    value: e,
-                                    child: Text(e.label),
-                                  );
-                                }).toList(),
-                              ),
+                            child: ComboBox<Specialty>(
+                              isExpanded: false,
+                              value: selectedSpecialty,
+                              key: specialtyKey,
+                              onChanged: (Specialty? newSpecialty) {
+                                setState(() {
+                                  selectedSpecialty = newSpecialty!;
+                                });
+                              },
+                              items:
+                                  (Specialty.values.toList()..sort(
+                                        (a, b) => a.label.compareTo(b.label),
+                                      ))
+                                      .map((Specialty e) {
+                                        return ComboBoxItem<Specialty>(
+                                          value: e,
+                                          child: Text(e.label),
+                                        );
+                                      })
+                                      .toList(),
                             ),
                           ),
                         ],
@@ -268,7 +276,6 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                     InfoLabel(
                       label: 'Κατάταξη',
                       child: CalendarDatePicker(
-                        isTodayHighlighted: false,
                         locale: Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
@@ -378,7 +385,9 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                 });
                                 try {
                                   final newSailor = Sailor(
-                                    id: widget.sailor?.id ?? '',
+                                    id: widget.sailor != null
+                                        ? widget.sailor!.id
+                                        : Uuid().v4(),
                                     name: nameController.text,
                                     surname: surnameController.text,
                                     agm: agmController.text,
@@ -393,7 +402,6 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                     rank: selectedRank,
                                     servingMonths: servingMonths,
                                   );
-
                                   addND(newSailor);
                                   setState(() {
                                     isLoading = false;

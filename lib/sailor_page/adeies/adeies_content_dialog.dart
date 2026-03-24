@@ -38,21 +38,18 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
         children: [
           InfoLabel(
             label: 'Τύπος',
-            child: SizedBox(
-              height: 40,
-              child: ComboBox<Adeia>(
-                isExpanded: true,
-                value: selectedAdeia,
-                key: rankKey,
-                onChanged: (Adeia? newValue) {
-                  setState(() {
-                    selectedAdeia = newValue!;
-                  });
-                },
-                items: Adeia.values.map((Adeia e) {
-                  return ComboBoxItem<Adeia>(value: e, child: Text(e.label));
-                }).toList(),
-              ),
+            child: ComboBox<Adeia>(
+              isExpanded: true,
+              value: selectedAdeia,
+              key: rankKey,
+              onChanged: (Adeia? newValue) {
+                setState(() {
+                  selectedAdeia = newValue!;
+                });
+              },
+              items: Adeia.values.map((Adeia e) {
+                return ComboBoxItem<Adeia>(value: e, child: Text(e.label));
+              }).toList(),
             ),
           ),
           Gap(10),
@@ -60,50 +57,41 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
               selectedAdeia == Adeia.anarrotiki)
             InfoLabel(
               label: 'Σήμα',
-              child: SizedBox(
-                height: 40,
-                child: TextBox(placeholder: 'WAF', controller: simaController),
-              ),
+              child: TextBox(placeholder: 'WAF', controller: simaController),
             ),
           Gap(10),
           Row(
             children: [
               InfoLabel(
                 label: 'Έναρξη',
-                child: SizedBox(
-                  height: 40,
-                  child: CalendarDatePicker(
-                    locale: Locale('el'),
-                    placeholderText:
-                        '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}',
-                    onSelectionChanged: (CalendarSelectionData data) {
-                      if (data.selectedDates.isNotEmpty) {
-                        setState(() {
-                          selectedStartDate = data.selectedDates.first;
-                          selectedEndDate = data.selectedDates.first;
-                        });
-                      }
-                    },
-                  ),
+                child: CalendarDatePicker(
+                  locale: Locale('el'),
+                  placeholderText:
+                      '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}',
+                  onSelectionChanged: (CalendarSelectionData data) {
+                    if (data.selectedDates.isNotEmpty) {
+                      setState(() {
+                        selectedStartDate = data.selectedDates.first;
+                        selectedEndDate = data.selectedDates.first;
+                      });
+                    }
+                  },
                 ),
               ),
               Gap(10),
               InfoLabel(
                 label: 'Λήξη',
-                child: SizedBox(
-                  height: 40,
-                  child: CalendarDatePicker(
-                    locale: Locale('el'),
-                    placeholderText:
-                        '${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}',
-                    onSelectionChanged: (CalendarSelectionData data) {
-                      if (data.selectedDates.isNotEmpty) {
-                        setState(() {
-                          selectedEndDate = data.selectedDates.first;
-                        });
-                      }
-                    },
-                  ),
+                child: CalendarDatePicker(
+                  locale: Locale('el'),
+                  placeholderText:
+                      '${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}',
+                  onSelectionChanged: (CalendarSelectionData data) {
+                    if (data.selectedDates.isNotEmpty) {
+                      setState(() {
+                        selectedEndDate = data.selectedDates.first;
+                      });
+                    }
+                  },
                 ),
               ),
             ],

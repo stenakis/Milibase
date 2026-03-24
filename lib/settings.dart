@@ -37,7 +37,7 @@ class SettingsPage extends StatelessWidget {
             Text('$dbLocation/sailors_database.sqlite'),
             Gap(5),
             Button(
-              child: Text('Άνοιγμα τοποθεσίας'),
+              child: Text('Άνοιγμα στην εξερεύνηση'),
               onPressed: () => OpenFolder.openFolder(dbLocation),
             ),
             Gap(padding * 2),

@@ -19,8 +19,10 @@ class SailorWidgetAdeies extends StatefulWidget {
 }
 
 class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
+  final adeiaKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeia Key');
   late Future<List<Adeies>> _future;
   final FlyoutController flyoutController = FlyoutController();
+  Adeia? selectedAdeia;
   bool isLoading = false;
   void setFuture() {
     _future =
@@ -57,6 +59,11 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final List<Adeies> adeies = snapshot.data!;
+          final List<Adeies> selectedList = selectedAdeia == null
+              ? adeies
+              : adeies.where((adeia) => adeia.type == selectedAdeia).toList();
+          final sortedAdeies = selectedList.toList()
+            ..sort((a, b) => a.dateStart.compareTo(b.dateStart));
           return Column(
             mainAxisSize: .min,
             crossAxisAlignment: .start,
@@ -64,56 +71,58 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
               Padding(
                 padding: .all(padding),
                 child: Row(
+                  crossAxisAlignment: .start,
                   children: [
                     Text(
                       'Άδειες',
                       style: FluentTheme.of(context).typography.title,
                     ),
-                    Gap(10),
+                    Gap(padding),
                     Expanded(
-                      child: SizedBox(
-                        height: 30,
-                        child: ListView(
-                          scrollDirection: .horizontal,
-                          children: [
-                            ...Adeia.values.map((adeiaType) {
-                              final totalDays = adeies
-                                  .where((item) => item.type == adeiaType)
-                                  .fold<int>(
-                                    0,
-                                    (sum, item) =>
-                                        sum +
-                                        item.dateEnd
-                                            .difference(item.dateStart)
-                                            .inDays +
-                                        1,
-                                  );
-                              if (totalDays == 0) {
-                                return const SizedBox.shrink();
-                              }
-                              String days = totalDays == 1 ? 'ημέρα' : 'ημέρες';
-                              final labelText = adeiaType == Adeia.kanoniki
-                                  ? '${adeiaType.label}: $totalDays/$daysKanoniki ημέρες'
-                                  : '${adeiaType.label}: $totalDays $days';
+                      child: Wrap(
+                        spacing: 5,
+                        runSpacing: 5,
+                        children: [
+                          ...Adeia.values.map((adeiaType) {
+                            final totalDays = adeies
+                                .where((item) => item.type == adeiaType)
+                                .fold<int>(
+                                  0,
+                                  (sum, item) =>
+                                      sum +
+                                      item.dateEnd
+                                          .difference(item.dateStart)
+                                          .inDays +
+                                      1,
+                                );
+                            if (totalDays == 0) {
+                              return const SizedBox.shrink();
+                            }
+                            String days = totalDays == 1 ? 'ημέρα' : 'ημέρες';
+                            final labelText = adeiaType == .kanoniki
+                                ? '${adeiaType.label}: $totalDays/$daysKanoniki ημέρες'
+                                : '${adeiaType.label}: $totalDays $days';
 
-                              return Container(
-                                margin: .only(right: 5),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: secColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Text(labelText),
-                              );
-                            }),
-                          ],
-                        ),
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    adeiaType == .kanoniki &&
+                                        totalDays > daysKanoniki
+                                    ? Colors.orange.withOpacity(0.3)
+                                    : secColor,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(labelText),
+                            );
+                          }),
+                        ],
                       ),
                     ),
-                    Gap(10),
+                    Gap(padding),
                     adeies.isEmpty
                         ? SizedBox.shrink()
                         : FilledButton(
@@ -129,6 +138,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                   ],
                 ),
               ),
+
               adeies.isEmpty
                   ? Center(
                       child: Column(
@@ -153,7 +163,6 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                       ),
                     )
                   : Row(
-                      crossAxisAlignment: .start,
                       children: [
                         Gap(padding * 2),
                         Expanded(
@@ -164,13 +173,13 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                         ),
                         Expanded(
                           child: Text(
-                            'Ημερομηνία Έναρξης',
+                            'Έναρξη',
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
                         Expanded(
                           child: Text(
-                            'Ημερομηνία Λήξης',
+                            'Λήξη',
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
@@ -180,14 +189,50 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
-                        Gap(padding * 2),
+                        ComboBox<Adeia>(
+                          placeholder: Row(
+                            children: [
+                              WindowsIcon(WindowsIcons.filter),
+                              Gap(5),
+                              Text(selectedAdeia?.label ?? 'Όλες'),
+                            ],
+                          ),
+                          isExpanded: false,
+                          value: selectedAdeia,
+                          key: adeiaKey,
+                          onChanged: (Adeia? adeia) {
+                            setState(() {
+                              selectedAdeia = adeia!;
+                            });
+                          },
+                          items:
+                              (Adeia.values.toList()..sort(
+                                    (a, b) => a.label.compareTo(b.label),
+                                  ))
+                                  .map((Adeia e) {
+                                    return ComboBoxItem<Adeia>(
+                                      value: e,
+                                      child: Text(e.label),
+                                    );
+                                  })
+                                  .toList(),
+                        ),
+                        if (selectedAdeia != null)
+                          IconButton(
+                            onPressed: () => setState(() {
+                              selectedAdeia = null;
+                            }),
+                            icon: WindowsIcon(WindowsIcons.clear),
+                          ),
+
+                        Gap(padding),
                       ],
                     ),
               Gap(5),
               Expanded(
                 child: ListView(
                   padding: .symmetric(horizontal: padding),
-                  children: adeies
+                  children: sortedAdeies
                       .map(
                         (adeia) => Container(
                           decoration: BoxDecoration(

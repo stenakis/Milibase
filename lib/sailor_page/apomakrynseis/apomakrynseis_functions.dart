@@ -1,5 +1,5 @@
 import 'package:drift/src/runtime/data_class.dart';
-import 'package:milibase/objects/apomakrynseis.dart';
+import '../../objects/apomakrynseis.dart';
 
 import '../../db/init_db.dart';
 import '../../main.dart';
