@@ -4,6 +4,8 @@ import 'package:milibase/objects/apomakrynseis.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_functions.dart';
 
+import '../../variables.dart';
+
 class ShowApomakrynseisDialog extends StatefulWidget {
   const ShowApomakrynseisDialog({super.key, required this.sailor});
   final Sailor sailor;
@@ -40,6 +42,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Gap(10),
             InfoLabel(
               label: 'Τύπος',
               child: ComboBox<Apomakrynsi>(
@@ -59,7 +62,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 }).toList(),
               ),
             ),
-            Gap(10),
+            Gap(padding),
             InfoLabel(
               label: 'Υπηρεσία',
               child: TextFormBox(
@@ -73,14 +76,11 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 },
               ),
             ),
-            Gap(10),
+            Gap(padding),
             InfoLabel(
               label: 'Σήμα',
               child: TextFormBox(
-                prefix: Padding(
-                  padding: .only(left: 10),
-                  child: Text('WAF'),
-                ),
+                prefix: Padding(padding: .only(left: 10), child: Text('WAF')),
                 controller: simaController,
                 validator: (text) {
                   if (text == '') {
@@ -90,7 +90,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 },
               ),
             ),
-            Gap(10),
+            Gap(padding),
             Row(
               children: [
                 InfoLabel(
@@ -136,43 +136,43 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  try {
-                    await addNewApomakrynsi(
-                      Apomakrynseis(
-                        type: selectedApomakrynsi,
-                        dateStart: selectedStartDate,
-                        dateEnd: selectedEndDate,
-                        sailorId: widget.sailor.id,
-                        sima: simaController.text,
-                        ypiresia: ypiresiaController.text,
-                      ),
-                    );
-                    Navigator.pop(context, 'success');
-                  } catch (error) {
-                    await displayInfoBar(
-                      context,
-                      builder: (context, close) {
-                        return InfoBar(
-                          title: const Text('An error occurred:'),
-                          content: Text(error.toString()),
-                          action: IconButton(
-                            icon: const WindowsIcon(WindowsIcons.error),
-                            onPressed: close,
-                          ),
-                          severity: InfoBarSeverity.error,
-                        );
-                      },
-                    );
-                  } finally {
+                  if (_formKey.currentState!.validate()) {
                     setState(() {
-                      isLoading = false;
+                      isLoading = true;
                     });
-                  }
+                    try {
+                      await addNewApomakrynsi(
+                        Apomakrynseis(
+                          type: selectedApomakrynsi,
+                          dateStart: selectedStartDate,
+                          dateEnd: selectedEndDate,
+                          sailorId: widget.sailor.id,
+                          sima: simaController.text,
+                          ypiresia: ypiresiaController.text,
+                        ),
+                      );
+                      Navigator.pop(context, 'success');
+                    } catch (error) {
+                      await displayInfoBar(
+                        context,
+                        builder: (context, close) {
+                          return InfoBar(
+                            title: const Text('An error occurred:'),
+                            content: Text(error.toString()),
+                            action: IconButton(
+                              icon: const WindowsIcon(WindowsIcons.error),
+                              onPressed: close,
+                            ),
+                            severity: InfoBarSeverity.error,
+                          );
+                        },
+                      );
+                    } finally {
+                      setState(() {
+                        isLoading = false;
+                      });
                     }
+                  }
                 },
               ),
       ],

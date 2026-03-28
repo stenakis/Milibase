@@ -24,6 +24,8 @@ dependencies:
   bitsdojo_window: ^0.1.6
   flutter_svg: ^2.2.4
   open_folder: ^0.0.3
+  url_launcher: ^6.3.2
+  super_bullet_list: ^0.0.3
 
 dev_dependencies:
   flutter_test:

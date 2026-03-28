@@ -3,11 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+
 import '../db/add_nd.dart';
-import '../objects/sailor.dart';
-import '../variables.dart';
 import '../objects/rank.dart';
+import '../objects/sailor.dart';
 import '../objects/specialty.dart';
+import '../variables.dart';
 
 class ShowCreateNdDialog extends StatefulWidget {
   final Sailor? sailor;
@@ -95,6 +96,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                   child: Column(
                     children: [
                       Row(
+                        crossAxisAlignment: .end,
                         children: [
                           Expanded(
                             child: InfoLabel(
@@ -111,7 +113,30 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                               ),
                             ),
                           ),
-                          Gap(padding),
+                          Gap(10),
+                          if (widget.sailor != null)
+                            Tooltip(
+                              message: 'Εναλλαγή ονόματος-επωνύμου',
+                              child: IconButton(
+                                icon: WindowsIcon(WindowsIcons.switch_widget),
+                                onPressed: () {
+                                  setState(() {
+                                    if (surnameController.text ==
+                                        widget.sailor!.surname) {
+                                      surnameController.text =
+                                          widget.sailor!.name;
+                                      nameController.text =
+                                          widget.sailor!.surname;
+                                    } else {
+                                      surnameController.text =
+                                          widget.sailor!.surname;
+                                      nameController.text = widget.sailor!.name;
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          Gap(10),
                           Expanded(
                             child: InfoLabel(
                               label: 'Όνομα',
@@ -142,7 +167,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                     RegExp("[0-9]"),
                                   ),
                                 ],
-                                maxLength: 5,
+                                maxLength: 6,
                                 placeholder: widget.sailor?.agm ?? '',
                                 validator: (text) {
                                   if (text == null || text.isEmpty) {
@@ -369,9 +394,17 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         : FilledButton(
                             child: Row(
                               children: [
-                                WindowsIcon(WindowsIcons.add),
+                                WindowsIcon(
+                                  widget.sailor == null
+                                      ? WindowsIcons.add
+                                      : WindowsIcons.save,
+                                ),
                                 Gap(10),
-                                Text('Υποβολή'),
+                                Text(
+                                  widget.sailor == null
+                                      ? 'Υποβολή'
+                                      : 'Αποθήκευση',
+                                ),
                               ],
                             ),
                             onPressed: () async {

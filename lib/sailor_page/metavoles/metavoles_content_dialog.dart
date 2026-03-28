@@ -1,6 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/sailor.dart';
+import 'package:milibase/variables.dart';
+
 import '../../objects/metavoles.dart';
 import 'metavoles_functions.dart';
 
@@ -40,6 +42,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Gap(10),
             InfoLabel(
               label: 'Τύπος',
               child: ComboBox<Metavoli>(
@@ -56,33 +59,50 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                 }).toList(),
               ),
             ),
-            Gap(10),
+            Gap(5),
+            Opacity(
+              opacity: 0.75,
+              child: Text(
+                (selectedMetavoli == .meiomeni)
+                    ? 'Μεταφέρθηκε στους υπόχρεους $selectedDurationμηνης θητείας'
+                    : selectedMetavoli == .ekkremei
+                    ? 'Υπέχει στρατολογική εκκρεμότητα'
+                    : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
+                style: TextStyle(fontStyle: .italic),
+              ),
+            ),
+            if (selectedMetavoli == .meiomeni) Gap(padding),
             if (selectedMetavoli == .meiomeni)
               InfoLabel(
-                label: 'Διάρκεια',
-                child: ComboBox<int>(
-                  isExpanded: true,
-                  value: selectedDuration,
+                label: 'Διάρκεια Θητείας',
+                child: RadioGroup<int>(
                   key: durationKey,
+                  groupValue: selectedDuration,
                   onChanged: (int? newValue) {
                     setState(() {
-                      selectedDuration = newValue!;
+                      selectedDuration = newValue ?? selectedDuration;
                     });
                   },
-                  items: [
-                    ComboBoxItem<int>(value: 6, child: Text(6.toString())),
-                    ComboBoxItem<int>(value: 9, child: Text(9.toString())),
-                  ],
+                  child: Row(
+                    spacing: padding,
+                    children: [
+                      RadioButton<int>(
+                        value: 6,
+                        content: const Text('6 μήνες'),
+                      ),
+                      RadioButton<int>(
+                        value: 9,
+                        content: const Text('9 μήνες'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            Gap(10),
+            Gap(padding),
             InfoLabel(
               label: 'Σήμα',
               child: TextFormBox(
-                prefix: Padding(
-                  padding: .only(left: 10),
-                  child: Text('WAF'),
-                ),
+                prefix: Padding(padding: .only(left: 10), child: Text('WAF')),
                 controller: simaController,
                 validator: (text) {
                   if (text == '') {
@@ -92,8 +112,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                 },
               ),
             ),
-            Gap(10),
-        
+            Gap(padding),
             InfoLabel(
               label: 'Ημερομηνία',
               child: CalendarDatePicker(
@@ -129,13 +148,12 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                           date: selectedDate,
                           sailorId: widget.sailor.id,
                           sima: 'WAF ${simaController.text}',
-                          duration: selectedMetavoli == Metavoli.meiomeni
-                              ? selectedDuration
-                              : null,
+                          duration: selectedDuration,
                         ),
                       );
                       Navigator.pop(context, 'success');
                     } catch (error) {
+                      print(error);
                       await displayInfoBar(
                         context,
                         builder: (context, close) {

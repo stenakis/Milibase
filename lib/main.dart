@@ -17,7 +17,14 @@ void main() async {
   databaseFactoryFfi;
   runApp(const MyApp());
   doWhenWindowReady(() {
-    appWindow.show();
+    final win = appWindow;
+    win.minSize = const Size(600, 450);
+    const initialSize = Size(1280, 720);
+    win.size = initialSize;
+    win.show();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      win.size = initialSize + const Offset(0, 1);
+    });
   });
 }
 
@@ -54,6 +61,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return ScaffoldPage.withPadding(content: KatalogosNd());
+    return KatalogosNd();
   }
 }

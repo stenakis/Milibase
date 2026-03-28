@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/variables.dart';
+
 import '../../main.dart';
 import '../../objects/metavoles.dart';
 import 'metavoles_content_dialog.dart';
@@ -17,7 +18,7 @@ class SailorWidgetMetavoles extends StatefulWidget {
 }
 
 class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
-    final _metavoliKey = GlobalKey<ComboBoxState>(debugLabel: 'Metavoli Key');
+  final _metavoliKey = GlobalKey<ComboBoxState>(debugLabel: 'Metavoli Key');
   late Future<List<Metavoles>> _future;
   final FlyoutController flyoutController = FlyoutController();
   Metavoli? selectedMetavoli;
@@ -52,7 +53,9 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
           final List<Metavoles> metavoles = snapshot.data!;
           final List<Metavoles> selectedList = selectedMetavoli == null
               ? metavoles
-              : metavoles.where((metavoli) => metavoli.type == selectedMetavoli).toList();
+              : metavoles
+                    .where((metavoli) => metavoli.type == selectedMetavoli)
+                    .toList();
           final sortedMetavoles = selectedList.toList()
             ..sort((a, b) => a.date.compareTo(b.date));
           return Column(
@@ -127,7 +130,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                             style: TextStyle(fontWeight: .bold),
                           ),
                         ),
-                          ComboBox<Metavoli>(
+                        ComboBox<Metavoli>(
                           placeholder: Row(
                             children: [
                               WindowsIcon(WindowsIcons.filter),
@@ -155,7 +158,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                                   })
                                   .toList(),
                         ),
-                         if (selectedMetavoli != null)
+                        if (selectedMetavoli != null)
                           IconButton(
                             onPressed: () => setState(() {
                               selectedMetavoli = null;
@@ -188,17 +191,18 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                                 child: Text(
                                   metavoli.type == .meiomeni
                                       ? 'Μεταφέρθηκε στους υπόχρεους ${metavoli.duration}μηνης θητείας'
-                                      : 'Υπέχει στρατολογική εκκρεμότητα',
+                                      : metavoli.type == .ekkremei
+                                      ? 'Υπέχει στρατολογική εκκρεμότητα'
+                                      : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
                                 ),
                               ),
-
                               Gap(10),
                               Expanded(
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
                                     'EEE dd MMM yy',
-                            'el',
+                                    'el',
                                   ).format(metavoli.date),
                                 ),
                               ),

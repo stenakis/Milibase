@@ -1,9 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/adeies.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/adeies/adeies_functions.dart';
+import 'package:milibase/variables.dart';
 
 class ShowAdeiesDialog extends StatefulWidget {
   const ShowAdeiesDialog({super.key, required this.sailor});
@@ -40,6 +40,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Gap(10),
             InfoLabel(
               label: 'Τύπος',
               child: ComboBox<Adeia>(
@@ -56,7 +57,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                 }).toList(),
               ),
             ),
-            Gap(10),
+            Gap(padding),
             if (selectedAdeia == Adeia.oikos_nosileias ||
                 selectedAdeia == Adeia.anarrotiki)
               InfoLabel(

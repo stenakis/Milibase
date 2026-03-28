@@ -254,8 +254,8 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                     'EEE dd MMM yy',
-                            'el',
+                                    'EEE dd MMM yy',
+                                    'el',
                                   ).format(adeia.dateStart),
                                 ),
                               ),
@@ -263,8 +263,8 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                 flex: 1,
                                 child: Text(
                                   DateFormat(
-                                      'EEE dd MMM yy',
-                            'el',
+                                    'EEE dd MMM yy',
+                                    'el',
                                   ).format(adeia.dateEnd),
                                 ),
                               ),

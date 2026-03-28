@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 import '../objects/rank.dart';
 import '../objects/specialty.dart';
 

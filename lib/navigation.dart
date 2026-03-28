@@ -91,7 +91,12 @@ class _NavigationState extends State<Navigation> {
               ),
             ),*/
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),
-            Button(
+
+            Image.asset('assets/faron.png', height: 25),
+            Gap(5),
+            Text('Υπηρεσία Φάρων'),
+            Gap(padding),
+            IconButton(
               onPressed: () {
                 mainInnerKey.currentState?.push(
                   FluentPageRoute(
@@ -101,18 +106,8 @@ class _NavigationState extends State<Navigation> {
                   ),
                 );
               },
-              child: Row(
-                children: [
-                  const WindowsIcon(WindowsIcons.settings, size: 24),
-                  Gap(10),
-                  const Text('Ρυθμίσεις'),
-                ],
-              ),
+              icon: const WindowsIcon(WindowsIcons.settings, size: 20),
             ),
-            Gap(padding),
-            Image.asset('assets/faron.png', height: 25),
-            Gap(5),
-            Text('Υπηρεσία Φάρων'),
             SizedBox(
               width: padding,
               child: WindowTitleBarBox(child: MoveWindow()),
