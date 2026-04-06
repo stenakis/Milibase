@@ -4,7 +4,7 @@ import 'package:milibase/navigation.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/variables.dart';
 
-import '../main.dart';
+import '../../main.dart';
 
 class SailorWidgetSettings extends StatefulWidget {
   const SailorWidgetSettings({super.key, required this.sailor});

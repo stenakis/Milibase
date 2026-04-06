@@ -14,14 +14,14 @@ enum Metavoli {
     return {
           Metavoli.meiomeni: 'Μειωμένη Θητεία',
           Metavoli.ekkremei: 'Εκκρεμότητα',
-          Metavoli.exagora: 'Εξαγορά'
+          Metavoli.exagora: 'Εξαγορά',
         }[this] ??
         'Μειωμένη Θητεία';
   }
 }
 
 class Metavoles {
-  final String? id;
+  final String id;
   final Metavoli type;
   final DateTime date;
   final String sailorId;
@@ -29,7 +29,7 @@ class Metavoles {
   final int? duration;
 
   Metavoles({
-    this.id,
+    required this.id,
     required this.type,
     required this.date,
     required this.sailorId,

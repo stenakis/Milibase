@@ -1,14 +1,32 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:milibase/db/export_db.dart';
 import 'package:milibase/db/init_db.dart';
 import 'package:milibase/variables.dart';
 import 'package:open_folder/open_folder.dart';
 import 'package:super_bullet_list/bullet_list.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'main.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  /*Future<String> initializeTable() async {
+    var row = await db.select(db.vars).getSingleOrNull();
+    if (row == null) {
+      await db
+          .into(db.vars)
+          .insertOnConflictUpdate(VarsCompanion.insert(prothemaShmatos: 'WAF'));
+      row = await db.select(db.vars).getSingle();
+    }
+    return row.prothemaShmatos;
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +50,15 @@ class SettingsPage extends StatelessWidget {
                       Gap(10),
                       Text(
                         'Ρυθμίσεις',
-                        style: FluentTheme.of(context).typography.titleLarge,
+                        style: FluentTheme.of(context).typography.title,
                       ),
                     ],
                   ),
                   Gap(padding),
-
-                  Text('Τοποθεσία Βάσης:'),
+                  Text(
+                    'Βάση',
+                    style: TextStyle(fontSize: 20, fontWeight: .bold),
+                  ),
                   Gap(5),
                   Text('$dbLocation/sailors_database.sqlite'),
                   Gap(5),
@@ -46,7 +66,31 @@ class SettingsPage extends StatelessWidget {
                     child: Text('Άνοιγμα στην εξερεύνηση'),
                     onPressed: () => OpenFolder.openFolder(dbLocation),
                   ),
+
                   Gap(padding * 2),
+                  Text(
+                    'Επαναφορά Βάσης',
+                    style: TextStyle(fontSize: 20, fontWeight: .bold),
+                  ),
+                  Gap(10),
+                  Row(
+                    spacing: 5,
+                    children: [
+                      Button(
+                        onPressed: () async {
+                          await exportBackup(context);
+                        },
+                        child: Text('Export'),
+                      ),
+
+                      Button(
+                        onPressed: () async {
+                          await importBackup(context);
+                        },
+                        child: Text('Import'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -54,8 +98,12 @@ class SettingsPage extends StatelessWidget {
           Expanded(
             flex: 4,
             child: Container(
+              margin: .all(padding),
               padding: .all(padding * 2),
-              color: Colors.white,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Column(
                 crossAxisAlignment: .start,
                 children: [
@@ -64,7 +112,7 @@ class SettingsPage extends StatelessWidget {
                     child: SvgPicture.asset('assets/logo_large.svg'),
                   ),
                   Gap(10),
-                  Text('Έκδοση 0.2'),
+                  Text('Έκδοση 0.4'),
                   Gap(padding),
                   Text('Σε αυτή την έκδοση:'),
                   Gap(5),
@@ -72,18 +120,7 @@ class SettingsPage extends StatelessWidget {
                     iconSize: 5,
                     separator: Gap(0),
                     gap: 5,
-                    items: [
-                      Text('Νέες ειδικότητες'),
-                      Text('Αναζήτηση ναυτών'),
-                      Text('Φίλτρα μεταβολών'),
-                      Text('Ταξινόμηση λιστών'),
-                      Text(
-                        'Εναλλαγή ονόματος-επωνύμου στην επεξεργασία ναυτών',
-                      ),
-                      Text(
-                        'Διόρθωση σφάλματος όπου οι ημερομηνίες κατάταξης, εισασωγής και διαγραφής ισούνταν με την ημέρα εισαγωγής του στη βάση',
-                      ),
-                    ],
+                    items: [Text('Επεξεργασία μεταβολών')],
                   ),
 
                   Spacer(),

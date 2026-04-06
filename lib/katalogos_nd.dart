@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/create_nd.dart';
-import 'package:milibase/sailor_page/sailor_page.dart';
+import 'package:milibase/sailor_page/sailors/sailor_page.dart';
 import 'package:milibase/variables.dart';
 
 import 'main.dart';
@@ -16,58 +16,40 @@ class KatalogosNd extends StatefulWidget {
 
 class _KatalogosNdState extends State<KatalogosNd> {
   final searchController = TextEditingController();
-  late Future<List<Sailor>> _future;
+  late Stream<List<Sailor>> _stream;
+  List<Sailor> _allSailors = [];
+  List<Sailor> _displayedSailors = [];
+  String _searchQuery = '';
+
   @override
   void initState() {
-    _refreshData();
+    _stream = db.select(db.tableSailors).watch().map((rows) {
+      final sailors = rows.map((row) => Sailor.fromJson(row.toJson())).toList();
+      sailors.sort(
+        (a, b) => a.surname.toLowerCase().compareTo(b.surname.toLowerCase()),
+      );
+      return sailors;
+    });
     super.initState();
   }
 
-  List<Sailor> _allSailors = [];
-  List<Sailor> _displayedSailors = [];
-
-  void _refreshData() {
-    setState(() {
-      _future = db.select(db.tableSailors).get().then((rows) {
-        final sailors = rows
-            .map((row) => Sailor.fromJson(row.toJson()))
-            .toList();
-        sailors.sort(
-          (a, b) => a.surname.toLowerCase().compareTo(b.surname.toLowerCase()),
-        );
-        _allSailors = sailors;
-        _displayedSailors = sailors;
-        return sailors;
-      });
-    });
-  }
-
   void _searchSailors(String query) {
-    List<Sailor> results = [];
-
-    if (query.isEmpty) {
-      results = _allSailors;
-    } else {
-      results = _allSailors.where((sailor) {
-        final queryy = query.toLowerCase();
-        final firstName = sailor.name.toLowerCase();
-        final surname = sailor.surname.toLowerCase();
-        return firstName.contains(queryy) || surname.contains(queryy);
-      }).toList();
-    }
-
     setState(() {
-      _displayedSailors = results;
-      _displayedSailors.sort(
-        (a, b) => a.surname.toLowerCase().compareTo(b.surname.toLowerCase()),
-      );
+      _searchQuery = query;
+      _displayedSailors = query.isEmpty
+          ? _allSailors
+          : _allSailors.where((sailor) {
+              final q = query.toLowerCase();
+              return sailor.name.toLowerCase().contains(q) ||
+                  sailor.surname.toLowerCase().contains(q);
+            }).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage.withPadding(
-      padding: .only(left: padding, right: padding, top: 10),
+      padding: .only(left: padding + 10, right: padding + 10, top: 15),
       content: Column(
         crossAxisAlignment: .start,
         children: [
@@ -75,16 +57,9 @@ class _KatalogosNdState extends State<KatalogosNd> {
             children: [
               Text(
                 'Κατάλογος Ν/Δ',
-                style: FluentTheme.of(context).typography.titleLarge,
+                style: FluentTheme.of(context).typography.title,
               ),
               Spacer(),
-              IconButton(
-                icon: WindowsIcon(WindowsIcons.update_restore),
-                onPressed: () => setState(() {
-                  _refreshData();
-                }),
-              ),
-              Gap(10),
               FilledButton(
                 child: Row(
                   mainAxisSize: .min,
@@ -97,15 +72,16 @@ class _KatalogosNdState extends State<KatalogosNd> {
                 onPressed: () => showCreateNDDialog(context),
                 //showNdDialog(context),
               ),
-              Gap(padding),
+              Gap(10),
               SizedBox(
-                width: 250,
+                width: 200,
                 child: TextBox(
                   controller: searchController,
                   prefix: Padding(
                     padding: .only(left: 10),
                     child: WindowsIcon(WindowsIcons.search),
                   ),
+                  placeholder: 'Αναζήτηση Ν/Δ',
                   onChanged: (String text) {
                     _searchSailors(text);
                   },
@@ -122,20 +98,41 @@ class _KatalogosNdState extends State<KatalogosNd> {
             ],
           ),
           Gap(padding),
-          Row(
-            mainAxisAlignment: .spaceBetween,
-            children: [
-              Gap(padding),
-              Expanded(child: Text('Ονοματεπώνυμο')),
-              Expanded(child: Text('ΑΓΜ')),
-              Expanded(child: Text('Βαθμός/Ειδικότητα')),
-              Expanded(child: Text('Τηλέφωνο')),
-            ],
+          Padding(
+            padding: .symmetric(horizontal: padding),
+            child: Row(
+              mainAxisAlignment: .spaceBetween,
+              spacing: 5,
+              children: [
+                Expanded(
+                  flex: nameFlex,
+                  child: Text(
+                    'Ονοματεπώνυμο',
+                    style: TextStyle(fontWeight: .bold),
+                  ),
+                ),
+                Expanded(
+                  flex: col2Flex,
+                  child: Text('ΑΓΜ', style: TextStyle(fontWeight: .bold)),
+                ),
+                Expanded(
+                  flex: col3Flex,
+                  child: Text(
+                    'Βαθμός/Ειδικότητα',
+                    style: TextStyle(fontWeight: .bold),
+                  ),
+                ),
+                Expanded(
+                  flex: col4Flex,
+                  child: Text('Τηλέφωνο', style: TextStyle(fontWeight: .bold)),
+                ),
+              ],
+            ),
           ),
-          Gap(10),
+          Gap(5),
           Expanded(
-            child: FutureBuilder(
-              future: _future,
+            child: StreamBuilder<List<Sailor>>(
+              stream: _stream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: ProgressRing());
@@ -154,21 +151,27 @@ class _KatalogosNdState extends State<KatalogosNd> {
                             'Failed to connect to the server. Please check your internet connection.\nServer message: SocketException',
                             textAlign: TextAlign.center,
                           ),
-                          Gap(10),
-                          Button(
-                            child: Text('Retry'),
-                            onPressed: () => _refreshData(),
-                          ),
                         ],
                       ),
                     );
                   }
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
+                  _allSailors = snapshot.data!;
+                  _displayedSailors = _searchQuery.isEmpty
+                      ? _allSailors
+                      : _allSailors
+                            .where(
+                              (s) => s.surname.toLowerCase().contains(
+                                _searchQuery,
+                              ),
+                            )
+                            .toList();
                   return ListView.builder(
                     itemCount: _displayedSailors.length,
                     itemBuilder: ((context, index) {
                       final Sailor sailor = _displayedSailors[index];
+
                       return HoverButton(
                         builder: (context, states) {
                           return Container(
@@ -182,20 +185,29 @@ class _KatalogosNdState extends State<KatalogosNd> {
                               vertical: padding,
                             ),
                             child: Row(
+                              spacing: 5,
                               mainAxisAlignment: .spaceBetween,
                               children: [
                                 Expanded(
+                                  flex: nameFlex,
                                   child: Text(
                                     '${sailor.surname} ${sailor.name}',
                                   ),
                                 ),
-                                Expanded(child: Text(sailor.agm)),
                                 Expanded(
+                                  flex: col2Flex,
+                                  child: Text(sailor.agm),
+                                ),
+                                Expanded(
+                                  flex: col3Flex,
                                   child: Text(
                                     '${sailor.rank.label} (${sailor.specialty.label})',
                                   ),
                                 ),
-                                Expanded(child: Text(sailor.mobile)),
+                                Expanded(
+                                  flex: col4Flex,
+                                  child: Text(sailor.mobile),
+                                ),
                               ],
                             ),
                           );
@@ -227,9 +239,5 @@ class _KatalogosNdState extends State<KatalogosNd> {
       context: context,
       builder: (context) => ShowCreateNdDialog(),
     );
-
-    setState(() {
-      _refreshData();
-    });
   }
 }

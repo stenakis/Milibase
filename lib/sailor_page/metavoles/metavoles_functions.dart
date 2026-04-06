@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-
 import '../../db/init_db.dart';
 import '../../main.dart';
 import '../../objects/metavoles.dart';
@@ -7,8 +6,9 @@ import '../../objects/metavoles.dart';
 Future<void> addNewMetavoli(Metavoles metavoli) async {
   await db
       .into(db.tableMetavoles)
-      .insert(
+      .insertOnConflictUpdate(
         TableMetavolesCompanion.insert(
+          id: Value(metavoli.id),
           sailorId: metavoli.sailorId,
           date: Value(metavoli.date),
           type: metavoli.type,

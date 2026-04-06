@@ -29,13 +29,11 @@ class FluentButton extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             borderRadius: .circular(5),
-            border: selected != null && selected!
-                ? null
-                : .all(width: 0.5, color: Colors.black.withAlpha(100)),
+
             color:
                 (selected != null && selected!
                         ? color ?? secColor
-                        : Colors.transparent)
+                        : secColor.withAlpha(75))
                     as Color?,
           ),
           width: width,
@@ -43,12 +41,12 @@ class FluentButton extends StatelessWidget {
           child: Padding(
             padding: .symmetric(
               horizontal: padding ?? 20,
-              vertical: padding != null ? padding! - 5 : 15,
+              vertical: padding != null ? padding! - 5 : 12,
             ),
             child: Row(
               spacing: 10,
               children: [
-                if (icon != null) SizedBox(height: 24, child: icon!),
+                if (icon != null) SizedBox(height: 24, child: icon),
                 if (text != null) Text(text!),
               ],
             ),

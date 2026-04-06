@@ -16,7 +16,7 @@ Typography getTypography(Brightness brightness) {
       fontWeight: FontWeight.bold,
       color: mainColor,
     ),
-    titleLarge: GoogleFonts.inter(fontSize: 35, fontWeight: FontWeight.bold),
+    titleLarge: GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.bold),
   );
 }
 

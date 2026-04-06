@@ -2,8 +2,11 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:milibase/katalogos_nd.dart';
 import 'package:milibase/main.dart';
 import 'package:milibase/settings.dart';
+import 'package:milibase/styles/button.dart';
+import 'package:milibase/vardies.dart';
 import 'package:milibase/variables.dart';
 
 class Navigation extends StatefulWidget {
@@ -16,7 +19,7 @@ class Navigation extends StatefulWidget {
 final GlobalKey<NavigatorState> mainInnerKey = GlobalKey<NavigatorState>();
 
 class _NavigationState extends State<Navigation> {
-  int selected = 0;
+  int selected = 1;
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -30,7 +33,6 @@ class _NavigationState extends State<Navigation> {
       header: Container(
         height: 60,
         color: Colors.white,
-
         child: Row(
           children: [
             Gap(padding),
@@ -43,9 +45,14 @@ class _NavigationState extends State<Navigation> {
             ),
 
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),
-            /* Button(
+            /*FluentButton(
+              selected: selected == 0,
+              text: 'Βάρδιες',
               onPressed: () {
-                _mainInnerKey.currentState?.push(
+                setState(() {
+                  selected = 0;
+                });
+                mainInnerKey.currentState?.pushReplacement(
                   FluentPageRoute(
                     builder: (context) {
                       return const VardiesPage();
@@ -53,45 +60,25 @@ class _NavigationState extends State<Navigation> {
                   ),
                 );
               },
-              child: Padding(
-                padding: .symmetric(vertical: 10),
-                child: Center(
-                  child: Row(
-                    children: [
-                      const WindowsIcon(WindowsIcons.arrow_down8, size: 24),
-                      Gap(10),
-                      const Text('Βάρδιες', style: TextStyle(fontSize: 10)),
-                    ],
-                  ),
-                ),
-              ),
             ),
             Gap(10),
-            Button(
+            FluentButton(
+              selected: selected == 1,
+              text: 'Βάση',
               onPressed: () {
-                _mainInnerKey.currentState?.push(
+                setState(() {
+                  selected = 1;
+                });
+                mainInnerKey.currentState?.pushReplacement(
                   FluentPageRoute(
                     builder: (context) {
-                      return const MyHomePage();
+                      return const KatalogosNd();
                     },
                   ),
                 );
               },
-              child: Padding(
-                padding: .symmetric(vertical: 10),
-                child: Center(
-                  child: Row(
-                    children: [
-                      const WindowsIcon(WindowsIcons.phone_book, size: 24),
-                      Gap(10),
-                      const Text('Κατάλογος', style: TextStyle(fontSize: 10)),
-                    ],
-                  ),
-                ),
-              ),
-            ),*/
-            Expanded(child: WindowTitleBarBox(child: MoveWindow())),
-
+            ),
+            Expanded(child: WindowTitleBarBox(child: MoveWindow())),*/
             Image.asset('assets/faron.png', height: 25),
             Gap(5),
             Text('Υπηρεσία Φάρων'),

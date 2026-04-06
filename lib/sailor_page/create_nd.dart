@@ -2,8 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:milibase/templates/info_bar.dart';
 import 'package:uuid/uuid.dart';
-
 import '../db/add_nd.dart';
 import '../objects/rank.dart';
 import '../objects/sailor.dart';
@@ -11,9 +11,8 @@ import '../objects/specialty.dart';
 import '../variables.dart';
 
 class ShowCreateNdDialog extends StatefulWidget {
-  final Sailor? sailor;
   const ShowCreateNdDialog({super.key, this.sailor});
-
+  final Sailor? sailor;
   @override
   State<ShowCreateNdDialog> createState() => _ShowCreateNdDialogState();
 }
@@ -39,6 +38,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
   late DateTime selectedRemovalDate;
   final validateKey = GlobalKey<FormState>();
   late DateTime now = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -71,7 +71,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
   Widget build(BuildContext context) {
     return ContentDialog(
       constraints: .tightFor(
-        width: MediaQuery.of(context).size.width * 75 / 100,
+        width: MediaQuery.of(context).size.width * 70 / 100,
       ),
       title: Row(
         children: [
@@ -435,27 +435,12 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                   setState(() {
                                     isLoading = false;
                                   });
-                                  Navigator.pop(
-                                    context,
-                                    widget.sailor != null ? newSailor : null,
-                                  );
+                                  Navigator.pop(context);
                                 } catch (error) {
-                                  await displayInfoBar(
-                                    context,
-                                    duration: Duration(seconds: 5),
-                                    builder: (context, close) {
-                                      return InfoBar(
-                                        title: const Text('An error occurred:'),
-                                        content: Text(error.toString()),
-                                        action: IconButton(
-                                          icon: const WindowsIcon(
-                                            WindowsIcons.error,
-                                          ),
-                                          onPressed: close,
-                                        ),
-                                        severity: InfoBarSeverity.error,
-                                      );
-                                    },
+                                  await showCustomInfoBar(
+                                    context: context,
+                                    text: error.toString(),
+                                    severity: .error,
                                   );
                                 }
                               }

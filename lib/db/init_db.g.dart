@@ -949,7 +949,7 @@ class $TableAdeiesTable extends TableAdeies
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => const {};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   TableAdey map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -1355,7 +1355,7 @@ class $TableMetavolesTable extends TableMetavoles
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => const {};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   TableMetavole map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -1788,7 +1788,7 @@ class $TableApomakrynseisTable extends TableApomakrynseis
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => const {};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   TableApomakrynsei map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -2098,6 +2098,176 @@ class TableApomakrynseisCompanion extends UpdateCompanion<TableApomakrynsei> {
   }
 }
 
+class $VarsTable extends Vars with TableInfo<$VarsTable, Var> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VarsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _prothemaShmatosMeta = const VerificationMeta(
+    'prothemaShmatos',
+  );
+  @override
+  late final GeneratedColumn<String> prothemaShmatos = GeneratedColumn<String>(
+    'prothema_shmatos',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [prothemaShmatos];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'vars';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Var> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('prothema_shmatos')) {
+      context.handle(
+        _prothemaShmatosMeta,
+        prothemaShmatos.isAcceptableOrUnknown(
+          data['prothema_shmatos']!,
+          _prothemaShmatosMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_prothemaShmatosMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {prothemaShmatos};
+  @override
+  Var map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Var(
+      prothemaShmatos: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}prothema_shmatos'],
+      )!,
+    );
+  }
+
+  @override
+  $VarsTable createAlias(String alias) {
+    return $VarsTable(attachedDatabase, alias);
+  }
+}
+
+class Var extends DataClass implements Insertable<Var> {
+  final String prothemaShmatos;
+  const Var({required this.prothemaShmatos});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['prothema_shmatos'] = Variable<String>(prothemaShmatos);
+    return map;
+  }
+
+  VarsCompanion toCompanion(bool nullToAbsent) {
+    return VarsCompanion(prothemaShmatos: Value(prothemaShmatos));
+  }
+
+  factory Var.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Var(
+      prothemaShmatos: serializer.fromJson<String>(json['prothemaShmatos']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'prothemaShmatos': serializer.toJson<String>(prothemaShmatos),
+    };
+  }
+
+  Var copyWith({String? prothemaShmatos}) =>
+      Var(prothemaShmatos: prothemaShmatos ?? this.prothemaShmatos);
+  Var copyWithCompanion(VarsCompanion data) {
+    return Var(
+      prothemaShmatos: data.prothemaShmatos.present
+          ? data.prothemaShmatos.value
+          : this.prothemaShmatos,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Var(')
+          ..write('prothemaShmatos: $prothemaShmatos')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => prothemaShmatos.hashCode;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Var && other.prothemaShmatos == this.prothemaShmatos);
+}
+
+class VarsCompanion extends UpdateCompanion<Var> {
+  final Value<String> prothemaShmatos;
+  final Value<int> rowid;
+  const VarsCompanion({
+    this.prothemaShmatos = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VarsCompanion.insert({
+    required String prothemaShmatos,
+    this.rowid = const Value.absent(),
+  }) : prothemaShmatos = Value(prothemaShmatos);
+  static Insertable<Var> custom({
+    Expression<String>? prothemaShmatos,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (prothemaShmatos != null) 'prothema_shmatos': prothemaShmatos,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VarsCompanion copyWith({Value<String>? prothemaShmatos, Value<int>? rowid}) {
+    return VarsCompanion(
+      prothemaShmatos: prothemaShmatos ?? this.prothemaShmatos,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (prothemaShmatos.present) {
+      map['prothema_shmatos'] = Variable<String>(prothemaShmatos.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VarsCompanion(')
+          ..write('prothemaShmatos: $prothemaShmatos, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2106,6 +2276,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TableMetavolesTable tableMetavoles = $TableMetavolesTable(this);
   late final $TableApomakrynseisTable tableApomakrynseis =
       $TableApomakrynseisTable(this);
+  late final $VarsTable vars = $VarsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2115,6 +2286,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tableAdeies,
     tableMetavoles,
     tableApomakrynseis,
+    vars,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -3896,6 +4068,116 @@ typedef $$TableApomakrynseisTableProcessedTableManager =
       TableApomakrynsei,
       PrefetchHooks Function({bool sailorId})
     >;
+typedef $$VarsTableCreateCompanionBuilder =
+    VarsCompanion Function({required String prothemaShmatos, Value<int> rowid});
+typedef $$VarsTableUpdateCompanionBuilder =
+    VarsCompanion Function({Value<String> prothemaShmatos, Value<int> rowid});
+
+class $$VarsTableFilterComposer extends Composer<_$AppDatabase, $VarsTable> {
+  $$VarsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get prothemaShmatos => $composableBuilder(
+    column: $table.prothemaShmatos,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$VarsTableOrderingComposer extends Composer<_$AppDatabase, $VarsTable> {
+  $$VarsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get prothemaShmatos => $composableBuilder(
+    column: $table.prothemaShmatos,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$VarsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VarsTable> {
+  $$VarsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get prothemaShmatos => $composableBuilder(
+    column: $table.prothemaShmatos,
+    builder: (column) => column,
+  );
+}
+
+class $$VarsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VarsTable,
+          Var,
+          $$VarsTableFilterComposer,
+          $$VarsTableOrderingComposer,
+          $$VarsTableAnnotationComposer,
+          $$VarsTableCreateCompanionBuilder,
+          $$VarsTableUpdateCompanionBuilder,
+          (Var, BaseReferences<_$AppDatabase, $VarsTable, Var>),
+          Var,
+          PrefetchHooks Function()
+        > {
+  $$VarsTableTableManager(_$AppDatabase db, $VarsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VarsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VarsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VarsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> prothemaShmatos = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) =>
+                  VarsCompanion(prothemaShmatos: prothemaShmatos, rowid: rowid),
+          createCompanionCallback:
+              ({
+                required String prothemaShmatos,
+                Value<int> rowid = const Value.absent(),
+              }) => VarsCompanion.insert(
+                prothemaShmatos: prothemaShmatos,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$VarsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VarsTable,
+      Var,
+      $$VarsTableFilterComposer,
+      $$VarsTableOrderingComposer,
+      $$VarsTableAnnotationComposer,
+      $$VarsTableCreateCompanionBuilder,
+      $$VarsTableUpdateCompanionBuilder,
+      (Var, BaseReferences<_$AppDatabase, $VarsTable, Var>),
+      Var,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3908,4 +4190,5 @@ class $AppDatabaseManager {
       $$TableMetavolesTableTableManager(_db, _db.tableMetavoles);
   $$TableApomakrynseisTableTableManager get tableApomakrynseis =>
       $$TableApomakrynseisTableTableManager(_db, _db.tableApomakrynseis);
+  $$VarsTableTableManager get vars => $$VarsTableTableManager(_db, _db.vars);
 }

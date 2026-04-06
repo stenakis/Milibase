@@ -1,13 +1,17 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:milibase/objects/adeies.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/adeies/adeies_functions.dart';
+import 'package:milibase/templates/info_bar.dart';
 import 'package:milibase/variables.dart';
+import 'package:uuid/uuid.dart';
 
 class ShowAdeiesDialog extends StatefulWidget {
-  const ShowAdeiesDialog({super.key, required this.sailor});
+  const ShowAdeiesDialog({super.key, required this.sailor, this.id});
   final Sailor sailor;
+  final Adeies? id;
   @override
   State<ShowAdeiesDialog> createState() => _ShowAdeiesDialogState();
 }
@@ -20,14 +24,32 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
   DateTime selectedEndDate = DateTime.now();
   Adeia selectedAdeia = Adeia.kanoniki;
   String statusText = 'Προσθήκη Άδειας';
-  TextEditingController simaController = TextEditingController();
+  late TextEditingController simaController;
+
+  @override
+  void initState() {
+    simaController = TextEditingController(
+      text: selectedAdeia == .oikos_nosileias || selectedAdeia == .anarrotiki
+          ? widget.id?.sima ?? ""
+          : '',
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: Row(
+        mainAxisAlignment: .spaceBetween,
         children: [
-          const Text('Νέα Άδεια'),
-          Spacer(),
+          Flexible(
+            child: Text(
+              widget.id == null ? 'Νέα Άδεια' : 'Επεξεργασία Άδειας',
+              overflow: .ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          Gap(10),
           IconButton(
             icon: WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
@@ -64,9 +86,11 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                 label: 'Σήμα',
                 child: TextFormBox(
                   controller: simaController,
-                  prefix: Row(children: [Gap(5), Text('WAF')]),
+                  placeholder: simaController.text.isEmpty
+                      ? 'Εισαγωγή σήματος'
+                      : widget.id?.sima ?? 'Εισαγωγή σήματος',
                   validator: (text) {
-                    if (text == '') {
+                    if (text == null || text.isEmpty) {
                       return 'Παρακαλώ συμπληρώστε το σήμα';
                     }
                     return null;
@@ -80,8 +104,10 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                   label: 'Έναρξη',
                   child: CalendarDatePicker(
                     locale: Locale('el'),
-                    placeholderText:
-                        '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}',
+                    placeholderText: DateFormat(
+                      'dd/MM/yy',
+                      'el',
+                    ).format(widget.id?.dateStart ?? selectedStartDate),
                     onSelectionChanged: (CalendarSelectionData data) {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
@@ -97,8 +123,10 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                   label: 'Λήξη',
                   child: CalendarDatePicker(
                     locale: Locale('el'),
-                    placeholderText:
-                        '${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}',
+                    placeholderText: DateFormat(
+                      'dd/MM/yy',
+                      'el',
+                    ).format(widget.id?.dateEnd ?? selectedEndDate),
                     onSelectionChanged: (CalendarSelectionData data) {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
@@ -124,31 +152,25 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                       isLoading = true;
                     });
                     try {
-                      await addNewAdeia(
-                        Adeies(
-                          type: selectedAdeia,
-                          dateStart: selectedStartDate,
-                          dateEnd: selectedEndDate,
-                          sailorId: widget.sailor.id,
-                          sima: 'WAF ${simaController.text}',
-                        ),
+                      final newAdeia = Adeies(
+                        id: widget.id != null ? widget.id!.id : Uuid().v4(),
+                        type: selectedAdeia,
+                        dateStart: selectedStartDate,
+                        dateEnd: selectedEndDate,
+                        sailorId: widget.sailor.id,
+                        sima: simaController.text,
                       );
-                      Navigator.pop(context, 'success');
-                    } catch (error) {
-                      await displayInfoBar(
-                        context,
-                        builder: (context, close) {
-                          return InfoBar(
-                            title: const Text('An error occurred:'),
-                            content: Text(error.toString()),
-                            action: IconButton(
-                              icon: const WindowsIcon(WindowsIcons.error),
-                              onPressed: close,
-                            ),
-                            severity: InfoBarSeverity.error,
-                          );
-                        },
-                      );
+                      await addNewAdeia(newAdeia);
+                      if (context.mounted && mounted) Navigator.pop(context);
+                    } catch (e) {
+                      print(e);
+                      if (context.mounted && mounted) {
+                        showCustomInfoBar(
+                          context: context,
+                          text: e.toString(),
+                          severity: .error,
+                        );
+                      }
                     } finally {
                       setState(() {
                         isLoading = false;

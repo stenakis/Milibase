@@ -16,7 +16,7 @@ part 'init_db.g.dart';
 String dbLocation = 'Φόρτωση...';
 
 @DriftDatabase(
-  tables: [TableAdeies, TableMetavoles, TableSailors, TableApomakrynseis],
+  tables: [TableAdeies, TableMetavoles, TableSailors, TableApomakrynseis, Vars],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -29,9 +29,6 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationSupportDirectory();
     final file = File(p.join(dbFolder.path, 'sailors_database.sqlite'));
-
-    // THIS LINE IS YOUR BEST FRIEND:
-    print('DATABASE PATH: ${file.path}');
     dbLocation = dbFolder.path;
 
     return NativeDatabase.createInBackground(file);

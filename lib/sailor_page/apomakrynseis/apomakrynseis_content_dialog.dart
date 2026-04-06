@@ -1,14 +1,18 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:milibase/objects/apomakrynseis.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_functions.dart';
+import 'package:milibase/templates/info_bar.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../variables.dart';
 
 class ShowApomakrynseisDialog extends StatefulWidget {
-  const ShowApomakrynseisDialog({super.key, required this.sailor});
+  const ShowApomakrynseisDialog({super.key, required this.sailor, this.id});
   final Sailor sailor;
+  final Apomakrynseis? id;
   @override
   State<ShowApomakrynseisDialog> createState() => _ShowApomakrynseisDialog();
 }
@@ -21,15 +25,32 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
   DateTime selectedEndDate = DateTime.now();
   Apomakrynsi selectedApomakrynsi = Apomakrynsi.apospasi;
   String statusText = 'Προσθήκη Απομάκρυνσης';
-  TextEditingController simaController = TextEditingController();
-  TextEditingController ypiresiaController = TextEditingController();
+  late TextEditingController simaController;
+  late TextEditingController ypiresiaController;
+
+  @override
+  void initState() {
+    simaController = TextEditingController(text: widget.id?.sima ?? "");
+    ypiresiaController = TextEditingController(text: widget.id?.ypiresia ?? "");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: Row(
+        mainAxisAlignment: .spaceBetween,
         children: [
-          const Text('Νέα Απομάκρυνση'),
-          Spacer(),
+          Flexible(
+            child: Text(
+              widget.id == null
+                  ? 'Νέα Απομάκρυνση'
+                  : 'Επεξεργασία Απομάκρυνσης',
+              overflow: .ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          Gap(10),
           IconButton(
             icon: WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
@@ -66,10 +87,12 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
             InfoLabel(
               label: 'Υπηρεσία',
               child: TextFormBox(
-                placeholder: 'Εισαγωγή υπηρεσίας',
+                placeholder: ypiresiaController.text.isEmpty
+                    ? 'Εισαγωγή υπηρεσίας'
+                    : widget.id?.ypiresia ?? 'Εισαγωγή υπηρεσίας',
                 controller: ypiresiaController,
                 validator: (text) {
-                  if (text == '') {
+                  if (text == null || text.isEmpty) {
                     return 'Παρακαλώ συμπληρώστε την υπηρεσία';
                   }
                   return null;
@@ -80,10 +103,12 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
             InfoLabel(
               label: 'Σήμα',
               child: TextFormBox(
-                prefix: Padding(padding: .only(left: 10), child: Text('WAF')),
+                placeholder: simaController.text.isEmpty
+                    ? 'Εισαγωγή σήματος'
+                    : widget.id?.sima ?? 'Εισαγωγή σήματος',
                 controller: simaController,
                 validator: (text) {
-                  if (text == '') {
+                  if (text == null || text.isEmpty) {
                     return 'Παρακαλώ συμπληρώστε το σήμα';
                   }
                   return null;
@@ -97,13 +122,17 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                   label: 'Έναρξη',
                   child: CalendarDatePicker(
                     locale: Locale('el'),
-                    placeholderText:
-                        '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}',
+                    placeholderText: DateFormat(
+                      'dd/MM/yy',
+                      'el',
+                    ).format(widget.id?.dateStart ?? selectedStartDate),
                     onSelectionChanged: (CalendarSelectionData data) {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
                           selectedStartDate = data.selectedDates.first;
-                          selectedEndDate = data.selectedDates.first;
+                          if (widget.id == null) {
+                            selectedEndDate = data.selectedDates.first;
+                          }
                         });
                       }
                     },
@@ -114,8 +143,10 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                   label: 'Λήξη',
                   child: CalendarDatePicker(
                     locale: Locale('el'),
-                    placeholderText:
-                        '${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}',
+                    placeholderText: DateFormat(
+                      'dd/MM/yy',
+                      'el',
+                    ).format(widget.id?.dateEnd ?? selectedEndDate),
                     onSelectionChanged: (CalendarSelectionData data) {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
@@ -137,40 +168,41 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    try {
-                      await addNewApomakrynsi(
-                        Apomakrynseis(
+                    if (selectedStartDate.isAfter(selectedEndDate)) {
+                      showCustomInfoBar(
+                        context: context,
+                        text:
+                            'Η ημερομηνία ένραξης πρέπει να είναι πριν την ημερομηνία λήξης.',
+                        severity: .warning,
+                      );
+                    } else {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      try {
+                        final newApomakrynsi = Apomakrynseis(
+                          id: widget.id != null ? widget.id!.id : Uuid().v4(),
                           type: selectedApomakrynsi,
                           dateStart: selectedStartDate,
                           dateEnd: selectedEndDate,
                           sailorId: widget.sailor.id,
                           sima: simaController.text,
                           ypiresia: ypiresiaController.text,
-                        ),
-                      );
-                      Navigator.pop(context, 'success');
-                    } catch (error) {
-                      await displayInfoBar(
-                        context,
-                        builder: (context, close) {
-                          return InfoBar(
-                            title: const Text('An error occurred:'),
-                            content: Text(error.toString()),
-                            action: IconButton(
-                              icon: const WindowsIcon(WindowsIcons.error),
-                              onPressed: close,
-                            ),
-                            severity: InfoBarSeverity.error,
+                        );
+                        await addNewApomakrynsi(newApomakrynsi);
+                        if (context.mounted && mounted) Navigator.pop(context);
+                      } catch (e) {
+                        if (context.mounted && mounted) {
+                          showCustomInfoBar(
+                            context: context,
+                            text: e.toString(),
                           );
-                        },
-                      );
-                    } finally {
-                      setState(() {
-                        isLoading = false;
-                      });
+                        }
+                      } finally {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
                     }
                   }
                 },

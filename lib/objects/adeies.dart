@@ -39,7 +39,7 @@ enum Adeia {
 }
 
 class Adeies {
-  final String? id;
+  final String id;
   final Adeia type;
   final DateTime dateStart;
   final DateTime dateEnd;
@@ -47,7 +47,7 @@ class Adeies {
   final String? sima;
 
   Adeies({
-    this.id,
+    required this.id,
     required this.type,
     required this.dateStart,
     required this.dateEnd,
@@ -62,10 +62,9 @@ class Adeies {
     return DateTime.parse(date.toString());
   }
 
-  // Parse the String from Supabase back into a Dart DateTime
   factory Adeies.fromJson(Map<String, dynamic> json) {
     return Adeies(
-      id: json['id'],
+      id: json['id']?.toString() ?? '',
       type: Adeia.fromString(json['type']),
       dateStart: _parseDate(json['dateStart']),
       dateEnd: _parseDate(json['dateEnd']),

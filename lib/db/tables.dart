@@ -4,7 +4,6 @@ import '../objects/apomakrynseis.dart';
 import '../objects/metavoles.dart';
 import '../objects/specialty.dart';
 import 'package:uuid/uuid.dart';
-
 import '../objects/rank.dart';
 
 // dart run build_runner build --delete-conflicting-outputs
@@ -37,6 +36,16 @@ class TableAdeies extends Table {
   TextColumn get sima => text()();
   TextColumn get sailorId =>
       text().references(TableSailors, #id, onDelete: KeyAction.cascade)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class Vars extends Table {
+  TextColumn get prothemaShmatos => text()();
+
+  @override
+  Set<Column> get primaryKey => {prothemaShmatos};
 }
 
 class TableApomakrynseis extends Table {
@@ -48,6 +57,9 @@ class TableApomakrynseis extends Table {
   TextColumn get ypiresia => text()();
   TextColumn get sailorId =>
       text().references(TableSailors, #id, onDelete: KeyAction.cascade)();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class TableMetavoles extends Table {
@@ -58,4 +70,7 @@ class TableMetavoles extends Table {
   TextColumn get sailorId =>
       text().references(TableSailors, #id, onDelete: KeyAction.cascade)();
   IntColumn get duration => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }

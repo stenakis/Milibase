@@ -1,14 +1,14 @@
 import 'package:drift/drift.dart';
 import '../../objects/adeies.dart';
-
 import '../../db/init_db.dart';
 import '../../main.dart';
 
 Future<void> addNewAdeia(Adeies adeia) async {
   await db
       .into(db.tableAdeies)
-      .insert(
+      .insertOnConflictUpdate(
         TableAdeiesCompanion.insert(
+          id: Value(adeia.id),
           sailorId: adeia.sailorId,
           dateStart: Value(adeia.dateStart),
           dateEnd: Value(adeia.dateEnd),

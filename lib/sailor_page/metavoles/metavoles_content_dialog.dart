@@ -1,14 +1,18 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
+import 'package:milibase/templates/info_bar.dart';
 import 'package:milibase/variables.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../objects/metavoles.dart';
 import 'metavoles_functions.dart';
 
 class ShowMetavolesDialog extends StatefulWidget {
-  const ShowMetavolesDialog({super.key, required this.sailor});
+  const ShowMetavolesDialog({super.key, required this.sailor, this.id});
   final Sailor sailor;
+  final Metavoles? id;
   @override
   State<ShowMetavolesDialog> createState() => _ShowMetavolesDialog();
 }
@@ -21,15 +25,29 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   DateTime selectedDate = DateTime.now();
   Metavoli selectedMetavoli = Metavoli.meiomeni;
   String statusText = 'Προσθήκη Μεταβολής';
-  TextEditingController simaController = TextEditingController();
+  late TextEditingController simaController;
   int selectedDuration = 9;
+
+  @override
+  void initState() {
+    simaController = TextEditingController(text: widget.id?.sima ?? "");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: Row(
+        mainAxisAlignment: .spaceBetween,
         children: [
-          const Text('Νέα Μεταβολή'),
-          Spacer(),
+          Flexible(
+            child: Text(
+              widget.id == null ? 'Νέα Μεταβολή' : 'Επεξεργασία Μεταβολή',
+              overflow: .ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          Gap(10),
           IconButton(
             icon: WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
@@ -102,10 +120,12 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
             InfoLabel(
               label: 'Σήμα',
               child: TextFormBox(
-                prefix: Padding(padding: .only(left: 10), child: Text('WAF')),
+                placeholder: simaController.text.isEmpty
+                    ? 'Εισαγωγή σήματος'
+                    : widget.id?.sima ?? 'Εισαγωγή σήματος',
                 controller: simaController,
                 validator: (text) {
-                  if (text == '') {
+                  if (text == null || text.isEmpty) {
                     return 'Παρακαλώ συμπληρώστε το σήμα';
                   }
                   return null;
@@ -117,8 +137,10 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
               label: 'Ημερομηνία',
               child: CalendarDatePicker(
                 locale: Locale('el'),
-                placeholderText:
-                    '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                placeholderText: DateFormat(
+                  'dd/MM/yy',
+                  'el',
+                ).format(widget.id?.date ?? selectedDate),
                 onSelectionChanged: (CalendarSelectionData data) {
                   if (data.selectedDates.isNotEmpty) {
                     setState(() {
@@ -142,32 +164,24 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                       isLoading = true;
                     });
                     try {
-                      await addNewMetavoli(
-                        Metavoles(
-                          type: selectedMetavoli,
-                          date: selectedDate,
-                          sailorId: widget.sailor.id,
-                          sima: 'WAF ${simaController.text}',
-                          duration: selectedDuration,
-                        ),
+                      final newMetavoli = Metavoles(
+                        id: widget.id != null ? widget.id!.id : Uuid().v4(),
+                        type: selectedMetavoli,
+                        date: selectedDate,
+                        sailorId: widget.sailor.id,
+                        sima: simaController.text,
+                        duration: selectedDuration,
                       );
-                      Navigator.pop(context, 'success');
-                    } catch (error) {
-                      print(error);
-                      await displayInfoBar(
-                        context,
-                        builder: (context, close) {
-                          return InfoBar(
-                            title: const Text('An error occurred:'),
-                            content: Text(error.toString()),
-                            action: IconButton(
-                              icon: const WindowsIcon(WindowsIcons.error),
-                              onPressed: close,
-                            ),
-                            severity: InfoBarSeverity.error,
-                          );
-                        },
-                      );
+                      await addNewMetavoli(newMetavoli);
+                      if (context.mounted && mounted) Navigator.pop(context);
+                    } catch (e) {
+                      if (context.mounted && mounted) {
+                        showCustomInfoBar(
+                          context: context,
+                          text: e.toString(),
+                          severity: .error,
+                        );
+                      }
                     } finally {
                       setState(() {
                         isLoading = false;

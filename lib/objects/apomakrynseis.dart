@@ -32,7 +32,7 @@ enum Apomakrynsi {
 }
 
 class Apomakrynseis {
-  final String? id;
+  final String id;
   final Apomakrynsi type;
   final DateTime dateStart;
   final DateTime dateEnd;
@@ -41,7 +41,7 @@ class Apomakrynseis {
   final String ypiresia;
 
   Apomakrynseis({
-    this.id,
+    required this.id,
     required this.type,
     required this.dateStart,
     required this.dateEnd,
