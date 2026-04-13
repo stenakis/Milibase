@@ -4,8 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/templates/delete_button.dart';
 import 'package:milibase/variables.dart';
+
 import '../../main.dart';
 import '../../objects/metavoles.dart';
+import '../../styles/colors.dart';
+import '../../templates/info_bar.dart';
 import 'metavoles_content_dialog.dart';
 import 'metavoles_functions.dart';
 
@@ -43,6 +46,10 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
           return const Center(child: ProgressRing());
         }
         if (snapshot.hasError) {
+          showCustomInfoBar(
+            context: context,
+            text: snapshot.error.toString(),
+          );
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final List<Metavoles> metavoles = snapshot.data!;
@@ -119,12 +126,16 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                 if (metavoles.isNotEmpty) Gap(padding * 1.5),
                 Gap(10),
                 metavoles.isEmpty
-                    ? Text(
-                        'Δεν υπάρχουν καταχωρημένες μεταβολές.',
-                        textAlign: .center,
-                      )
-                    : Padding(
-                        padding: .symmetric(horizontal: padding),
+                    ? Text('Δεν υπάρχουν καταχωρημένες μεταβολές.')
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: secColor,
+                          borderRadius: .only(
+                            topRight: .circular(5),
+                            topLeft: .circular(5),
+                          ),
+                        ),
+                        padding: .symmetric(horizontal: padding, vertical: 10),
                         child: Row(
                           spacing: 5,
                           children: [
@@ -159,76 +170,79 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                           ],
                         ),
                       ),
-                Gap(5),
+
                 Expanded(
-                  child: ListView(
+                  child: ListView.separated(
                     padding: .only(bottom: padding),
-                    children: sortedMetavoles
-                        .map(
-                          (metavoli) => Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: .circular(5),
-                            ),
-                            margin: .symmetric(vertical: 5),
-                            padding: .symmetric(
-                              horizontal: padding,
-                              vertical: padding - 5,
-                            ),
-                            child: Row(
-                              spacing: 5,
-                              children: [
-                                Expanded(
-                                  flex: col1Flex,
-                                  child: Text(
-                                    metavoli.type == .meiomeni
-                                        ? 'Μεταφέρθηκε στους υπόχρεους ${metavoli.duration}μηνης θητείας'
-                                        : metavoli.type == .ekkremei
-                                        ? 'Υπέχει στρατολογική εκκρεμότητα'
-                                        : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: col2Flex,
-                                  child: Text(
-                                    DateFormat(
-                                      'EEE dd MMM yy',
-                                      'el',
-                                    ).format(metavoli.date),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: col3Flex,
-                                  child: Text(metavoli.sima),
-                                ),
-                                Expanded(
-                                  flex: col6Flex,
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const WindowsIcon(
-                                          WindowsIcons.edit,
-                                        ),
-                                        onPressed: () => showContentDialog(
-                                          context,
-                                          metavoli,
-                                        ),
-                                      ),
-                                      Gap(5),
-                                      DeleteFlyout(
-                                        title: 'Διαγραφή μεταβολής;',
-                                        onPressed: () async {
-                                          await deleteMetavoli(metavoli.id);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                    separatorBuilder: (context, _) => Divider(),
+                    itemCount: metavoles.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final metavoli = sortedMetavoles[index];
+                      final isLast = index == metavoles.length - 1;
+                      final bottomRadius = Radius.circular(isLast ? 5 : 0);
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: .only(
+                            bottomLeft: bottomRadius,
+                            bottomRight: bottomRadius,
                           ),
-                        )
-                        .toList(),
+                        ),
+
+                        padding: .symmetric(
+                          horizontal: padding,
+                          vertical: padding - 5,
+                        ),
+                        child: Row(
+                          spacing: 5,
+                          children: [
+                            Expanded(
+                              flex: col1Flex,
+                              child: Text(
+                                metavoli.type == .meiomeni
+                                    ? 'Μεταφέρθηκε στους υπόχρεους ${metavoli.duration}μηνης θητείας'
+                                    : metavoli.type == .ekkremei
+                                    ? 'Υπέχει στρατολογική εκκρεμότητα'
+                                    : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
+                              ),
+                            ),
+                            Expanded(
+                              flex: col2Flex,
+                              child: Text(
+                                DateFormat(
+                                  'EEE dd MMM yy',
+                                  'el',
+                                ).format(metavoli.date),
+                              ),
+                            ),
+                            Expanded(
+                              flex: col3Flex,
+                              child: Text(metavoli.sima),
+                            ),
+                            Expanded(
+                              flex: col6Flex,
+                              child: Row(
+                                mainAxisAlignment: .end,
+                                children: [
+                                  IconButton(
+                                    icon: const WindowsIcon(WindowsIcons.edit),
+                                    onPressed: () =>
+                                        showContentDialog(context, metavoli),
+                                  ),
+                                  Gap(5),
+                                  DeleteFlyout(
+                                    title: 'Διαγραφή μεταβολής;',
+                                    onPressed: () async {
+                                      await deleteMetavoli(metavoli.id);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

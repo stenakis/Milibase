@@ -223,7 +223,9 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                       ),
                     ),
                     Text(
-                      '$dateUntilRemoval μέρες μέχρι την απόλυση',
+                      dateUntilRemoval > 0
+                          ? '$dateUntilRemoval μέρες μέχρι την απόλυση'
+                          : 'Απολύθηκε πριν ${dateUntilRemoval.abs()} ημέρες',
                       style: TextStyle(color: primary),
                     ),
                   ],

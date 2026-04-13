@@ -152,6 +152,21 @@ class $TableSailorsTable extends TableSailors
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _avardiotosMeta = const VerificationMeta(
+    'avardiotos',
+  );
+  @override
+  late final GeneratedColumn<bool> avardiotos = GeneratedColumn<bool>(
+    'avardiotos',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("avardiotos" IN (0, 1))',
+    ),
+    clientDefault: () => false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -168,6 +183,7 @@ class $TableSailorsTable extends TableSailors
     dateArrival,
     dateInsert,
     dateRemoval,
+    avardiotos,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -281,6 +297,12 @@ class $TableSailorsTable extends TableSailors
     } else if (isInserting) {
       context.missing(_dateRemovalMeta);
     }
+    if (data.containsKey('avardiotos')) {
+      context.handle(
+        _avardiotosMeta,
+        avardiotos.isAcceptableOrUnknown(data['avardiotos']!, _avardiotosMeta),
+      );
+    }
     return context;
   }
 
@@ -350,6 +372,10 @@ class $TableSailorsTable extends TableSailors
         DriftSqlType.dateTime,
         data['${effectivePrefix}date_removal'],
       )!,
+      avardiotos: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}avardiotos'],
+      )!,
     );
   }
 
@@ -379,6 +405,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
   final DateTime dateArrival;
   final DateTime dateInsert;
   final DateTime dateRemoval;
+  final bool avardiotos;
   const TableSailor({
     required this.id,
     required this.name,
@@ -394,6 +421,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
     required this.dateArrival,
     required this.dateInsert,
     required this.dateRemoval,
+    required this.avardiotos,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -420,6 +448,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
     map['date_arrival'] = Variable<DateTime>(dateArrival);
     map['date_insert'] = Variable<DateTime>(dateInsert);
     map['date_removal'] = Variable<DateTime>(dateRemoval);
+    map['avardiotos'] = Variable<bool>(avardiotos);
     return map;
   }
 
@@ -439,6 +468,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
       dateArrival: Value(dateArrival),
       dateInsert: Value(dateInsert),
       dateRemoval: Value(dateRemoval),
+      avardiotos: Value(avardiotos),
     );
   }
 
@@ -466,6 +496,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
       dateArrival: serializer.fromJson<DateTime>(json['dateArrival']),
       dateInsert: serializer.fromJson<DateTime>(json['dateInsert']),
       dateRemoval: serializer.fromJson<DateTime>(json['dateRemoval']),
+      avardiotos: serializer.fromJson<bool>(json['avardiotos']),
     );
   }
   @override
@@ -490,6 +521,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
       'dateArrival': serializer.toJson<DateTime>(dateArrival),
       'dateInsert': serializer.toJson<DateTime>(dateInsert),
       'dateRemoval': serializer.toJson<DateTime>(dateRemoval),
+      'avardiotos': serializer.toJson<bool>(avardiotos),
     };
   }
 
@@ -508,6 +540,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
     DateTime? dateArrival,
     DateTime? dateInsert,
     DateTime? dateRemoval,
+    bool? avardiotos,
   }) => TableSailor(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -523,6 +556,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
     dateArrival: dateArrival ?? this.dateArrival,
     dateInsert: dateInsert ?? this.dateInsert,
     dateRemoval: dateRemoval ?? this.dateRemoval,
+    avardiotos: avardiotos ?? this.avardiotos,
   );
   TableSailor copyWithCompanion(TableSailorsCompanion data) {
     return TableSailor(
@@ -548,6 +582,9 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
       dateRemoval: data.dateRemoval.present
           ? data.dateRemoval.value
           : this.dateRemoval,
+      avardiotos: data.avardiotos.present
+          ? data.avardiotos.value
+          : this.avardiotos,
     );
   }
 
@@ -567,7 +604,8 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
           ..write('servingMonths: $servingMonths, ')
           ..write('dateArrival: $dateArrival, ')
           ..write('dateInsert: $dateInsert, ')
-          ..write('dateRemoval: $dateRemoval')
+          ..write('dateRemoval: $dateRemoval, ')
+          ..write('avardiotos: $avardiotos')
           ..write(')'))
         .toString();
   }
@@ -588,6 +626,7 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
     dateArrival,
     dateInsert,
     dateRemoval,
+    avardiotos,
   );
   @override
   bool operator ==(Object other) =>
@@ -606,7 +645,8 @@ class TableSailor extends DataClass implements Insertable<TableSailor> {
           other.servingMonths == this.servingMonths &&
           other.dateArrival == this.dateArrival &&
           other.dateInsert == this.dateInsert &&
-          other.dateRemoval == this.dateRemoval);
+          other.dateRemoval == this.dateRemoval &&
+          other.avardiotos == this.avardiotos);
 }
 
 class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
@@ -624,6 +664,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
   final Value<DateTime> dateArrival;
   final Value<DateTime> dateInsert;
   final Value<DateTime> dateRemoval;
+  final Value<bool> avardiotos;
   final Value<int> rowid;
   const TableSailorsCompanion({
     this.id = const Value.absent(),
@@ -640,6 +681,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
     this.dateArrival = const Value.absent(),
     this.dateInsert = const Value.absent(),
     this.dateRemoval = const Value.absent(),
+    this.avardiotos = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TableSailorsCompanion.insert({
@@ -657,6 +699,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
     required DateTime dateArrival,
     required DateTime dateInsert,
     required DateTime dateRemoval,
+    this.avardiotos = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name),
        surname = Value(surname),
@@ -686,6 +729,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
     Expression<DateTime>? dateArrival,
     Expression<DateTime>? dateInsert,
     Expression<DateTime>? dateRemoval,
+    Expression<bool>? avardiotos,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -703,6 +747,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
       if (dateArrival != null) 'date_arrival': dateArrival,
       if (dateInsert != null) 'date_insert': dateInsert,
       if (dateRemoval != null) 'date_removal': dateRemoval,
+      if (avardiotos != null) 'avardiotos': avardiotos,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -722,6 +767,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
     Value<DateTime>? dateArrival,
     Value<DateTime>? dateInsert,
     Value<DateTime>? dateRemoval,
+    Value<bool>? avardiotos,
     Value<int>? rowid,
   }) {
     return TableSailorsCompanion(
@@ -739,6 +785,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
       dateArrival: dateArrival ?? this.dateArrival,
       dateInsert: dateInsert ?? this.dateInsert,
       dateRemoval: dateRemoval ?? this.dateRemoval,
+      avardiotos: avardiotos ?? this.avardiotos,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -792,6 +839,9 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
     if (dateRemoval.present) {
       map['date_removal'] = Variable<DateTime>(dateRemoval.value);
     }
+    if (avardiotos.present) {
+      map['avardiotos'] = Variable<bool>(avardiotos.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -815,6 +865,7 @@ class TableSailorsCompanion extends UpdateCompanion<TableSailor> {
           ..write('dateArrival: $dateArrival, ')
           ..write('dateInsert: $dateInsert, ')
           ..write('dateRemoval: $dateRemoval, ')
+          ..write('avardiotos: $avardiotos, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2330,6 +2381,7 @@ typedef $$TableSailorsTableCreateCompanionBuilder =
       required DateTime dateArrival,
       required DateTime dateInsert,
       required DateTime dateRemoval,
+      Value<bool> avardiotos,
       Value<int> rowid,
     });
 typedef $$TableSailorsTableUpdateCompanionBuilder =
@@ -2348,6 +2400,7 @@ typedef $$TableSailorsTableUpdateCompanionBuilder =
       Value<DateTime> dateArrival,
       Value<DateTime> dateInsert,
       Value<DateTime> dateRemoval,
+      Value<bool> avardiotos,
       Value<int> rowid,
     });
 
@@ -2500,6 +2553,11 @@ class $$TableSailorsTableFilterComposer
 
   ColumnFilters<DateTime> get dateRemoval => $composableBuilder(
     column: $table.dateRemoval,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get avardiotos => $composableBuilder(
+    column: $table.avardiotos,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2657,6 +2715,11 @@ class $$TableSailorsTableOrderingComposer
     column: $table.dateRemoval,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get avardiotos => $composableBuilder(
+    column: $table.avardiotos,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TableSailorsTableAnnotationComposer
@@ -2715,6 +2778,11 @@ class $$TableSailorsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get dateRemoval => $composableBuilder(
     column: $table.dateRemoval,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get avardiotos => $composableBuilder(
+    column: $table.avardiotos,
     builder: (column) => column,
   );
 
@@ -2841,6 +2909,7 @@ class $$TableSailorsTableTableManager
                 Value<DateTime> dateArrival = const Value.absent(),
                 Value<DateTime> dateInsert = const Value.absent(),
                 Value<DateTime> dateRemoval = const Value.absent(),
+                Value<bool> avardiotos = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TableSailorsCompanion(
                 id: id,
@@ -2857,6 +2926,7 @@ class $$TableSailorsTableTableManager
                 dateArrival: dateArrival,
                 dateInsert: dateInsert,
                 dateRemoval: dateRemoval,
+                avardiotos: avardiotos,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2875,6 +2945,7 @@ class $$TableSailorsTableTableManager
                 required DateTime dateArrival,
                 required DateTime dateInsert,
                 required DateTime dateRemoval,
+                Value<bool> avardiotos = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TableSailorsCompanion.insert(
                 id: id,
@@ -2891,6 +2962,7 @@ class $$TableSailorsTableTableManager
                 dateArrival: dateArrival,
                 dateInsert: dateInsert,
                 dateRemoval: dateRemoval,
+                avardiotos: avardiotos,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

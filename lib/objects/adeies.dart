@@ -24,18 +24,6 @@ enum Adeia {
         }[this] ??
         'Κανονική';
   }
-
-  String get enumType {
-    return {
-          Adeia.kanoniki: 'kanoniki',
-          Adeia.aimodotiki: 'aimodotiki',
-          Adeia.proforiki: 'proforiki',
-          Adeia.timitiki: 'timitiki',
-          Adeia.anarrotiki: 'anarrotiki',
-          Adeia.oikos_nosileias: 'oikos_nosileias:',
-        }[this] ??
-        'kanoniki';
-  }
 }
 
 class Adeies {

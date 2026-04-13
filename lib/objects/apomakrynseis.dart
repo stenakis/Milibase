@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 enum Apomakrynsi {
   diathesi,
   apospasi,
@@ -19,15 +17,6 @@ enum Apomakrynsi {
           Apomakrynsi.metathesi: 'Μετάθεση',
         }[this] ??
         'Απόσπαση';
-  }
-
-  String get enumType {
-    return {
-          Apomakrynsi.apospasi: 'apospasi',
-          Apomakrynsi.diathesi: 'diathesi',
-          Apomakrynsi.metathesi: 'metathesi',
-        }[this] ??
-        'apospasi';
   }
 }
 
@@ -49,15 +38,6 @@ class Apomakrynseis {
     required this.ypiresia,
     required this.sima,
   });
-
-  Map<String, dynamic> toJson() => {
-    'type': type.enumType,
-    'dateStart': DateFormat('yyyy-MM-dd').format(dateStart),
-    'dateEnd': DateFormat('yyyy-MM-dd').format(dateEnd),
-    'sailorId': sailorId,
-    'ypiresia': ypiresia,
-    'sima': sima,
-  };
 
   static DateTime _parseDate(dynamic date) {
     if (date is int) {

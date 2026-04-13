@@ -27,7 +27,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
   String statusText = 'Προσθήκη Απομάκρυνσης';
   late TextEditingController simaController;
   late TextEditingController ypiresiaController;
-
+  bool enableEnd = true;
   @override
   void initState() {
     simaController = TextEditingController(text: widget.id?.sima ?? "");
@@ -117,6 +117,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
             ),
             Gap(padding),
             Row(
+              crossAxisAlignment: .start,
               children: [
                 InfoLabel(
                   label: 'Έναρξη',
@@ -139,22 +140,38 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                   ),
                 ),
                 Gap(10),
-                InfoLabel(
-                  label: 'Λήξη',
-                  child: CalendarDatePicker(
-                    locale: Locale('el'),
-                    placeholderText: DateFormat(
-                      'dd/MM/yy',
-                      'el',
-                    ).format(widget.id?.dateEnd ?? selectedEndDate),
-                    onSelectionChanged: (CalendarSelectionData data) {
-                      if (data.selectedDates.isNotEmpty) {
-                        setState(() {
-                          selectedEndDate = data.selectedDates.first;
-                        });
-                      }
-                    },
-                  ),
+                Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    Row(
+                      children: [
+                        Text('Λήξη'),
+                        Gap(10),
+                        ToggleSwitch(
+                          checked: enableEnd,
+                          onChanged: (change) =>
+                              setState(() => enableEnd = change),
+                        ),
+                      ],
+                    ),
+
+                    enableEnd
+                        ? CalendarDatePicker(
+                            locale: Locale('el'),
+                            placeholderText: DateFormat(
+                              'dd/MM/yy',
+                              'el',
+                            ).format(widget.id?.dateEnd ?? selectedEndDate),
+                            onSelectionChanged: (CalendarSelectionData data) {
+                              if (data.selectedDates.isNotEmpty) {
+                                setState(() {
+                                  selectedEndDate = data.selectedDates.first;
+                                });
+                              }
+                            },
+                          )
+                        : SizedBox.shrink(),
+                  ],
                 ),
               ],
             ),
@@ -184,7 +201,9 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                           id: widget.id != null ? widget.id!.id : Uuid().v4(),
                           type: selectedApomakrynsi,
                           dateStart: selectedStartDate,
-                          dateEnd: selectedEndDate,
+                          dateEnd: enableEnd
+                              ? selectedEndDate
+                              : widget.sailor.dateRemoval,
                           sailorId: widget.sailor.id,
                           sima: simaController.text,
                           ypiresia: ypiresiaController.text,

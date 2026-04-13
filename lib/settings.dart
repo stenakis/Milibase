@@ -7,7 +7,6 @@ import 'package:milibase/variables.dart';
 import 'package:open_folder/open_folder.dart';
 import 'package:super_bullet_list/bullet_list.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'main.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -60,7 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: TextStyle(fontSize: 20, fontWeight: .bold),
                   ),
                   Gap(5),
-                  Text('$dbLocation/sailors_database.sqlite'),
+                  Text('$dbLocation\\sailors_database.sqlite'),
                   Gap(5),
                   Button(
                     child: Text('Άνοιγμα στην εξερεύνηση'),
@@ -112,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: SvgPicture.asset('assets/logo_large.svg'),
                   ),
                   Gap(10),
-                  Text('Έκδοση 0.4'),
+                  Text('Έκδοση 0.5'),
                   Gap(padding),
                   Text('Σε αυτή την έκδοση:'),
                   Gap(5),
@@ -120,9 +119,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     iconSize: 5,
                     separator: Gap(0),
                     gap: 5,
-                    items: [Text('Επεξεργασία μεταβολών')],
+                    items: [
+                      Text('Εμφάνιση κατάστασης Ν/Δ στην αρχική οθόνη'),
+                      Text(
+                        'Συμπυκνωμένη εμφάνιση για καλύτερη προοβολή σε μικρές οθόνες',
+                      ),
+                      Text(
+                        'Προαιρετική εισαγωγή ημερομηνίας λήξης απομάκρνυνσης',
+                      ),
+                      Text('Προσθήκη ονόματος και ΑΓΜ στην αναζήτηση Ν/Δ'),
+                    ],
                   ),
-
                   Spacer(),
                   Text('Σχεδιασμός & Υλοποίηση'),
                   Gap(padding),

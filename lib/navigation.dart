@@ -2,12 +2,13 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:milibase/katalogos_nd.dart';
 import 'package:milibase/main.dart';
 import 'package:milibase/settings.dart';
 import 'package:milibase/styles/button.dart';
-import 'package:milibase/vardies.dart';
+import 'package:milibase/vardies/vardies.dart';
 import 'package:milibase/variables.dart';
+
+import 'katalogos_nd.dart';
 
 class Navigation extends StatefulWidget {
   const Navigation({super.key});
@@ -43,9 +44,8 @@ class _NavigationState extends State<Navigation> {
                 context,
               ).typography.title?.copyWith(color: Colors.white),
             ),
-
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),
-            /*FluentButton(
+            FluentButton(
               selected: selected == 0,
               text: 'Βάρδιες',
               onPressed: () {
@@ -78,7 +78,7 @@ class _NavigationState extends State<Navigation> {
                 );
               },
             ),
-            Expanded(child: WindowTitleBarBox(child: MoveWindow())),*/
+            Expanded(child: WindowTitleBarBox(child: MoveWindow())),
             Image.asset('assets/faron.png', height: 25),
             Gap(5),
             Text('Υπηρεσία Φάρων'),

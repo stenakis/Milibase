@@ -16,7 +16,7 @@ class Sailor {
   final DateTime dateArrival;
   final DateTime dateInsert;
   final DateTime dateRemoval;
-
+  final bool avardiotos;
   Sailor({
     this.id = '',
     required this.name,
@@ -32,6 +32,7 @@ class Sailor {
     required this.dateRemoval,
     required this.rank,
     required this.servingMonths,
+    this.avardiotos = false,
   });
 
   factory Sailor.fromJson(Map<String, dynamic> json) {
@@ -47,12 +48,16 @@ class Sailor {
       landline: json['landline']?.toString() ?? '',
       education: json['education']?.toString() ?? '',
       servingMonths: (json['servingMonths'] as num?)?.toInt() ?? 0,
-      dateArrival:
-          DateTime.fromMicrosecondsSinceEpoch(json['dateArrival'].toInt() *1000),
-      dateInsert:
-           DateTime.fromMicrosecondsSinceEpoch(json['dateInsert'].toInt() *1000),
-      dateRemoval:
-         DateTime.fromMicrosecondsSinceEpoch(json['dateRemoval'].toInt() *1000)
+      dateArrival: DateTime.fromMicrosecondsSinceEpoch(
+        json['dateArrival'].toInt() * 1000,
+      ),
+      dateInsert: DateTime.fromMicrosecondsSinceEpoch(
+        json['dateInsert'].toInt() * 1000,
+      ),
+      dateRemoval: DateTime.fromMicrosecondsSinceEpoch(
+        json['dateRemoval'].toInt() * 1000,
+      ),
+      avardiotos: json['avardiotos'] ?? false,
     );
   }
 }

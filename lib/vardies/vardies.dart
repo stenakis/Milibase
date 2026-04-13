@@ -3,9 +3,11 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/styles/colors.dart';
+import 'package:milibase/vardies/generate_vardies.dart';
 import 'package:milibase/variables.dart';
 
-import 'main.dart';
+import '../main.dart';
+import '../templates/info_bar.dart';
 
 class VardiesPage extends StatefulWidget {
   const VardiesPage({super.key});
@@ -15,7 +17,7 @@ class VardiesPage extends StatefulWidget {
 }
 
 class _VardiesPageState extends State<VardiesPage> {
-  late List<List<Sailor>> vardies = [];
+  List<List<Sailor>> vardies = [];
   late Future<List<Sailor>> _future;
   @override
   void initState() {
@@ -66,85 +68,70 @@ class _VardiesPageState extends State<VardiesPage> {
   Widget build(BuildContext context) {
     return ScaffoldPage.withPadding(
       padding: .only(left: padding + 10, right: padding + 10, top: 15),
-      content: Column(
-        crossAxisAlignment: .start,
-        children: [
-          Row(
-            children: [
-              Text('Βάρδιες', style: FluentTheme.of(context).typography.title),
-              Spacer(),
-              FilledButton(
-                child: Row(
-                  mainAxisSize: .min,
+      content: FutureBuilder<List<Sailor>>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: ProgressRing());
+          }
+          if (snapshot.hasError) {
+            showCustomInfoBar(
+              context: context,
+              text: snapshot.error.toString(),
+            );
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            return Column(
+              crossAxisAlignment: .start,
+              children: [
+                Row(
                   children: [
-                    Icon(FluentIcons.add),
-                    Gap(5),
-                    Text('Προσθήκη Ν/Δ'),
+                    Text(
+                      'Βάρδιες',
+                      style: FluentTheme.of(context).typography.title,
+                    ),
+                    Spacer(),
+                    FilledButton(
+                      child: Row(
+                        mainAxisSize: .min,
+                        children: [
+                          Icon(FluentIcons.add),
+                          Gap(5),
+                          Text('Δημιουργία βάρδιας'),
+                        ],
+                      ),
+                      onPressed: () => setState(() {
+                        vardies = generateVardies(snapshot.data!);
+                      }),
+
+                      //showNdDialog(context),
+                    ),
+                    Gap(10),
+                    Row(
+                      children: [
+                        Button(
+                          onPressed: generateNextWeek,
+                          child: const Text("Generate Next Week"),
+                        ),
+                        Gap(10),
+                        Button(
+                          onPressed: removeWeek,
+                          child: const Text("Remove Week"),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-                onPressed: () {},
-                //showNdDialog(context),
-              ),
-              Gap(10),
-              Row(
-                children: [
-                  Button(
-                    onPressed: generateNextWeek,
-                    child: const Text("Generate Next Week"),
-                  ),
-                  Gap(10),
-                  Button(
-                    onPressed: removeWeek,
-                    child: const Text("Remove Week"),
-                  ),
-                ],
-              ),
-
-              /* SizedBox(
-                            width: 200,
-                            child: TextBox(
-                              controller: searchController,
-                              prefix: Padding(
-                                padding: .only(left: 10),
-                                child: WindowsIcon(WindowsIcons.search),
-                              ),
-                              placeholder: 'Αναζήτηση Ν/Δ',
-                              onChanged: (String text) {
-                                _searchSailors(text);
-                              },
-                            ),
-                          ),
-                          if (searchController.text.isNotEmpty)
-                            IconButton(
-                              onPressed: () => setState(() {
-                                searchController.clear();
-                                _displayedSailors = _allSailors;
-                              }),
-                              icon: WindowsIcon(WindowsIcons.clear),
-                            ),*/
-            ],
-          ),
-          Gap(padding),
-          Expanded(
-            child: FutureBuilder(
-              future: _future,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: ProgressRing());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData) {
-                  return ListView.separated(
+                Gap(padding),
+                Expanded(
+                  child: ListView.separated(
                     itemCount: weeks.length + 1,
                     itemBuilder: (context, index) {
                       if (index == weeks.length) return SizedBox.shrink();
-                      final weekStart = weeks[index];
-                      final days = generateWeekDays(weekStart);
-
+                      final DateTime weekStart = weeks[index];
+                      final List<DateTime> days = generateWeekDays(weekStart);
                       // Check if we need to show month header
                       bool showMonthHeader = false;
-
                       if (index == 0) {
                         showMonthHeader = true;
                       } else {
@@ -166,18 +153,20 @@ class _VardiesPageState extends State<VardiesPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          /*Button(
-                            onPressed: () => setState(() {
-                              vardies = createVardies(sailors);
-                            }),
-                            child: Text('Δημιουργία βάρδιας'),
-                          ),*/
+                          if (showMonthHeader) Gap(10),
 
                           /// WEEK ROW
                           Container(
                             color: Colors.white,
                             child: Row(
                               children: days.map((date) {
+                                final dayIndex = days.indexOf(
+                                  date,
+                                ); // 0–6 within the week
+                                final absoluteIndex =
+                                    index * 7 +
+                                    dayIndex; // across multiple weeks
+
                                 final isSelected = isSameDay(
                                   date,
                                   selectedDate,
@@ -201,7 +190,6 @@ class _VardiesPageState extends State<VardiesPage> {
                                               horizontal: 10,
                                               vertical: 5,
                                             ),
-                                            width: double.infinity,
                                             color: secColor,
                                             child: Row(
                                               children: [
@@ -224,16 +212,21 @@ class _VardiesPageState extends State<VardiesPage> {
                                           Gap(7),
                                           Padding(
                                             padding: .symmetric(horizontal: 12),
-                                            child: vardies.isNotEmpty
+                                            child:
+                                                vardies.isNotEmpty &&
+                                                    absoluteIndex <
+                                                        vardies.length
                                                 ? Column(
+                                                    spacing: 5,
                                                     crossAxisAlignment: .start,
-                                                    children: vardies[index]
-                                                        .map(
-                                                          (sailor) => Text(
-                                                            sailor.surname,
-                                                          ),
-                                                        )
-                                                        .toList(),
+                                                    children:
+                                                        vardies[absoluteIndex]
+                                                            .map(
+                                                              (sailor) => Text(
+                                                                sailor.surname,
+                                                              ),
+                                                            )
+                                                            .toList(),
                                                   )
                                                 : Text('Home'),
                                           ),
@@ -252,14 +245,14 @@ class _VardiesPageState extends State<VardiesPage> {
                     },
                     separatorBuilder: (BuildContext context, int index) =>
                         Gap(padding),
-                  );
-                } else {
-                  return const Center(child: Text('Error'));
-                }
-              },
-            ),
-          ),
-        ],
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return const Center(child: Text('Error'));
+          }
+        },
       ),
     );
   }

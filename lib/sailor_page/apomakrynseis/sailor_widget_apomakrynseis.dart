@@ -3,13 +3,14 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/apomakrynseis.dart';
 import 'package:milibase/objects/sailor.dart';
-import 'package:milibase/sailor_page/adeies/adeies_functions.dart';
 import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_content_dialog.dart';
 import 'package:milibase/sailor_page/apomakrynseis/apomakrynseis_functions.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/templates/delete_button.dart';
 import 'package:milibase/variables.dart';
+
 import '../../main.dart';
+import '../../templates/info_bar.dart';
 
 class SailorWidgetApomakrynseis extends StatefulWidget {
   const SailorWidgetApomakrynseis({super.key, required this.sailor});
@@ -51,6 +52,10 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
           return const Center(child: ProgressRing());
         }
         if (snapshot.hasError) {
+          showCustomInfoBar(
+            context: context,
+            text: snapshot.error.toString(),
+          );
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final List<Apomakrynseis> apomakrynseis = snapshot.data!;
@@ -123,7 +128,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                       ),
                   ],
                 ),
-                Gap(10),
+                Gap(padding),
                 Wrap(
                   spacing: 5,
                   runSpacing: 5,
@@ -175,8 +180,15 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                 if (apomakrynseis.isNotEmpty) Gap(padding * 1.5),
                 apomakrynseis.isEmpty
                     ? Text('Δεν υπάρχουν καταχωρημένες απομακρύνσεις.')
-                    : Padding(
-                        padding: .symmetric(horizontal: padding),
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: secColor,
+                          borderRadius: .only(
+                            topRight: .circular(5),
+                            topLeft: .circular(5),
+                          ),
+                        ),
+                        padding: .symmetric(horizontal: padding, vertical: 10),
                         child: Row(
                           spacing: 5,
                           children: [
@@ -219,84 +231,85 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                           ],
                         ),
                       ),
-                Gap(5),
+
                 Expanded(
-                  child: ListView(
+                  child: ListView.separated(
+                    itemCount: apomakrynseis.length,
+                    separatorBuilder: (context, _) => Divider(),
                     padding: .only(bottom: padding),
-                    children: sortedApomakrynseis
-                        .map(
-                          (apomakrynsi) => Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: .circular(5),
-                            ),
-                            margin: .symmetric(vertical: 5),
-                            padding: .symmetric(
-                              horizontal: padding,
-                              vertical: padding - 5,
-                            ),
-                            child: Row(
-                              spacing: 5,
-                              children: [
-                                Expanded(
-                                  flex: col1Flex,
-                                  child: Text(apomakrynsi.type.label),
-                                ),
-                                Expanded(
-                                  flex: col2Flex,
-                                  child: Text(
-                                    DateFormat(
-                                      'EEE dd MMM yy',
-                                      'el',
-                                    ).format(apomakrynsi.dateStart),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: col3Flex,
-                                  child: Text(
-                                    DateFormat(
-                                      'EEE dd MMM yy',
-                                      'el',
-                                    ).format(apomakrynsi.dateEnd),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: col4Flex,
-                                  child: Text(apomakrynsi.ypiresia),
-                                ),
-                                Expanded(
-                                  flex: col5Flex,
-                                  child: Text(apomakrynsi.sima),
-                                ),
-                                Expanded(
-                                  flex: col6Flex,
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const WindowsIcon(
-                                          WindowsIcons.edit,
-                                        ),
-                                        onPressed: () => showContentDialog(
-                                          context,
-                                          apomakrynsi,
-                                        ),
-                                      ),
-                                      DeleteFlyout(
-                                        title: 'Διαγραφή απομάκρυνσης;',
-                                        onPressed: () async {
-                                          await deleteApomakrynsi(
-                                            apomakrynsi.id!,
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                    itemBuilder: (BuildContext context, int index) {
+                      final apomakrynsi = sortedApomakrynseis[index];
+                      final isLast = index == apomakrynseis.length - 1;
+                      final bottomRadius = Radius.circular(isLast ? 5 : 0);
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: .only(
+                            bottomLeft: bottomRadius,
+                            bottomRight: bottomRadius,
                           ),
-                        )
-                        .toList(),
+                        ),
+
+                        padding: .symmetric(
+                          horizontal: padding,
+                          vertical: padding - 5,
+                        ),
+                        child: Row(
+                          spacing: 5,
+                          children: [
+                            Expanded(
+                              flex: col1Flex,
+                              child: Text(apomakrynsi.type.label),
+                            ),
+                            Expanded(
+                              flex: col2Flex,
+                              child: Text(
+                                DateFormat(
+                                  'EEE dd MMM yy',
+                                  'el',
+                                ).format(apomakrynsi.dateStart),
+                              ),
+                            ),
+                            Expanded(
+                              flex: col3Flex,
+                              child: Text(
+                                DateFormat(
+                                  'EEE dd MMM yy',
+                                  'el',
+                                ).format(apomakrynsi.dateEnd),
+                              ),
+                            ),
+                            Expanded(
+                              flex: col4Flex,
+                              child: Text(apomakrynsi.ypiresia),
+                            ),
+                            Expanded(
+                              flex: col5Flex,
+                              child: Text(apomakrynsi.sima),
+                            ),
+                            Expanded(
+                              flex: col6Flex,
+                              child: Row(
+                                mainAxisAlignment: .end,
+                                children: [
+                                  IconButton(
+                                    icon: const WindowsIcon(WindowsIcons.edit),
+                                    onPressed: () =>
+                                        showContentDialog(context, apomakrynsi),
+                                  ),
+                                  DeleteFlyout(
+                                    title: 'Διαγραφή απομάκρυνσης;',
+                                    onPressed: () async {
+                                      await deleteApomakrynsi(apomakrynsi.id);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

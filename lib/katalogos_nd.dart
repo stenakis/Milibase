@@ -3,6 +3,9 @@ import 'package:gap/gap.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/create_nd.dart';
 import 'package:milibase/sailor_page/sailors/sailor_page.dart';
+import 'package:milibase/sailor_page/sailors/status/sailor_status_widget.dart';
+import 'package:milibase/styles/colors.dart';
+import 'package:milibase/templates/info_bar.dart';
 import 'package:milibase/variables.dart';
 
 import 'main.dart';
@@ -20,9 +23,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
   List<Sailor> _allSailors = [];
   List<Sailor> _displayedSailors = [];
   String _searchQuery = '';
-
-  @override
-  void initState() {
+  void retry() {
     _stream = db.select(db.tableSailors).watch().map((rows) {
       final sailors = rows.map((row) => Sailor.fromJson(row.toJson())).toList();
       sailors.sort(
@@ -30,18 +31,24 @@ class _KatalogosNdState extends State<KatalogosNd> {
       );
       return sailors;
     });
+  }
+
+  @override
+  void initState() {
+    retry();
     super.initState();
   }
 
   void _searchSailors(String query) {
     setState(() {
-      _searchQuery = query;
       _displayedSailors = query.isEmpty
           ? _allSailors
           : _allSailors.where((sailor) {
+              _searchQuery = query.toLowerCase();
               final q = query.toLowerCase();
               return sailor.name.toLowerCase().contains(q) ||
-                  sailor.surname.toLowerCase().contains(q);
+                  sailor.surname.toLowerCase().contains(q) ||
+                  sailor.agm.contains(q.trim());
             }).toList();
     });
   }
@@ -98,8 +105,15 @@ class _KatalogosNdState extends State<KatalogosNd> {
             ],
           ),
           Gap(padding),
-          Padding(
-            padding: .symmetric(horizontal: padding),
+          Container(
+            decoration: BoxDecoration(
+              color: secColor,
+              borderRadius: .only(
+                topRight: .circular(5),
+                topLeft: .circular(5),
+              ),
+            ),
+            padding: .symmetric(horizontal: padding, vertical: 10),
             child: Row(
               mainAxisAlignment: .spaceBetween,
               spacing: 5,
@@ -126,10 +140,14 @@ class _KatalogosNdState extends State<KatalogosNd> {
                   flex: col4Flex,
                   child: Text('Τηλέφωνο', style: TextStyle(fontWeight: .bold)),
                 ),
+                Expanded(
+                  flex: col5Flex,
+                  child: Text('Κατάσταση', style: TextStyle(fontWeight: .bold)),
+                ),
               ],
             ),
           ),
-          Gap(5),
+
           Expanded(
             child: StreamBuilder<List<Sailor>>(
               stream: _stream,
@@ -137,48 +155,55 @@ class _KatalogosNdState extends State<KatalogosNd> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: ProgressRing());
                 }
-
                 if (snapshot.hasError) {
-                  final error = snapshot.error.toString();
-                  if (error.contains('SocketException') ||
-                      error.contains('Failed host lookup')) {
-                    return Center(
-                      child: Column(
-                        crossAxisAlignment: .center,
-                        mainAxisAlignment: .center,
-                        children: [
-                          Text(
-                            'Failed to connect to the server. Please check your internet connection.\nServer message: SocketException',
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  showCustomInfoBar(
+                    context: context,
+                    text: snapshot.error.toString(),
+                  );
+                  return Center(
+                    child: Column(
+                      children: [
+                        IconButton(
+                          icon: WindowsIcon(WindowsIcons.restart_update2),
+                          onPressed: () => setState(() => retry()),
+                        ),
+                        Gap(5),
+                        Text('Retry'),
+                      ],
+                    ),
+                  );
                 } else if (snapshot.hasData) {
                   _allSailors = snapshot.data!;
                   _displayedSailors = _searchQuery.isEmpty
                       ? _allSailors
                       : _allSailors
                             .where(
-                              (s) => s.surname.toLowerCase().contains(
-                                _searchQuery,
-                              ),
+                              (s) =>
+                                  s.surname.toLowerCase().contains(
+                                    _searchQuery,
+                                  ) ||
+                                  s.name.toLowerCase().contains(_searchQuery) ||
+                                  s.agm.toLowerCase().contains(_searchQuery),
                             )
                             .toList();
-                  return ListView.builder(
+                  return ListView.separated(
+                    padding: .only(bottom: padding),
+                    separatorBuilder: (BuildContext context, int index) =>
+                        Divider(),
                     itemCount: _displayedSailors.length,
                     itemBuilder: ((context, index) {
                       final Sailor sailor = _displayedSailors[index];
-
+                      final isLast = index == _displayedSailors.length - 1;
+                      final bottomRadius = Radius.circular(isLast ? 5 : 0);
                       return HoverButton(
                         builder: (context, states) {
                           return Container(
-                            margin: .symmetric(vertical: 5),
                             decoration: BoxDecoration(
-                              borderRadius: .circular(5),
                               color: Colors.white,
+                              borderRadius: .only(
+                                bottomLeft: bottomRadius,
+                                bottomRight: bottomRadius,
+                              ),
                             ),
                             padding: .symmetric(
                               horizontal: padding + 5,
@@ -207,6 +232,10 @@ class _KatalogosNdState extends State<KatalogosNd> {
                                 Expanded(
                                   flex: col4Flex,
                                   child: Text(sailor.mobile),
+                                ),
+                                Expanded(
+                                  flex: col5Flex,
+                                  child: SailorStatus(sailor: sailor),
                                 ),
                               ],
                             ),

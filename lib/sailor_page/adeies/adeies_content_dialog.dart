@@ -112,7 +112,9 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
                           selectedStartDate = data.selectedDates.first;
-                          selectedEndDate = data.selectedDates.first;
+                          if (widget.id == null) {
+                            selectedEndDate = data.selectedDates.first;
+                          }
                         });
                       }
                     },

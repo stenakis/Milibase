@@ -1,10 +1,11 @@
 import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
+
 import '../objects/adeies.dart';
 import '../objects/apomakrynseis.dart';
 import '../objects/metavoles.dart';
-import '../objects/specialty.dart';
-import 'package:uuid/uuid.dart';
 import '../objects/rank.dart';
+import '../objects/specialty.dart';
 
 // dart run build_runner build --delete-conflicting-outputs
 
@@ -23,6 +24,7 @@ class TableSailors extends Table {
   DateTimeColumn get dateArrival => dateTime()();
   DateTimeColumn get dateInsert => dateTime()();
   DateTimeColumn get dateRemoval => dateTime()();
+  BoolColumn get avardiotos => boolean().clientDefault(() => false)();
 
   @override
   Set<Column> get primaryKey => {id};

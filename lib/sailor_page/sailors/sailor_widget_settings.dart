@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/navigation.dart';
 import 'package:milibase/objects/sailor.dart';
+import 'package:milibase/templates/info_bar.dart';
 import 'package:milibase/variables.dart';
 
 import '../../main.dart';
@@ -54,11 +55,11 @@ class _SailorWidgetSettingsState extends State<SailorWidgetSettings> {
                     mainInnerKey.currentState?.popUntil(
                       (route) => route.isFirst,
                     );
-                    setState(() {
-                      isLoading = false;
-                    });
                   } catch (e) {
-                    print(e.toString());
+                    await showCustomInfoBar(
+                      context: context,
+                      text: e.toString(),
+                    );
                   } finally {
                     setState(() {
                       isLoading = false;

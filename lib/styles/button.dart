@@ -28,12 +28,10 @@ class FluentButton extends StatelessWidget {
       builder: (BuildContext context, Set<WidgetState> state) {
         return Container(
           decoration: BoxDecoration(
-            borderRadius: .circular(5),
-
             color:
                 (selected != null && selected!
                         ? color ?? secColor
-                        : secColor.withAlpha(75))
+                        : Colors.transparent)
                     as Color?,
           ),
           width: width,

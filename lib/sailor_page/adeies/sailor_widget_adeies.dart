@@ -8,7 +8,9 @@ import 'package:milibase/sailor_page/adeies/adeies_functions.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/templates/delete_button.dart';
 import 'package:milibase/variables.dart';
+
 import '../../main.dart';
+import '../../templates/info_bar.dart';
 
 class SailorWidgetAdeies extends StatefulWidget {
   const SailorWidgetAdeies({super.key, required this.sailor});
@@ -51,6 +53,10 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
           return const Center(child: ProgressRing());
         }
         if (snapshot.hasError) {
+          showCustomInfoBar(
+            context: context,
+            text: snapshot.error.toString(),
+          );
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           final List<Adeies> adeies = snapshot.data!;
@@ -122,7 +128,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                       ),
                   ],
                 ),
-                Gap(10),
+                Gap(padding),
                 Wrap(
                   alignment: .start,
                   spacing: 5,
@@ -165,8 +171,15 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                 if (adeies.isNotEmpty) Gap(padding * 1.5),
                 adeies.isEmpty
                     ? Text('Δεν υπάρχουν καταχωρημένες άδειες.')
-                    : Padding(
-                        padding: .symmetric(horizontal: padding),
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: secColor,
+                          borderRadius: .only(
+                            topRight: .circular(5),
+                            topLeft: .circular(5),
+                          ),
+                        ),
+                        padding: .symmetric(horizontal: padding, vertical: 10),
                         child: Row(
                           spacing: 5,
                           children: [
@@ -208,77 +221,80 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                           ],
                         ),
                       ),
-                Gap(5),
                 Expanded(
-                  child: ListView(
+                  child: ListView.separated(
+                    itemCount: adeies.length,
+                    separatorBuilder: (context, _) => Divider(),
                     padding: .only(bottom: padding),
-                    children: sortedAdeies
-                        .map(
-                          (adeia) => Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: .circular(5),
-                            ),
-                            margin: .symmetric(vertical: 5),
-                            padding: .symmetric(
-                              horizontal: padding,
-                              vertical: padding - 5,
-                            ),
-                            child: Row(
-                              spacing: 5,
-                              children: [
-                                Expanded(
-                                  flex: col1Flex,
-                                  child: Text(adeia.type.label),
-                                ),
-                                Expanded(
-                                  flex: col2Flex,
-                                  child: Text(
-                                    DateFormat(
-                                      'EEE dd MMM yy',
-                                      'el',
-                                    ).format(adeia.dateStart),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: col3Flex,
-                                  child: Text(
-                                    DateFormat(
-                                      'EEE dd MMM yy',
-                                      'el',
-                                    ).format(adeia.dateEnd),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: col4Flex,
-                                  child: Text(adeia.sima ?? ''),
-                                ),
-                                Expanded(
-                                  flex: col6Flex,
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const WindowsIcon(
-                                          WindowsIcons.edit,
-                                        ),
-                                        onPressed: () =>
-                                            showContentDialog(context, adeia),
-                                      ),
-                                      Gap(5),
-                                      DeleteFlyout(
-                                        title: 'Διαγραφή άδειας;',
-                                        onPressed: () async {
-                                          await deleteAdeia(adeia.id);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                    itemBuilder: (context, int index) {
+                      final adeia = sortedAdeies[index];
+                      final isLast = index == adeies.length - 1;
+                      final bottomRadius = Radius.circular(isLast ? 5 : 0);
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: .only(
+                            bottomLeft: bottomRadius,
+                            bottomRight: bottomRadius,
                           ),
-                        )
-                        .toList(),
+                        ),
+                        padding: .symmetric(
+                          horizontal: padding,
+                          vertical: padding - 5,
+                        ),
+                        child: Row(
+                          spacing: 5,
+                          children: [
+                            Expanded(
+                              flex: col1Flex,
+                              child: Text(adeia.type.label),
+                            ),
+                            Expanded(
+                              flex: col2Flex,
+                              child: Text(
+                                DateFormat(
+                                  'EEE dd MMM yy',
+                                  'el',
+                                ).format(adeia.dateStart),
+                              ),
+                            ),
+                            Expanded(
+                              flex: col3Flex,
+                              child: Text(
+                                DateFormat(
+                                  'EEE dd MMM yy',
+                                  'el',
+                                ).format(adeia.dateEnd),
+                              ),
+                            ),
+                            Expanded(
+                              flex: col4Flex,
+                              child: Text(adeia.sima ?? ''),
+                            ),
+                            Expanded(
+                              flex: col6Flex,
+                              child: Row(
+                                mainAxisAlignment: .end,
+                                children: [
+                                  IconButton(
+                                    icon: const WindowsIcon(WindowsIcons.edit),
+                                    onPressed: () =>
+                                        showContentDialog(context, adeia),
+                                  ),
+                                  Gap(5),
+                                  DeleteFlyout(
+                                    title: 'Διαγραφή άδειας;',
+                                    onPressed: () async {
+                                      await deleteAdeia(adeia.id);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
