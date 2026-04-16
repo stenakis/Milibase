@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/templates/info_bar.dart';
 import 'package:uuid/uuid.dart';
+
 import '../db/add_nd.dart';
 import '../objects/rank.dart';
 import '../objects/sailor.dart';
@@ -297,6 +298,8 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                     InfoLabel(
                       label: 'Κατάταξη',
                       child: CalendarDatePicker(
+                        initialStart: selectedEntryDate,
+                        isTodayHighlighted: false,
                         locale: Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
@@ -319,6 +322,8 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                     InfoLabel(
                       label: 'Άφιξη στην Υπηρεσία',
                       child: CalendarDatePicker(
+                        initialStart: selectedArrivalDate,
+                        isTodayHighlighted: false,
                         locale: Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
@@ -368,7 +373,9 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                     InfoLabel(
                       label: 'Απόλυση',
                       child: CalendarDatePicker(
+                        initialStart: selectedRemovalDate,
                         isTodayHighlighted: false,
+
                         locale: Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',

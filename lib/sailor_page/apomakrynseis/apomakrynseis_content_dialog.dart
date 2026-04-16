@@ -21,15 +21,21 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
   bool isLoading = false;
   final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Apomakrynseis Key');
   final _formKey = GlobalKey<FormState>();
-  DateTime selectedStartDate = DateTime.now();
-  DateTime selectedEndDate = DateTime.now();
-  Apomakrynsi selectedApomakrynsi = Apomakrynsi.apospasi;
-  String statusText = 'Προσθήκη Απομάκρυνσης';
+  late DateTime selectedStartDate, selectedEndDate;
+  late Apomakrynsi selectedApomakrynsi;
   late TextEditingController simaController;
   late TextEditingController ypiresiaController;
   bool enableEnd = true;
   @override
   void initState() {
+    selectedApomakrynsi = widget.id == null
+        ? Apomakrynsi.apospasi
+        : widget.id!.type;
+    selectedStartDate = widget.id == null
+        ? DateTime.now()
+        : widget.id!.dateStart;
+    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
+    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
     simaController = TextEditingController(text: widget.id?.sima ?? "");
     ypiresiaController = TextEditingController(text: widget.id?.ypiresia ?? "");
     super.initState();
@@ -122,6 +128,8 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 InfoLabel(
                   label: 'Έναρξη',
                   child: CalendarDatePicker(
+                    initialStart: selectedStartDate,
+                    isTodayHighlighted: false,
                     locale: Locale('el'),
                     placeholderText: DateFormat(
                       'dd/MM/yy',
@@ -157,6 +165,8 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
 
                     enableEnd
                         ? CalendarDatePicker(
+                            initialStart: selectedEndDate,
+                            isTodayHighlighted: false,
                             locale: Locale('el'),
                             placeholderText: DateFormat(
                               'dd/MM/yy',
@@ -180,7 +190,13 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
       ),
       actions: [
         isLoading
-            ? Row(children: [ProgressRing(), Gap(10), Text(statusText)])
+            ? Row(
+                children: [
+                  ProgressRing(),
+                  Gap(10),
+                  Text('Προσθήκη Απομάκρυνσης'),
+                ],
+              )
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {

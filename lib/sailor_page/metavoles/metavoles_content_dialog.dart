@@ -22,14 +22,16 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   final metavoliKey = GlobalKey<ComboBoxState>(debugLabel: 'Metavoli Key');
   final durationKey = GlobalKey<ComboBoxState>(debugLabel: 'Duration Key');
   final _formKey = GlobalKey<FormState>();
-  DateTime selectedDate = DateTime.now();
-  Metavoli selectedMetavoli = Metavoli.meiomeni;
+  late DateTime selectedDate;
+  late Metavoli selectedMetavoli;
   String statusText = 'Προσθήκη Μεταβολής';
   late TextEditingController simaController;
   int selectedDuration = 9;
 
   @override
   void initState() {
+    selectedDate = widget.id == null ? DateTime.now() : widget.id!.date;
+    selectedMetavoli = widget.id == null ? Metavoli.meiomeni : widget.id!.type;
     simaController = TextEditingController(text: widget.id?.sima ?? "");
     super.initState();
   }
@@ -136,6 +138,8 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
             InfoLabel(
               label: 'Ημερομηνία',
               child: CalendarDatePicker(
+                initialStart: selectedDate,
+                isTodayHighlighted: false,
                 locale: Locale('el'),
                 placeholderText: DateFormat(
                   'dd/MM/yy',

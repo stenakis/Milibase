@@ -20,14 +20,18 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
   bool isLoading = false;
   final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeies Key');
   final _formKey = GlobalKey<FormState>();
-  DateTime selectedStartDate = DateTime.now();
-  DateTime selectedEndDate = DateTime.now();
-  Adeia selectedAdeia = Adeia.kanoniki;
-  String statusText = 'Προσθήκη Άδειας';
+  late DateTime selectedStartDate, selectedEndDate;
+  late Adeia selectedAdeia;
   late TextEditingController simaController;
 
   @override
   void initState() {
+    selectedAdeia = widget.id == null ? Adeia.kanoniki : widget.id!.type;
+    selectedStartDate = widget.id == null
+        ? DateTime.now()
+        : widget.id!.dateStart;
+    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
+    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
     simaController = TextEditingController(
       text: selectedAdeia == .oikos_nosileias || selectedAdeia == .anarrotiki
           ? widget.id?.sima ?? ""
@@ -103,6 +107,8 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                 InfoLabel(
                   label: 'Έναρξη',
                   child: CalendarDatePicker(
+                    initialStart: selectedStartDate,
+                    isTodayHighlighted: false,
                     locale: Locale('el'),
                     placeholderText: DateFormat(
                       'dd/MM/yy',
@@ -124,6 +130,8 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                 InfoLabel(
                   label: 'Λήξη',
                   child: CalendarDatePicker(
+                    initialStart: selectedEndDate,
+                    isTodayHighlighted: false,
                     locale: Locale('el'),
                     placeholderText: DateFormat(
                       'dd/MM/yy',
@@ -145,7 +153,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
       ),
       actions: [
         isLoading
-            ? Row(children: [ProgressRing(), Gap(10), Text(statusText)])
+            ? Row(children: [ProgressRing(), Gap(10), Text('Προσθήκη Άδειας')])
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {

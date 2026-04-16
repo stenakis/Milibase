@@ -20,7 +20,7 @@ class KatalogosNd extends StatefulWidget {
 class _KatalogosNdState extends State<KatalogosNd> {
   final searchController = TextEditingController();
   late Stream<List<Sailor>> _stream;
-  List<Sailor> _allSailors = [];
+  late List<Sailor> _allSailors;
   List<Sailor> _displayedSailors = [];
   String _searchQuery = '';
   void retry() {
@@ -29,6 +29,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
       sailors.sort(
         (a, b) => a.surname.toLowerCase().compareTo(b.surname.toLowerCase()),
       );
+      _allSailors = sailors;
       return sailors;
     });
   }
@@ -119,14 +120,14 @@ class _KatalogosNdState extends State<KatalogosNd> {
               spacing: 5,
               children: [
                 Expanded(
-                  flex: nameFlex,
+                  flex: 3,
                   child: Text(
                     'Ονοματεπώνυμο',
                     style: TextStyle(fontWeight: .bold),
                   ),
                 ),
                 Expanded(
-                  flex: col2Flex,
+                  flex: 1,
                   child: Text('ΑΓΜ', style: TextStyle(fontWeight: .bold)),
                 ),
                 Expanded(
@@ -214,15 +215,12 @@ class _KatalogosNdState extends State<KatalogosNd> {
                               mainAxisAlignment: .spaceBetween,
                               children: [
                                 Expanded(
-                                  flex: nameFlex,
+                                  flex: 3,
                                   child: Text(
                                     '${sailor.surname} ${sailor.name}',
                                   ),
                                 ),
-                                Expanded(
-                                  flex: col2Flex,
-                                  child: Text(sailor.agm),
-                                ),
+                                Expanded(flex: 1, child: Text(sailor.agm)),
                                 Expanded(
                                   flex: col3Flex,
                                   child: Text(

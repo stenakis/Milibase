@@ -10,6 +10,8 @@ import 'package:milibase/styles/button.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
 
+import '../vardies/sailor_vardies_settings.dart';
+
 class SailorPage extends StatefulWidget {
   const SailorPage({super.key, required this.sailor});
   final Sailor sailor;
@@ -133,7 +135,7 @@ class _SailorPageState extends State<SailorPage> {
                               icon: WindowsIcon(WindowsIcons.shuffle),
                               text: 'Μεταβολές',
                             ),
-                            /*FluentButton(
+                            FluentButton(
                               onPressed: () => setState(() {
                                 selectedIndex = 4;
                                 screen = SailorWidgetVardies(
@@ -143,7 +145,7 @@ class _SailorPageState extends State<SailorPage> {
                               selected: selectedIndex == 4,
                               icon: WindowsIcon(WindowsIcons.lock),
                               text: 'Βάρδιες',
-                            ),*/
+                            ),
                           ],
                         ),
                       ),
