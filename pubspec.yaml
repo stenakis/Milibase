@@ -28,6 +28,7 @@ dependencies:
   path: ^1.9.1
   http: ^1.6.0
   rxdart: ^0.28.0
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -41,17 +41,15 @@ class _KatalogosNdState extends State<KatalogosNd> {
   }
 
   void _searchSailors(String query) {
-    setState(() {
-      _displayedSailors = query.isEmpty
-          ? _allSailors
-          : _allSailors.where((sailor) {
-              _searchQuery = query.toLowerCase();
-              final q = query.toLowerCase();
-              return sailor.name.toLowerCase().contains(q) ||
-                  sailor.surname.toLowerCase().contains(q) ||
-                  sailor.agm.contains(q.trim());
-            }).toList();
-    });
+    _searchQuery = query.toLowerCase();
+    _displayedSailors = query.isEmpty
+        ? _allSailors
+        : _allSailors.where((sailor) {
+            final q = _searchQuery;
+            return sailor.name.toLowerCase().contains(q) ||
+                sailor.surname.toLowerCase().contains(q) ||
+                sailor.agm.toLowerCase().contains(q.trim());
+          }).toList();
   }
 
   @override
@@ -91,7 +89,9 @@ class _KatalogosNdState extends State<KatalogosNd> {
                   ),
                   placeholder: 'Αναζήτηση Ν/Δ',
                   onChanged: (String text) {
-                    _searchSailors(text);
+                    setState(() {
+                      _searchSailors(text);
+                    });
                   },
                 ),
               ),
@@ -99,6 +99,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
                 IconButton(
                   onPressed: () => setState(() {
                     searchController.clear();
+                    _searchQuery = '';
                     _displayedSailors = _allSailors;
                   }),
                   icon: WindowsIcon(WindowsIcons.clear),

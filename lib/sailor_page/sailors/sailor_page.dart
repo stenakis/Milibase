@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/objects/sailor.dart';
@@ -9,7 +10,6 @@ import 'package:milibase/sailor_page/sailors/sailor_widget_settings.dart';
 import 'package:milibase/styles/button.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
-
 import '../vardies/sailor_vardies_settings.dart';
 
 class SailorPage extends StatefulWidget {
@@ -54,8 +54,9 @@ class _SailorPageState extends State<SailorPage> {
                         '${widget.sailor.rank.label} (${widget.sailor.specialty.label})',
                       ),
                       Gap(5),
-                      Text(
+                      AutoSizeText(
                         '${widget.sailor.surname}\n${widget.sailor.name}',
+                        maxLines: 2,
                         style: TextStyle(
                           fontSize: 34,
                           fontWeight: .bold,

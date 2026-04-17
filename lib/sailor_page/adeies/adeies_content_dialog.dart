@@ -153,7 +153,9 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
       ),
       actions: [
         isLoading
-            ? Row(children: [ProgressRing(), Gap(10), Text('Προσθήκη Άδειας')])
+            ? Row(
+                children: [ProgressRing(), Gap(10), Text('Αποθήκευση Άδειας')],
+              )
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {

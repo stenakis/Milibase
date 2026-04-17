@@ -194,7 +194,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 children: [
                   ProgressRing(),
                   Gap(10),
-                  Text('Προσθήκη Απομάκρυνσης'),
+                  Text('Αποθήκευση Απομάκρυνσης'),
                 ],
               )
             : FilledButton(

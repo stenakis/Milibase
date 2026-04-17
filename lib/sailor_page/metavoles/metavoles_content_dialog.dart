@@ -24,7 +24,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   final _formKey = GlobalKey<FormState>();
   late DateTime selectedDate;
   late Metavoli selectedMetavoli;
-  String statusText = 'Προσθήκη Μεταβολής';
+  String statusText = 'Αποθήκευση Μεταβολής';
   late TextEditingController simaController;
   int selectedDuration = 9;
 
