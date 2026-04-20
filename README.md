@@ -37,6 +37,13 @@ The app checks for and applies over-the-air updates automatically, so it always 
 ### 🗂 Offline & Private
 All data is stored locally in a SQLite database on the host machine. Nothing is sent to any server — keeping sensitive military personnel data private and secure.
 
+<p align="center">
+  <img src="screenshots/screen_1.jpg" width="49%" />
+ <img src="screenshots/screen_2.jpg" width="49%" />
+  <img src="screenshots/screen_3.jpg" width="49%" />
+  <img src="screenshots/screen_4.jpg" width="49%" />
+</p>
+
 ---
 
 ## Getting Started
