@@ -1,8 +1,8 @@
-# Milibase
+![Milibase Logo](assets/logo_large.svg)
 
 A Windows desktop application for **soldier management**, built during military service at **Ypiresia Faron**. Milibase tracks all essential soldier information throughout their service period — including leaves, transfers between service centers, and status changes.
 
-> ⚠️ **This application is in Greek only** and is tailored for use within the Greek military administrative context.
+> ℹ️ **This application is in Greek only** and is tailored for use within the Greek military administrative context.
 
 ---
 
@@ -39,19 +39,6 @@ All data is stored locally in a SQLite database on the host machine. Nothing is 
 
 ---
 
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | [Flutter](https://flutter.dev) (Dart) |
-| UI Library | [Fluent UI](https://pub.dev/packages/fluent_ui) |
-| Database | [Drift](https://drift.simonbinder.eu/) + SQLite (via `sqflite_common_ffi`) |
-| State / Streams | [RxDart](https://pub.dev/packages/rxdart) |
-| Fonts | [Google Fonts](https://pub.dev/packages/google_fonts) |
-| Window Management | [bitsdojo_window](https://pub.dev/packages/bitsdojo_window) |
-
----
-
 ## Getting Started
 
 ### Prerequisites
@@ -85,27 +72,12 @@ All data is stored locally in a SQLite database on the host machine. Nothing is 
    flutter run -d windows
    ```
 
----
+5. Build for Release:
+   ```bash
+   flutter build windows --release
+   ```
 
-## Project Structure
 
-```
-Milibase/
-├── assets/          # Images, SVGs, and other static assets
-├── lib/             # Dart source code
-├── test/            # Unit and widget tests
-├── windows/         # Windows platform-specific files
-├── pubspec.yaml     # Project dependencies
-└── analysis_options.yaml
-```
-
----
-
-## Building for Release
-
-```bash
-flutter build windows --release
-```
 
 The output will be located in `build/windows/runner/Release/`.
 
