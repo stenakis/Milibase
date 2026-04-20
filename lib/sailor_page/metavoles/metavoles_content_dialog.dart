@@ -80,17 +80,15 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
               ),
             ),
             Gap(5),
-            Opacity(
-              opacity: 0.75,
-              child: Text(
-                (selectedMetavoli == .meiomeni)
-                    ? 'Μεταφέρθηκε στους υπόχρεους $selectedDurationμηνης θητείας'
-                    : selectedMetavoli == .ekkremei
-                    ? 'Υπέχει στρατολογική εκκρεμότητα'
-                    : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
-                style: TextStyle(fontStyle: .italic),
-              ),
+            Text(
+              (selectedMetavoli == .meiomeni)
+                  ? 'Μεταφέρθηκε στους υπόχρεους $selectedDurationμηνης θητείας'
+                  : selectedMetavoli == .ekkremei
+                  ? 'Υπέχει στρατολογική εκκρεμότητα'
+                  : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
+              style: TextStyle(fontStyle: .italic),
             ),
+
             if (selectedMetavoli == .meiomeni) Gap(padding),
             if (selectedMetavoli == .meiomeni)
               InfoLabel(

@@ -3,6 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/db/export_db.dart';
 import 'package:milibase/db/init_db.dart';
+import 'package:milibase/settings/install.dart';
+import 'package:milibase/settings/update_func.dart';
 import 'package:milibase/variables.dart';
 import 'package:open_folder/open_folder.dart';
 import 'package:super_bullet_list/bullet_list.dart';
@@ -16,16 +18,12 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  /*Future<String> initializeTable() async {
-    var row = await db.select(db.vars).getSingleOrNull();
-    if (row == null) {
-      await db
-          .into(db.vars)
-          .insertOnConflictUpdate(VarsCompanion.insert(prothemaShmatos: 'WAF'));
-      row = await db.select(db.vars).getSingle();
-    }
-    return row.prothemaShmatos;
-  }*/
+  late Future<bool> checkUpdate;
+  @override
+  void initState() {
+    checkUpdate = checkVersion();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,8 +108,77 @@ class _SettingsPageState extends State<SettingsPage> {
                     constraints: BoxConstraints(maxWidth: 200),
                     child: SvgPicture.asset('assets/logo_large.svg'),
                   ),
+                  Gap(padding),
+                  Text(
+                    'Έκδοση $appVersion',
+                    style: TextStyle(fontSize: 20, fontWeight: .bold),
+                  ),
+
                   Gap(10),
-                  Text('Έκδοση 0.5'),
+                  FutureBuilder<bool>(
+                    future: checkUpdate,
+                    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                      if (snapshot.connectionState == .waiting) {
+                        return Row(
+                          children: [
+                            ProgressRing(),
+                            Gap(10),
+                            Text('Γίνεται έλεγχος για ενημερώσεις'),
+                          ],
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text(
+                          'Σφάλμα εύρεσης καινούργιας έδκοσης: ${snapshot.error}',
+                        );
+                      } else if (snapshot.hasData) {
+                        if (snapshot.data == false) {
+                          return Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Text('Δεν υπάρχει διαθέσιμη ενημέρωση'),
+                              Gap(10),
+                              FilledButton(
+                                child: Text('Έλεγχος για ενημερώσεις'),
+                                onPressed: () async {
+                                  setState(() {
+                                    checkUpdate = checkVersion();
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Text('Υπάρχει διαθέσιμη ενημέρωση!'),
+                              Gap(10),
+                              FilledButton(
+                                child: Text('Εγκατάσταση'),
+                                onPressed: () async {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => ContentDialog(
+                                      title: Text('Προετοιμασία για ενημέρωση'),
+                                      content: Text(
+                                        'Όταν ολοκληρωθεί η λήψη του αρχείου εγκατάστασης, η εφαρμογή θα κλείσει και μετά την εγκατάσταση θα γίνει αυτόματη εκκίνηση.',
+                                      ),
+                                      actions: [ProgressBar()],
+                                    ),
+                                  );
+
+                                  Future.delayed(Duration(seconds: 2));
+                                  await downloadAndInstallUpdate();
+                                },
+                              ),
+                            ],
+                          );
+                        }
+                      } else {
+                        return Text('Σφάλμα εύρεσης καινούργιας έδκοσης');
+                      }
+                    },
+                  ),
                   Gap(padding),
                   Text('Σε αυτή την έκδοση:'),
                   Gap(5),
@@ -142,15 +209,21 @@ class _SettingsPageState extends State<SettingsPage> {
                     mainAxisAlignment: .spaceBetween,
                     children: [
                       SvgPicture.asset('assets/evans_logo.svg', height: 30),
+                      Spacer(),
+                      Gap(10),
                       IconButton(
-                        icon: WindowsIcon(WindowsIcons.open_in_new_window),
                         onPressed: () async {
-                          final Uri url = Uri.parse(
-                            'https://stenakis.github.io',
-                          );
-                          if (!await launchUrl(url)) {
-                            throw Exception('Could not launch $url');
-                          }
+                          Uri url = Uri.parse('https://github.com/stenakis');
+                          await launchUrl(url);
+                        },
+                        icon: SvgPicture.asset('assets/github.svg', height: 20),
+                      ),
+                      Gap(5),
+                      IconButton(
+                        icon: SvgPicture.asset('assets/web.svg', height: 20),
+                        onPressed: () async {
+                          Uri url = Uri.parse('https://stenakis.github.io');
+                          await launchUrl(url);
                         },
                       ),
                     ],

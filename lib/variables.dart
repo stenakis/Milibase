@@ -12,3 +12,5 @@ const int nameFlex = 3;
 
 const int gapDays = 3;
 const int plithosVardias = 3;
+
+const double appVersion = 0.5;

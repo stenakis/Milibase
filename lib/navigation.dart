@@ -3,7 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/main.dart';
-import 'package:milibase/settings.dart';
+import 'package:milibase/settings/settings.dart';
 import 'package:milibase/styles/button.dart';
 import 'package:milibase/vardies/vardies.dart';
 import 'package:milibase/variables.dart';
