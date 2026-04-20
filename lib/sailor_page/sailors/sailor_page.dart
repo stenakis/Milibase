@@ -136,7 +136,7 @@ class _SailorPageState extends State<SailorPage> {
                               icon: WindowsIcon(WindowsIcons.shuffle),
                               text: 'Μεταβολές',
                             ),
-                            FluentButton(
+                           /* FluentButton(
                               onPressed: () => setState(() {
                                 selectedIndex = 4;
                                 screen = SailorWidgetVardies(
@@ -146,7 +146,7 @@ class _SailorPageState extends State<SailorPage> {
                               selected: selectedIndex == 4,
                               icon: WindowsIcon(WindowsIcons.lock),
                               text: 'Βάρδιες',
-                            ),
+                            ),*/
                           ],
                         ),
                       ),

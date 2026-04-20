@@ -45,7 +45,7 @@ class _NavigationState extends State<Navigation> {
               ).typography.title?.copyWith(color: Colors.white),
             ),
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),
-            FluentButton(
+           /* FluentButton(
               selected: selected == 0,
               text: 'Βάρδιες',
               onPressed: () {
@@ -78,7 +78,7 @@ class _NavigationState extends State<Navigation> {
                 );
               },
             ),
-            Expanded(child: WindowTitleBarBox(child: MoveWindow())),
+            Expanded(child: WindowTitleBarBox(child: MoveWindow())),*/
             Image.asset('assets/faron.png', height: 25),
             Gap(5),
             Text('Υπηρεσία Φάρων'),
