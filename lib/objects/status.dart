@@ -11,13 +11,10 @@ enum Status {
     );
   }
 
-  String get label {
-    return {
-          Status.stinYphresia: 'Στην υπηρεσία',
-          Status.apolythike: 'Απολύθηκε',
-          Status.seAdeia: 'Σε άδεια',
-          Status.seApomakrynsi: 'Σε απομάκρυνση',
-        }[this] ??
-        'Στην υπηρεσία';
-  }
+  String get label => switch (this) {
+    Status.stinYphresia => 'Στην υπηρεσία',
+    Status.apolythike => 'Απολύθηκε',
+    Status.seAdeia => 'Σε άδεια',
+    Status.seApomakrynsi => 'Σε απομάκρυνση',
+  };
 }

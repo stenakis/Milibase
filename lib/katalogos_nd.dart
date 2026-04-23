@@ -40,6 +40,12 @@ class _KatalogosNdState extends State<KatalogosNd> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   void _searchSailors(String query) {
     _searchQuery = query.toLowerCase();
     _displayedSailors = query.isEmpty
@@ -71,14 +77,14 @@ class _KatalogosNdState extends State<KatalogosNd> {
                   mainAxisSize: .min,
                   children: [
                     Icon(FluentIcons.add),
-                    Gap(5),
+                    const Gap(5),
                     Text('Προσθήκη Ν/Δ'),
                   ],
                 ),
                 onPressed: () => showCreateNDDialog(context),
                 //showNdDialog(context),
               ),
-              Gap(10),
+              const Gap(10),
               SizedBox(
                 width: 200,
                 child: TextBox(
@@ -106,7 +112,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
                 ),
             ],
           ),
-          Gap(padding),
+          const Gap(padding),
           Container(
             decoration: BoxDecoration(
               color: secColor,
@@ -158,10 +164,14 @@ class _KatalogosNdState extends State<KatalogosNd> {
                   return const Center(child: ProgressRing());
                 }
                 if (snapshot.hasError) {
-                  showCustomInfoBar(
-                    context: context,
-                    text: snapshot.error.toString(),
-                  );
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      showCustomInfoBar(
+                        context: context,
+                        text: snapshot.error.toString(),
+                      );
+                    }
+                  });
                   return Center(
                     child: Column(
                       children: [
@@ -169,25 +179,20 @@ class _KatalogosNdState extends State<KatalogosNd> {
                           icon: WindowsIcon(WindowsIcons.restart_update2),
                           onPressed: () => setState(() => retry()),
                         ),
-                        Gap(5),
+                        const Gap(5),
                         Text('Retry'),
                       ],
                     ),
                   );
                 } else if (snapshot.hasData) {
-                  _allSailors = snapshot.data!;
-                  _displayedSailors = _searchQuery.isEmpty
-                      ? _allSailors
-                      : _allSailors
-                            .where(
-                              (s) =>
-                                  s.surname.toLowerCase().contains(
-                                    _searchQuery,
-                                  ) ||
-                                  s.name.toLowerCase().contains(_searchQuery) ||
-                                  s.agm.toLowerCase().contains(_searchQuery),
-                            )
-                            .toList();
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      setState(() {
+                        _allSailors = snapshot.data!;
+                        _searchSailors(_searchQuery);
+                      });
+                    }
+                  });
                   return ListView.separated(
                     padding: .only(bottom: padding),
                     separatorBuilder: (BuildContext context, int index) =>

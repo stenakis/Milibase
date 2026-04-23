@@ -96,7 +96,7 @@ class _VardiesPageState extends State<VardiesPage> {
                         mainAxisSize: .min,
                         children: [
                           Icon(FluentIcons.add),
-                          Gap(5),
+                          const Gap(5),
                           Text('Δημιουργία βάρδιας'),
                         ],
                       ),
@@ -106,14 +106,14 @@ class _VardiesPageState extends State<VardiesPage> {
 
                       //showNdDialog(context),
                     ),
-                    Gap(10),
+                    const Gap(10),
                     Row(
                       children: [
                         Button(
                           onPressed: generateNextWeek,
                           child: const Text("Generate Next Week"),
                         ),
-                        Gap(10),
+                        const Gap(10),
                         Button(
                           onPressed: removeWeek,
                           child: const Text("Remove Week"),
@@ -122,7 +122,7 @@ class _VardiesPageState extends State<VardiesPage> {
                     ),
                   ],
                 ),
-                Gap(padding),
+                const Gap(padding),
                 Expanded(
                   child: ListView.separated(
                     itemCount: weeks.length + 1,
@@ -153,7 +153,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          if (showMonthHeader) Gap(10),
+                          if (showMonthHeader) const Gap(10),
 
                           /// WEEK ROW
                           Container(
@@ -199,7 +199,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                                     'el',
                                                   ).format(date).toUpperCase(),
                                                 ),
-                                                Gap(5),
+                                                const Gap(5),
                                                 Text(
                                                   date.day.toString(),
                                                   style: TextStyle(
@@ -209,7 +209,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                               ],
                                             ),
                                           ),
-                                          Gap(7),
+                                          const Gap(7),
                                           Padding(
                                             padding: .symmetric(horizontal: 12),
                                             child:
@@ -231,7 +231,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                                 : Text('Home'),
                                           ),
 
-                                          Gap(10),
+                                          const Gap(10),
                                         ],
                                       ),
                                     ),
@@ -244,7 +244,7 @@ class _VardiesPageState extends State<VardiesPage> {
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) =>
-                        Gap(padding),
+                        const Gap(padding),
                   ),
                 ),
               ],

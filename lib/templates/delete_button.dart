@@ -1,14 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:milibase/templates/info_bar.dart';
 
 class DeleteFlyout extends StatefulWidget {
-  const DeleteFlyout({
-    super.key,
-    required this.title,
-    this.returnType,
-    required this.onPressed,
-  });
+  const DeleteFlyout({super.key, required this.title, required this.onPressed});
   final String title;
-  final dynamic returnType;
   final Future<void> Function() onPressed;
   @override
   State<DeleteFlyout> createState() => _DeleteFlyoutState();
@@ -16,6 +11,12 @@ class DeleteFlyout extends StatefulWidget {
 
 class _DeleteFlyoutState extends State<DeleteFlyout> {
   final FlyoutController flyoutController = FlyoutController();
+
+  @override
+  void dispose() {
+    flyoutController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,20 +49,9 @@ class _DeleteFlyoutState extends State<DeleteFlyout> {
                           await widget.onPressed();
                           Navigator.pop(context);
                         } catch (error) {
-                          await displayInfoBar(
-                            context,
-                            duration: Duration(seconds: 5),
-                            builder: (context, close) {
-                              return InfoBar(
-                                title: const Text('Σφάλμα:'),
-                                content: Text(error.toString()),
-                                action: IconButton(
-                                  icon: const WindowsIcon(WindowsIcons.error),
-                                  onPressed: close,
-                                ),
-                                severity: InfoBarSeverity.error,
-                              );
-                            },
+                          showCustomInfoBar(
+                            context: context,
+                            text: error.toString(),
                           );
                         }
                       },

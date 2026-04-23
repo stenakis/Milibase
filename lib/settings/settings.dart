@@ -44,47 +44,58 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: WindowsIcon(WindowsIcons.chrome_back, size: 24),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      Gap(10),
+                      const Gap(10),
                       Text(
                         'Ρυθμίσεις',
                         style: FluentTheme.of(context).typography.title,
                       ),
                     ],
                   ),
-                  Gap(padding),
+                  const Gap(padding),
                   Text(
                     'Βάση',
                     style: TextStyle(fontSize: 20, fontWeight: .bold),
                   ),
-                  Gap(5),
+                  const Gap(5),
                   Text('$dbLocation\\sailors_database.sqlite'),
-                  Gap(5),
-                  Button(
-                    child: Text('Άνοιγμα στην εξερεύνηση'),
-                    onPressed: () => OpenFolder.openFolder(dbLocation),
-                  ),
-
-                  Gap(padding * 2),
-                  Text(
-                    'Επαναφορά Βάσης',
-                    style: TextStyle(fontSize: 20, fontWeight: .bold),
-                  ),
-                  Gap(10),
+                  const Gap(10),
                   Row(
                     spacing: 5,
                     children: [
                       Button(
+                        child: Row(
+                          children: [
+                            WindowsIcon(WindowsIcons.file_explorer),
+                            const Gap(5),
+                            Text('Άνοιγμα θέσης αρχείου'),
+                          ],
+                        ),
+                        onPressed: () => OpenFolder.openFolder(dbLocation),
+                      ),
+                      Button(
                         onPressed: () async {
                           await exportBackup(context);
                         },
-                        child: Text('Export'),
+                        child: Row(
+                          children: [
+                            WindowsIcon(WindowsIcons.export),
+                            const Gap(5),
+                            Text('Εξαγωγή σε .json'),
+                          ],
+                        ),
                       ),
 
                       Button(
                         onPressed: () async {
                           await importBackup(context);
                         },
-                        child: Text('Import'),
+                        child: Row(
+                          children: [
+                            WindowsIcon(WindowsIcons.import),
+                            const Gap(5),
+                            Text('Εισαγωγή από .json'),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -108,13 +119,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     constraints: BoxConstraints(maxWidth: 200),
                     child: SvgPicture.asset('assets/logo_large.svg'),
                   ),
-                  Gap(padding),
+                  const Gap(padding),
                   Text(
                     'Έκδοση $appVersion',
                     style: TextStyle(fontSize: 20, fontWeight: .bold),
                   ),
 
-                  Gap(10),
+                  const Gap(10),
                   FutureBuilder<bool>(
                     future: checkUpdate,
                     builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -122,7 +133,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         return Row(
                           children: [
                             ProgressRing(),
-                            Gap(10),
+                            const Gap(10),
                             Text('Γίνεται έλεγχος για ενημερώσεις'),
                           ],
                         );
@@ -136,7 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             crossAxisAlignment: .start,
                             children: [
                               Text('Δεν υπάρχει διαθέσιμη ενημέρωση'),
-                              Gap(10),
+                              const Gap(10),
                               FilledButton(
                                 child: Text('Έλεγχος για ενημερώσεις'),
                                 onPressed: () async {
@@ -152,7 +163,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             crossAxisAlignment: .start,
                             children: [
                               Text('Υπάρχει διαθέσιμη ενημέρωση!'),
-                              Gap(10),
+                              const Gap(10),
                               FilledButton(
                                 child: Text('Εγκατάσταση'),
                                 onPressed: () async {
@@ -179,38 +190,35 @@ class _SettingsPageState extends State<SettingsPage> {
                       }
                     },
                   ),
-                  Gap(padding),
+                  const Gap(padding),
                   Text('Σε αυτή την έκδοση:'),
-                  Gap(5),
+                  const Gap(5),
                   SuperBulletList(
                     iconSize: 5,
-                    separator: Gap(0),
+                    separator: const Gap(0),
                     gap: 5,
                     items: [
-                      Text('Εμφάνιση κατάστασης Ν/Δ στην αρχική οθόνη'),
-                      Text(
-                        'Συμπυκνωμένη εμφάνιση για καλύτερη προοβολή σε μικρές οθόνες',
-                      ),
+                      Text('Διόρθωση τυπογραφικών'),
+                      Text('Βελτίωση ταχύτητας'),
                       Text(
                         'Προαιρετική εισαγωγή ημερομηνίας λήξης απομάκρνυνσης',
                       ),
-                      Text('Προσθήκη ονόματος και ΑΓΜ στην αναζήτηση Ν/Δ'),
-                      Text('Προσαρμογή μεγέθους ονομ/νύμου ΝΔ σε μία γραμμή'),
                       Text(
-                        'Διόρθωση σφάλματος όπου η επεξεργασία μεταβολών επανέφερε τις ημερομηνίες στη σημερινή',
+                        'Διόρθωση σφάλματος όπου οι μήνες μειμωένης θητείας επαναφέρονταν στους 9 κατά την επεξεργασία',
                       ),
-                      Text('Διόρθωση σφάλματος αναζήτησης Ν/Δ'),
+
+                      Text('Διόρθωση οπτικού σφάλματος φίλτρου μεταβολών'),
                     ],
                   ),
                   Spacer(),
                   Text('Σχεδιασμός & Υλοποίηση'),
-                  Gap(padding),
+                  const Gap(padding),
                   Row(
                     mainAxisAlignment: .spaceBetween,
                     children: [
                       SvgPicture.asset('assets/evans_logo.svg', height: 30),
                       Spacer(),
-                      Gap(10),
+                      const Gap(10),
                       IconButton(
                         onPressed: () async {
                           Uri url = Uri.parse('https://github.com/stenakis');
@@ -218,7 +226,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         },
                         icon: SvgPicture.asset('assets/github.svg', height: 20),
                       ),
-                      Gap(5),
+                      const Gap(5),
                       IconButton(
                         icon: SvgPicture.asset('assets/web.svg', height: 20),
                         onPressed: () async {

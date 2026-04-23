@@ -4,7 +4,7 @@ import '../objects/sailor.dart';
 import '../main.dart';
 import 'init_db.dart';
 
-void addND(Sailor sailor) async {
+Future<void> addSailor(Sailor sailor) async {
   await db
       .into(db.tableSailors)
       .insertOnConflictUpdate(
@@ -23,6 +23,7 @@ void addND(Sailor sailor) async {
           dateArrival: sailor.dateArrival,
           dateInsert: sailor.dateInsert,
           dateRemoval: sailor.dateRemoval,
+          avardiotos: Value(sailor.avardiotos),
         ),
       );
 }

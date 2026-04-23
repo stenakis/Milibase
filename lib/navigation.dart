@@ -4,11 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/main.dart';
 import 'package:milibase/settings/settings.dart';
-import 'package:milibase/styles/button.dart';
-import 'package:milibase/vardies/vardies.dart';
 import 'package:milibase/variables.dart';
 
-import 'katalogos_nd.dart';
+final GlobalKey<NavigatorState> mainInnerKey = GlobalKey<NavigatorState>();
 
 class Navigation extends StatefulWidget {
   const Navigation({super.key});
@@ -16,8 +14,6 @@ class Navigation extends StatefulWidget {
   @override
   State<Navigation> createState() => _NavigationState();
 }
-
-final GlobalKey<NavigatorState> mainInnerKey = GlobalKey<NavigatorState>();
 
 class _NavigationState extends State<Navigation> {
   int selected = 1;
@@ -36,7 +32,7 @@ class _NavigationState extends State<Navigation> {
         color: Colors.white,
         child: Row(
           children: [
-            Gap(padding),
+            const Gap(padding),
             SvgPicture.asset('assets/logo_large.svg', height: 25),
             Text(
               'Milibase',
@@ -45,7 +41,7 @@ class _NavigationState extends State<Navigation> {
               ).typography.title?.copyWith(color: Colors.white),
             ),
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),
-           /* FluentButton(
+            /* FluentButton(
               selected: selected == 0,
               text: 'Βάρδιες',
               onPressed: () {
@@ -61,7 +57,7 @@ class _NavigationState extends State<Navigation> {
                 );
               },
             ),
-            Gap(10),
+            const  Gap(10),
             FluentButton(
               selected: selected == 1,
               text: 'Βάση',
@@ -80,9 +76,9 @@ class _NavigationState extends State<Navigation> {
             ),
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),*/
             Image.asset('assets/faron.png', height: 25),
-            Gap(5),
+            const Gap(5),
             Text('Υπηρεσία Φάρων'),
-            Gap(padding),
+            const Gap(padding),
             IconButton(
               onPressed: () {
                 mainInnerKey.currentState?.push(

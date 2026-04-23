@@ -14,7 +14,7 @@ final db = AppDatabase();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
-  databaseFactoryFfi;
+  databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
   doWhenWindowReady(() {
     final win = appWindow;
@@ -22,9 +22,6 @@ void main() async {
     const initialSize = Size(1280, 720);
     win.size = initialSize;
     win.show();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      win.size = initialSize + const Offset(0, 1);
-    });
   });
 }
 
@@ -51,14 +48,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return KatalogosNd();

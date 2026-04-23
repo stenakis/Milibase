@@ -10,7 +10,6 @@ import 'package:milibase/sailor_page/sailors/sailor_widget_settings.dart';
 import 'package:milibase/styles/button.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
-import '../vardies/sailor_vardies_settings.dart';
 
 class SailorPage extends StatefulWidget {
   const SailorPage({super.key, required this.sailor});
@@ -53,7 +52,7 @@ class _SailorPageState extends State<SailorPage> {
                       Text(
                         '${widget.sailor.rank.label} (${widget.sailor.specialty.label})',
                       ),
-                      Gap(5),
+                      const Gap(5),
                       AutoSizeText(
                         '${widget.sailor.surname}\n${widget.sailor.name}',
                         maxLines: 2,
@@ -63,7 +62,7 @@ class _SailorPageState extends State<SailorPage> {
                           color: primary,
                         ),
                       ),
-                      Gap(padding * 2),
+                      const Gap(padding * 2),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: .all(.circular(5)),
@@ -83,7 +82,7 @@ class _SailorPageState extends State<SailorPage> {
                                   mainAxisAlignment: .center,
                                   children: [
                                     WindowsIcon(WindowsIcons.smartcard),
-                                    Gap(10),
+                                    const  Gap(10),
                                     Text('Προεπισκόπηση'),
                                   ],
                                 ),
@@ -136,7 +135,7 @@ class _SailorPageState extends State<SailorPage> {
                               icon: WindowsIcon(WindowsIcons.shuffle),
                               text: 'Μεταβολές',
                             ),
-                           /* FluentButton(
+                            /* FluentButton(
                               onPressed: () => setState(() {
                                 selectedIndex = 4;
                                 screen = SailorWidgetVardies(

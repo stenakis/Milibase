@@ -8,7 +8,7 @@ class FluentButton extends StatelessWidget {
   final String? text;
   final void Function()? onPressed;
   final double? padding;
-  final double? color;
+  final Color? color;
   const FluentButton({
     super.key,
     this.height,
@@ -28,11 +28,11 @@ class FluentButton extends StatelessWidget {
       builder: (BuildContext context, Set<WidgetState> state) {
         return Container(
           decoration: BoxDecoration(
-            color:
-                (selected != null && selected!
-                        ? color ?? secColor
-                        : Colors.transparent)
-                    as Color?,
+            color: (selected == true)
+                ? (color ?? secColor)
+                : state.isHovered
+                ? secColor.withOpacity(0.5)
+                : Colors.transparent,
           ),
           width: width,
           height: height,

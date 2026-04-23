@@ -18,14 +18,18 @@ class ShowApomakrynseisDialog extends StatefulWidget {
 }
 
 class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
+  static final dateFormat = DateFormat('dd/MM/yy', 'el');
   bool isLoading = false;
-  final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Apomakrynseis Key');
+  final apomakrynsiKey = GlobalKey<ComboBoxState>(
+    debugLabel: 'Apomakrynseis Key',
+  );
   final _formKey = GlobalKey<FormState>();
   late DateTime selectedStartDate, selectedEndDate;
   late Apomakrynsi selectedApomakrynsi;
   late TextEditingController simaController;
   late TextEditingController ypiresiaController;
   bool enableEnd = true;
+
   @override
   void initState() {
     selectedApomakrynsi = widget.id == null
@@ -35,10 +39,16 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
         ? DateTime.now()
         : widget.id!.dateStart;
     selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
-    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
     simaController = TextEditingController(text: widget.id?.sima ?? "");
     ypiresiaController = TextEditingController(text: widget.id?.ypiresia ?? "");
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    simaController.dispose();
+    ypiresiaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -56,7 +66,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
               maxLines: 1,
             ),
           ),
-          Gap(10),
+          const Gap(10),
           IconButton(
             icon: WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
@@ -69,13 +79,13 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Gap(10),
+            const Gap(10),
             InfoLabel(
               label: 'Τύπος',
               child: ComboBox<Apomakrynsi>(
                 isExpanded: true,
                 value: selectedApomakrynsi,
-                key: rankKey,
+                key: apomakrynsiKey,
                 onChanged: (Apomakrynsi? newValue) {
                   setState(() {
                     selectedApomakrynsi = newValue!;
@@ -89,13 +99,11 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 }).toList(),
               ),
             ),
-            Gap(padding),
+            const Gap(padding),
             InfoLabel(
               label: 'Υπηρεσία',
               child: TextFormBox(
-                placeholder: ypiresiaController.text.isEmpty
-                    ? 'Εισαγωγή υπηρεσίας'
-                    : widget.id?.ypiresia ?? 'Εισαγωγή υπηρεσίας',
+                placeholder: 'Εισαγωγή υπηρεσίας',
                 controller: ypiresiaController,
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -105,13 +113,11 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 },
               ),
             ),
-            Gap(padding),
+            const Gap(padding),
             InfoLabel(
               label: 'Σήμα',
               child: TextFormBox(
-                placeholder: simaController.text.isEmpty
-                    ? 'Εισαγωγή σήματος'
-                    : widget.id?.sima ?? 'Εισαγωγή σήματος',
+                placeholder: 'Επεξεργασία σήματος',
                 controller: simaController,
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -121,7 +127,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 },
               ),
             ),
-            Gap(padding),
+            const Gap(padding),
             Row(
               crossAxisAlignment: .start,
               children: [
@@ -131,10 +137,9 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                     initialStart: selectedStartDate,
                     isTodayHighlighted: false,
                     locale: Locale('el'),
-                    placeholderText: DateFormat(
-                      'dd/MM/yy',
-                      'el',
-                    ).format(widget.id?.dateStart ?? selectedStartDate),
+                    placeholderText: dateFormat.format(
+                      widget.id?.dateStart ?? selectedStartDate,
+                    ),
                     onSelectionChanged: (CalendarSelectionData data) {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
@@ -147,14 +152,14 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                     },
                   ),
                 ),
-                Gap(10),
+                const Gap(10),
                 Column(
                   crossAxisAlignment: .start,
                   children: [
                     Row(
                       children: [
                         Text('Λήξη'),
-                        Gap(10),
+                        const Gap(10),
                         ToggleSwitch(
                           checked: enableEnd,
                           onChanged: (change) =>
@@ -168,10 +173,9 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                             initialStart: selectedEndDate,
                             isTodayHighlighted: false,
                             locale: Locale('el'),
-                            placeholderText: DateFormat(
-                              'dd/MM/yy',
-                              'el',
-                            ).format(widget.id?.dateEnd ?? selectedEndDate),
+                            placeholderText: dateFormat.format(
+                              widget.id?.dateEnd ?? selectedEndDate,
+                            ),
                             onSelectionChanged: (CalendarSelectionData data) {
                               if (data.selectedDates.isNotEmpty) {
                                 setState(() {
@@ -180,7 +184,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                               }
                             },
                           )
-                        : SizedBox.shrink(),
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ],
@@ -193,7 +197,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
             ? Row(
                 children: [
                   ProgressRing(),
-                  Gap(10),
+                  const Gap(10),
                   Text('Αποθήκευση Απομάκρυνσης'),
                 ],
               )
@@ -205,7 +209,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                       showCustomInfoBar(
                         context: context,
                         text:
-                            'Η ημερομηνία ένραξης πρέπει να είναι πριν την ημερομηνία λήξης.',
+                            'Η ημερομηνία έναρξης πρέπει να είναι πριν την ημερομηνία λήξης.',
                         severity: .warning,
                       );
                     } else {

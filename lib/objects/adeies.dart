@@ -6,6 +6,12 @@ enum Adeia {
   anarrotiki,
   oikos_nosileias;
 
+  static int kanonikiDays(int servingMonths) => switch (servingMonths) {
+    6 => 9,
+    9 => 15,
+    _ => 18,
+  };
+
   static Adeia fromString(String value) {
     return Adeia.values.firstWhere(
       (e) => e.name == value,
@@ -13,17 +19,14 @@ enum Adeia {
     );
   }
 
-  String get label {
-    return {
-          Adeia.kanoniki: 'Κανονική',
-          Adeia.aimodotiki: 'Αιμοδοτική',
-          Adeia.proforiki: 'Προφορική',
-          Adeia.timitiki: 'Τιμητική',
-          Adeia.anarrotiki: 'Αναρρωτική',
-          Adeia.oikos_nosileias: 'Οίκος Νοσηλείας',
-        }[this] ??
-        'Κανονική';
-  }
+  String get label => switch (this) {
+    Adeia.kanoniki => 'Κανονική',
+    Adeia.aimodotiki => 'Αιμοδοτική',
+    Adeia.proforiki => 'Προφορική',
+    Adeia.timitiki => 'Τιμητική',
+    Adeia.anarrotiki => 'Αναρρωτική',
+    Adeia.oikos_nosileias => 'Οίκος Νοσηλείας',
+  };
 }
 
 class Adeies {
@@ -52,7 +55,7 @@ class Adeies {
 
   factory Adeies.fromJson(Map<String, dynamic> json) {
     return Adeies(
-      id: json['id']?.toString() ?? '',
+      id: json['id']!.toString(),
       type: Adeia.fromString(json['type']),
       dateStart: _parseDate(json['dateStart']),
       dateEnd: _parseDate(json['dateEnd']),

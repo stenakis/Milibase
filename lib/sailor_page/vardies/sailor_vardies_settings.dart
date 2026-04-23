@@ -33,11 +33,11 @@ class _SailorWidgetVardiesState extends State<SailorWidgetVardies> {
           crossAxisAlignment: .start,
           children: [
             Text('Βάρδιες', style: FluentTheme.of(context).typography.title),
-            Gap(padding),
+            const Gap(padding),
             Row(
               children: [
                 Text('Απαλλαγή βαρδιών'),
-                Gap(10),
+                const Gap(10),
                 Checkbox(
                   checked: avardiotos,
                   onChanged: (avar) async {

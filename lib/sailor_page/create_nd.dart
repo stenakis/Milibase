@@ -69,6 +69,18 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
   }
 
   @override
+  void dispose() {
+    surnameController.dispose();
+    nameController.dispose();
+    agmController.dispose();
+    addressController.dispose();
+    mobileController.dispose();
+    landlineController.dispose();
+    educationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ContentDialog(
       constraints: .tightFor(
@@ -89,7 +101,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            Gap(10),
+            const Gap(10),
             Row(
               crossAxisAlignment: .start,
               children: [
@@ -114,7 +126,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                               ),
                             ),
                           ),
-                          Gap(10),
+                          const Gap(10),
                           if (widget.sailor != null)
                             Tooltip(
                               message: 'Εναλλαγή ονόματος-επωνύμου',
@@ -137,7 +149,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                 },
                               ),
                             ),
-                          Gap(10),
+                          const Gap(10),
                           Expanded(
                             child: InfoLabel(
                               label: 'Όνομα',
@@ -155,7 +167,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                           ),
                         ],
                       ),
-                      Gap(padding),
+                      const Gap(padding),
                       Row(
                         children: [
                           Expanded(
@@ -179,7 +191,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                               ),
                             ),
                           ),
-                          Gap(padding),
+                          const Gap(padding),
                           InfoLabel(
                             label: 'Βαθμός',
                             child: ComboBox<Rank>(
@@ -198,7 +210,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                               }).toList(),
                             ),
                           ),
-                          Gap(padding),
+                          const Gap(padding),
                           InfoLabel(
                             label: 'Ειδικότητα',
                             child: ComboBox<Specialty>(
@@ -225,7 +237,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                           ),
                         ],
                       ),
-                      Gap(padding),
+                      const Gap(padding),
                       InfoLabel(
                         label: 'Διεύθυνση',
                         child: TextFormBox(
@@ -240,7 +252,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         ),
                       ),
 
-                      Gap(padding),
+                      const Gap(padding),
                       Row(
                         children: [
                           Expanded(
@@ -263,7 +275,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                               ),
                             ),
                           ),
-                          Gap(padding),
+                          const Gap(padding),
                           Expanded(
                             child: InfoLabel(
                               label: 'Σταθερό τηλέφωνο',
@@ -280,7 +292,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                           ),
                         ],
                       ),
-                      Gap(padding),
+                      const Gap(padding),
                       InfoLabel(
                         label: 'Γνώσεις / Πτυχίο',
                         child: TextFormBox(
@@ -291,7 +303,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                     ],
                   ),
                 ),
-                Gap(padding * 2),
+                const Gap(padding * 2),
                 Column(
                   crossAxisAlignment: .start,
                   children: [
@@ -318,7 +330,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         }),
                       ),
                     ),
-                    Gap(10),
+                    const Gap(10),
                     InfoLabel(
                       label: 'Άφιξη στην Υπηρεσία',
                       child: CalendarDatePicker(
@@ -337,7 +349,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         }),
                       ),
                     ),
-                    Gap(10),
+                    const Gap(10),
                     InfoLabel(
                       label: 'Μήνες Υπηρεσίας',
                       child: ComboBox<int>(
@@ -369,7 +381,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         ],
                       ),
                     ),
-                    Gap(10),
+                    const Gap(10),
                     InfoLabel(
                       label: 'Απόλυση',
                       child: CalendarDatePicker(
@@ -389,12 +401,12 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         }),
                       ),
                     ),
-                    Gap(padding * 4),
+                    const Gap(padding * 4),
                     isLoading
                         ? Row(
                             children: [
                               ProgressRing(),
-                              Gap(10),
+                              const Gap(10),
                               Text('Καταχώρηση...'),
                             ],
                           )
@@ -406,7 +418,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                       ? WindowsIcons.add
                                       : WindowsIcons.save,
                                 ),
-                                Gap(10),
+                                const Gap(10),
                                 Text(
                                   widget.sailor == null
                                       ? 'Υποβολή'
@@ -438,10 +450,8 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                     rank: selectedRank,
                                     servingMonths: servingMonths,
                                   );
-                                  addND(newSailor);
-                                  setState(() {
-                                    isLoading = false;
-                                  });
+                                  await addSailor(newSailor);
+
                                   Navigator.pop(context);
                                 } catch (error) {
                                   await showCustomInfoBar(
@@ -449,6 +459,10 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                     text: error.toString(),
                                     severity: .error,
                                   );
+                                } finally {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 }
                               }
                             },

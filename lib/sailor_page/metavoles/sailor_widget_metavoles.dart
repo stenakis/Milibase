@@ -21,9 +21,18 @@ class SailorWidgetMetavoles extends StatefulWidget {
 
 class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
   final _metavoliKey = GlobalKey<ComboBoxState>(debugLabel: 'Metavoli Key');
+  List<Metavoles> _allMetavoles = [];
+  List<Metavoles> _displayedMetavoles = [];
   late Stream<List<Metavoles>> _stream;
   Metavoli? selectedMetavoli;
   bool isLoading = false;
+
+  void _applyFilter() {
+    final filtered = selectedMetavoli == null
+        ? _allMetavoles
+        : _allMetavoles.where((m) => m.type == selectedMetavoli).toList();
+    _displayedMetavoles = filtered..sort((a, b) => a.date.compareTo(b.date));
+  }
 
   @override
   void initState() {
@@ -46,26 +55,29 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
           return const Center(child: ProgressRing());
         }
         if (snapshot.hasError) {
-          showCustomInfoBar(
-            context: context,
-            text: snapshot.error.toString(),
-          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted)
+              showCustomInfoBar(
+                context: context,
+                text: snapshot.error.toString(),
+              );
+          });
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          final List<Metavoles> metavoles = snapshot.data!;
-          final List<Metavoles> selectedList = selectedMetavoli == null
-              ? metavoles
-              : metavoles
-                    .where((metavoli) => metavoli.type == selectedMetavoli)
-                    .toList();
-          final sortedMetavoles = selectedList.toList()
-            ..sort((a, b) => a.date.compareTo(b.date));
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _allMetavoles = snapshot.data!;
+                _applyFilter();
+              });
+            }
+          });
           return Padding(
             padding: .symmetric(horizontal: padding),
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Gap(padding),
+                const Gap(padding),
                 Row(
                   crossAxisAlignment: .center,
                   children: [
@@ -78,20 +90,19 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       child: Row(
                         children: [
                           Icon(FluentIcons.add),
-                          Gap(5),
+                          const Gap(5),
                           Text('Νέα Μεταβολή'),
                         ],
                       ),
                       onPressed: () => showContentDialog(context, null),
                     ),
-                    Gap(padding),
-
-                    if (metavoles.isNotEmpty)
+                    const Gap(padding),
+                    if (_allMetavoles.isNotEmpty)
                       ComboBox<Metavoli>(
                         placeholder: Row(
                           children: [
                             WindowsIcon(WindowsIcons.filter),
-                            Gap(5),
+                            const Gap(5),
                             Text(selectedMetavoli?.label ?? 'Όλες'),
                           ],
                         ),
@@ -100,7 +111,8 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                         key: _metavoliKey,
                         onChanged: (Metavoli? metavoli) {
                           setState(() {
-                            selectedMetavoli = metavoli!;
+                            selectedMetavoli = metavoli; // remove the !
+                            _applyFilter();
                           });
                         },
                         items:
@@ -118,14 +130,15 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       IconButton(
                         onPressed: () => setState(() {
                           selectedMetavoli = null;
+                          _applyFilter();
                         }),
                         icon: WindowsIcon(WindowsIcons.clear),
                       ),
                   ],
                 ),
-                if (metavoles.isNotEmpty) Gap(padding * 1.5),
-                Gap(10),
-                metavoles.isEmpty
+                if (_allMetavoles.isNotEmpty) const Gap(padding * 1.5),
+                const Gap(10),
+                _allMetavoles.isEmpty
                     ? Text('Δεν υπάρχουν καταχωρημένες μεταβολές.')
                     : Container(
                         decoration: BoxDecoration(
@@ -175,10 +188,10 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                   child: ListView.separated(
                     padding: .only(bottom: padding),
                     separatorBuilder: (context, _) => Divider(),
-                    itemCount: metavoles.length,
+                    itemCount: _allMetavoles.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final metavoli = sortedMetavoles[index];
-                      final isLast = index == metavoles.length - 1;
+                      final metavoli = _displayedMetavoles[index];
+                      final isLast = index == _allMetavoles.length - 1;
                       final bottomRadius = Radius.circular(isLast ? 5 : 0);
                       return Container(
                         decoration: BoxDecoration(
@@ -198,13 +211,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                           children: [
                             Expanded(
                               flex: col1Flex,
-                              child: Text(
-                                metavoli.type == .meiomeni
-                                    ? 'Μεταφέρθηκε στους υπόχρεους ${metavoli.duration}μηνης θητείας'
-                                    : metavoli.type == .ekkremei
-                                    ? 'Υπέχει στρατολογική εκκρεμότητα'
-                                    : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
-                              ),
+                              child: Text(metavoli.type.description),
                             ),
                             Expanded(
                               flex: col2Flex,
@@ -229,7 +236,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                                     onPressed: () =>
                                         showContentDialog(context, metavoli),
                                   ),
-                                  Gap(5),
+                                  const Gap(5),
                                   DeleteFlyout(
                                     title: 'Διαγραφή μεταβολής;',
                                     onPressed: () async {

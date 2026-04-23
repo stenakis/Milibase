@@ -17,8 +17,9 @@ class ShowAdeiesDialog extends StatefulWidget {
 }
 
 class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
+  static final dateFormat = DateFormat('dd/MM/yy', 'el');
   bool isLoading = false;
-  final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeies Key');
+  final adeiaKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeies Key');
   final _formKey = GlobalKey<FormState>();
   late DateTime selectedStartDate, selectedEndDate;
   late Adeia selectedAdeia;
@@ -31,13 +32,14 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
         ? DateTime.now()
         : widget.id!.dateStart;
     selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
-    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
-    simaController = TextEditingController(
-      text: selectedAdeia == .oikos_nosileias || selectedAdeia == .anarrotiki
-          ? widget.id?.sima ?? ""
-          : '',
-    );
+    simaController = TextEditingController(text: widget.id?.sima ?? '');
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    simaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,7 +55,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
               maxLines: 1,
             ),
           ),
-          Gap(10),
+          const Gap(10),
           IconButton(
             icon: WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
@@ -66,16 +68,17 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Gap(10),
+            const Gap(10),
             InfoLabel(
               label: 'Τύπος',
               child: ComboBox<Adeia>(
                 isExpanded: true,
                 value: selectedAdeia,
-                key: rankKey,
+                key: adeiaKey,
                 onChanged: (Adeia? newValue) {
                   setState(() {
                     selectedAdeia = newValue!;
+                    simaController.clear();
                   });
                 },
                 items: Adeia.values.map((Adeia e) {
@@ -83,16 +86,14 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                 }).toList(),
               ),
             ),
-            Gap(padding),
+            const Gap(padding),
             if (selectedAdeia == Adeia.oikos_nosileias ||
                 selectedAdeia == Adeia.anarrotiki)
               InfoLabel(
                 label: 'Σήμα',
                 child: TextFormBox(
                   controller: simaController,
-                  placeholder: simaController.text.isEmpty
-                      ? 'Εισαγωγή σήματος'
-                      : widget.id?.sima ?? 'Εισαγωγή σήματος',
+                  placeholder: 'Εισαγωγή σήματος',
                   validator: (text) {
                     if (text == null || text.isEmpty) {
                       return 'Παρακαλώ συμπληρώστε το σήμα';
@@ -101,7 +102,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                   },
                 ),
               ),
-            Gap(10),
+            const Gap(10),
             Row(
               children: [
                 InfoLabel(
@@ -110,10 +111,9 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                     initialStart: selectedStartDate,
                     isTodayHighlighted: false,
                     locale: Locale('el'),
-                    placeholderText: DateFormat(
-                      'dd/MM/yy',
-                      'el',
-                    ).format(widget.id?.dateStart ?? selectedStartDate),
+                    placeholderText: dateFormat.format(
+                      widget.id?.dateStart ?? selectedStartDate,
+                    ),
                     onSelectionChanged: (CalendarSelectionData data) {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
@@ -126,17 +126,16 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                     },
                   ),
                 ),
-                Gap(10),
+                const Gap(10),
                 InfoLabel(
                   label: 'Λήξη',
                   child: CalendarDatePicker(
                     initialStart: selectedEndDate,
                     isTodayHighlighted: false,
                     locale: Locale('el'),
-                    placeholderText: DateFormat(
-                      'dd/MM/yy',
-                      'el',
-                    ).format(widget.id?.dateEnd ?? selectedEndDate),
+                    placeholderText: dateFormat.format(
+                      widget.id?.dateEnd ?? selectedEndDate,
+                    ),
                     onSelectionChanged: (CalendarSelectionData data) {
                       if (data.selectedDates.isNotEmpty) {
                         setState(() {
@@ -154,12 +153,25 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
       actions: [
         isLoading
             ? Row(
-                children: [ProgressRing(), Gap(10), Text('Αποθήκευση Άδειας')],
+                children: [
+                  ProgressRing(),
+                  const Gap(10),
+                  Text('Αποθήκευση Άδειας'),
+                ],
               )
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    if (selectedStartDate.isAfter(selectedEndDate)) {
+                      showCustomInfoBar(
+                        context: context,
+                        text:
+                            'Η ημερομηνία έναρξης πρέπει να είναι πριν την ημερομηνία λήξης.',
+                        severity: InfoBarSeverity.warning,
+                      );
+                      return;
+                    }
                     setState(() {
                       isLoading = true;
                     });
@@ -175,7 +187,6 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                       await addNewAdeia(newAdeia);
                       if (context.mounted && mounted) Navigator.pop(context);
                     } catch (e) {
-                      print(e);
                       if (context.mounted && mounted) {
                         showCustomInfoBar(
                           context: context,

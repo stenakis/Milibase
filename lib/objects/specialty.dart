@@ -18,20 +18,17 @@ enum Specialty {
     );
   }
 
-  String get label {
-    return {
-          Specialty.t_mhx: 'Τ/ΜΗΧ',
-          Specialty.dioik: 'ΔΙΟΙΚ',
-          Specialty.t_syn: 'Τ/ΣΥΝ',
-          Specialty.diax: 'ΔΙΑΧ',
-          Specialty.t_hn: 'Τ/ΗΝ',
-          Specialty.hn_hy: 'ΗΝ/ΗΥ',
-          Specialty.b_nos: 'Β/ΝΟΣ',
-          Specialty.arm: 'ΑΡΜ',
-          Specialty.t_opl: 'Τ/ΟΠΛ',
-          Specialty.t_dom: 'Τ/ΔΟΜ',
-          Specialty.hl: 'ΗΛ',
-        }[this] ??
-        'Τ/ΗΝ';
-  }
+  String get label => switch (this) {
+    Specialty.t_mhx => 'Τ/ΜΗΧ',
+    Specialty.dioik => 'ΔΙΟΙΚ',
+    Specialty.t_syn => 'Τ/ΣΥΝ',
+    Specialty.diax => 'ΔΙΑΧ',
+    Specialty.t_hn => 'Τ/ΗΝ',
+    Specialty.hn_hy => 'ΗΝ/ΗΥ',
+    Specialty.b_nos => 'Β/ΝΟΣ',
+    Specialty.arm => 'ΑΡΜ',
+    Specialty.t_opl => 'Τ/ΟΠΛ',
+    Specialty.t_dom => 'Τ/ΔΟΜ',
+    Specialty.hl => 'ΗΛ',
+  };
 }

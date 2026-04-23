@@ -16,8 +16,6 @@ class SailorWidgetSettings extends StatefulWidget {
 }
 
 class _SailorWidgetSettingsState extends State<SailorWidgetSettings> {
-  bool isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,15 +38,12 @@ class _SailorWidgetSettingsState extends State<SailorWidgetSettings> {
                 child: Row(
                   children: [
                     WindowsIcon(WindowsIcons.delete),
-                    Gap(5),
+                    const Gap(5),
                     Text('Διαγραφή'),
                   ],
                 ),
                 onPressed: () async {
                   try {
-                    setState(() {
-                      isLoading = true;
-                    });
                     await (db.delete(
                       db.tableSailors,
                     )..where((t) => t.id.equals(widget.sailor.id))).go();
@@ -56,14 +51,12 @@ class _SailorWidgetSettingsState extends State<SailorWidgetSettings> {
                       (route) => route.isFirst,
                     );
                   } catch (e) {
-                    await showCustomInfoBar(
-                      context: context,
-                      text: e.toString(),
-                    );
-                  } finally {
-                    setState(() {
-                      isLoading = false;
-                    });
+                    if (mounted && context.mounted) {
+                      await showCustomInfoBar(
+                        context: context,
+                        text: e.toString(),
+                      );
+                    }
                   }
                 },
               ),

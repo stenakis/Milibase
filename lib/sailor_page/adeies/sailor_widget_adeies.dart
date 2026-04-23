@@ -20,21 +20,26 @@ class SailorWidgetAdeies extends StatefulWidget {
 }
 
 class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
+  List<Adeies> _allAdeies = [];
+  List<Adeies> _displayedAdeies = [];
+  static final dateFormat = DateFormat('EEE dd MMM yy', 'el');
   final _adeiaKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeia Key');
   late Stream<List<Adeies>> _stream;
   Adeia? selectedAdeia;
   bool isLoading = false;
-
   late int daysKanoniki;
+
+  void _applyFilter() {
+    final filtered = selectedAdeia == null
+        ? _allAdeies
+        : _allAdeies.where((a) => a.type == selectedAdeia).toList();
+    _displayedAdeies = filtered
+      ..sort((a, b) => a.dateStart.compareTo(b.dateStart));
+  }
+
   @override
   void initState() {
-    if (widget.sailor.servingMonths == 6) {
-      daysKanoniki = 9;
-    } else if (widget.sailor.servingMonths == 9) {
-      daysKanoniki = 15;
-    } else {
-      daysKanoniki = 18;
-    }
+    daysKanoniki = Adeia.kanonikiDays(widget.sailor.servingMonths);
     _stream =
         (db.select(
           db.tableAdeies,
@@ -53,25 +58,31 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
           return const Center(child: ProgressRing());
         }
         if (snapshot.hasError) {
-          showCustomInfoBar(
-            context: context,
-            text: snapshot.error.toString(),
-          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              showCustomInfoBar(
+                context: context,
+                text: snapshot.error.toString(),
+              );
+            }
+          });
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          final List<Adeies> adeies = snapshot.data!;
-          final List<Adeies> selectedList = selectedAdeia == null
-              ? adeies
-              : adeies.where((adeia) => adeia.type == selectedAdeia).toList();
-          final sortedAdeies = selectedList.toList()
-            ..sort((a, b) => a.dateStart.compareTo(b.dateStart));
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _allAdeies = snapshot.data!;
+                _applyFilter();
+              });
+            }
+          });
 
           return Padding(
             padding: .symmetric(horizontal: padding),
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Gap(padding),
+                const Gap(padding),
                 Row(
                   crossAxisAlignment: .center,
                   children: [
@@ -84,19 +95,19 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                       child: Row(
                         children: [
                           Icon(FluentIcons.add),
-                          Gap(5),
+                          const Gap(5),
                           Text('Νέα Άδεια'),
                         ],
                       ),
                       onPressed: () => showContentDialog(context, null),
                     ),
-                    Gap(padding),
-                    if (adeies.isNotEmpty)
+                    const Gap(padding),
+                    if (_allAdeies.isNotEmpty)
                       ComboBox<Adeia>(
                         placeholder: Row(
                           children: [
                             WindowsIcon(WindowsIcons.filter),
-                            Gap(5),
+                            const Gap(5),
                             Text(selectedAdeia?.label ?? 'Όλες'),
                           ],
                         ),
@@ -105,7 +116,8 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                         key: _adeiaKey,
                         onChanged: (Adeia? adeia) {
                           setState(() {
-                            selectedAdeia = adeia!;
+                            selectedAdeia = adeia;
+                            _applyFilter();
                           });
                         },
                         items:
@@ -123,19 +135,20 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                       IconButton(
                         onPressed: () => setState(() {
                           selectedAdeia = null;
+                          _applyFilter();
                         }),
                         icon: WindowsIcon(WindowsIcons.clear),
                       ),
                   ],
                 ),
-                Gap(padding),
+                const Gap(padding),
                 Wrap(
                   alignment: .start,
                   spacing: 5,
                   runSpacing: 5,
                   children: [
                     ...Adeia.values.map((adeiaType) {
-                      final totalDays = adeies
+                      final totalDays = _allAdeies
                           .where((item) => item.type == adeiaType)
                           .fold<int>(
                             0,
@@ -168,8 +181,8 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                     }),
                   ],
                 ),
-                if (adeies.isNotEmpty) Gap(padding * 1.5),
-                adeies.isEmpty
+                if (_allAdeies.isNotEmpty) const Gap(padding * 1.5),
+                _allAdeies.isEmpty
                     ? Text('Δεν υπάρχουν καταχωρημένες άδειες.')
                     : Container(
                         decoration: BoxDecoration(
@@ -223,12 +236,12 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                       ),
                 Expanded(
                   child: ListView.separated(
-                    itemCount: adeies.length,
+                    itemCount: _displayedAdeies.length,
                     separatorBuilder: (context, _) => Divider(),
                     padding: .only(bottom: padding),
                     itemBuilder: (context, int index) {
-                      final adeia = sortedAdeies[index];
-                      final isLast = index == adeies.length - 1;
+                      final adeia = _displayedAdeies[index];
+                      final isLast = index == _allAdeies.length - 1;
                       final bottomRadius = Radius.circular(isLast ? 5 : 0);
                       return Container(
                         decoration: BoxDecoration(
@@ -251,21 +264,11 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                             ),
                             Expanded(
                               flex: col2Flex,
-                              child: Text(
-                                DateFormat(
-                                  'EEE dd MMM yy',
-                                  'el',
-                                ).format(adeia.dateStart),
-                              ),
+                              child: Text(dateFormat.format(adeia.dateStart)),
                             ),
                             Expanded(
                               flex: col3Flex,
-                              child: Text(
-                                DateFormat(
-                                  'EEE dd MMM yy',
-                                  'el',
-                                ).format(adeia.dateEnd),
-                              ),
+                              child: Text(dateFormat.format(adeia.dateEnd)),
                             ),
                             Expanded(
                               flex: col4Flex,
@@ -281,7 +284,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                     onPressed: () =>
                                         showContentDialog(context, adeia),
                                   ),
-                                  Gap(5),
+                                  const Gap(5),
                                   DeleteFlyout(
                                     title: 'Διαγραφή άδειας;',
                                     onPressed: () async {

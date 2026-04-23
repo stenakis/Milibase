@@ -18,7 +18,7 @@ class Sailor {
   final DateTime dateRemoval;
   final bool avardiotos;
   Sailor({
-    this.id = '',
+    required this.id,
     required this.name,
     required this.surname,
     required this.agm,
@@ -37,10 +37,10 @@ class Sailor {
 
   factory Sailor.fromJson(Map<String, dynamic> json) {
     return Sailor(
-      id: json['id']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
-      surname: json['surname']?.toString() ?? '',
-      agm: json['agm']?.toString() ?? '',
+      id: json['id']!.toString(),
+      name: json['name']!.toString(),
+      surname: json['surname']!.toString(),
+      agm: json['agm']!.toString(),
       rank: Rank.fromString(json['rank']?.toString() ?? ''),
       specialty: Specialty.fromString(json['specialty']?.toString() ?? ''),
       address: json['address']?.toString() ?? '',

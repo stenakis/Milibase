@@ -9,7 +9,8 @@ enum Rank {
     );
   }
 
-  String get label {
-    return {Rank.naftis: 'Ναύτης', Rank.diopos: 'Σ. Δίοπος'}[this] ?? 'Ναύτης';
-  }
+  String get label => switch (this) {
+    Rank.naftis => 'Ναύτης',
+    Rank.diopos => 'Σ. Δίοπος',
+  };
 }

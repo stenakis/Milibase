@@ -1,12 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:milibase/objects/rank.dart';
 import 'package:milibase/objects/sailor.dart';
-import 'package:milibase/objects/specialty.dart';
 import 'package:milibase/sailor_page/create_nd.dart';
 import 'package:milibase/variables.dart';
-
 import '../../main.dart';
 
 class SailorWidgetInfo extends StatefulWidget {
@@ -16,20 +13,10 @@ class SailorWidgetInfo extends StatefulWidget {
   State<SailorWidgetInfo> createState() => _SailorWidgetInfoState();
 }
 
-final specialtyKey = GlobalKey<ComboBoxState>(debugLabel: 'Specialty Key');
-final rankKey = GlobalKey<ComboBoxState>(debugLabel: 'Rank Key');
-final monthsKey = GlobalKey<ComboBoxState>(debugLabel: 'Months Key');
-
 class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
-  late Rank selectedRank;
-  late Specialty selectedSpecialty;
-  late int servingMonths;
-  late DateTime? selectedArrivalDate;
-  late DateTime? selectedEntryDate;
-  late DateTime? selectedRemovalDate;
-  late DateTime now = DateTime.now();
+  final DateTime now = DateTime.now();
   late Stream<Sailor> _stream;
-
+  static final dateFormat = DateFormat('EEE dd MMM yy', 'el');
   @override
   void initState() {
     _stream =
@@ -37,16 +24,6 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
               ..where((t) => t.id.equals(widget.sailor.id)))
             .watchSingle()
             .map((row) => Sailor.fromJson(row.toJson()));
-    selectedSpecialty = widget.sailor.specialty;
-    selectedRank = widget.sailor.rank;
-    servingMonths = widget.sailor.servingMonths;
-    selectedArrivalDate = now;
-    selectedEntryDate = now;
-    selectedRemovalDate = DateTime(
-      now.year,
-      now.month + servingMonths,
-      now.day,
-    );
     super.initState();
   }
 
@@ -76,7 +53,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                   child: Row(
                     children: [
                       WindowsIcon(WindowsIcons.edit),
-                      Gap(10),
+                      const Gap(10),
                       Text('Επεξεργασία'),
                     ],
                   ),
@@ -84,7 +61,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                 ),
               ],
             ),
-            Gap(padding * 2),
+            const Gap(padding * 2),
             Row(
               crossAxisAlignment: .start,
               children: [
@@ -101,7 +78,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                               style: TextStyle(fontWeight: .bold, fontSize: 24),
                             ),
                           ),
-                          Gap(padding * 2),
+                          const Gap(padding * 2),
                           InfoLabel(
                             label: 'Όνομα',
                             child: Text(
@@ -111,7 +88,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                           ),
                         ],
                       ),
-                      Gap(padding),
+                      const Gap(padding),
                       Row(
                         children: [
                           InfoLabel(
@@ -121,7 +98,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                               style: TextStyle(fontWeight: .bold, fontSize: 24),
                             ),
                           ),
-                          Gap(padding * 2),
+                          const Gap(padding * 2),
                           InfoLabel(
                             label: 'Βαθμός',
                             child: Text(
@@ -131,7 +108,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                           ),
                         ],
                       ),
-                      Gap(padding),
+                      const Gap(padding),
                       InfoLabel(
                         label: 'Κινητό Τηλέφωνο',
                         child: Text(
@@ -140,7 +117,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         ),
                       ),
 
-                      Gap(padding),
+                      const Gap(padding),
                       Row(
                         crossAxisAlignment: .end,
                         children: [
@@ -151,7 +128,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                           ),
                         ],
                       ),
-                      Gap(padding),
+                      const Gap(padding),
                       Row(
                         crossAxisAlignment: .end,
                         children: [
@@ -163,7 +140,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         ],
                       ),
 
-                      Gap(padding),
+                      const Gap(padding),
                       Row(
                         crossAxisAlignment: .end,
                         children: [
@@ -177,7 +154,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                     ],
                   ),
                 ),
-                Gap(padding),
+                const Gap(padding),
                 Column(
                   crossAxisAlignment: .start,
                   children: [
@@ -188,37 +165,28 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         style: TextStyle(fontWeight: .bold, fontSize: 18),
                       ),
                     ),
-                    Gap(padding),
+                    const Gap(padding),
                     InfoLabel(
                       label: 'Κατάταξη',
                       child: Text(
                         locale: .new('el'),
-                        DateFormat(
-                          'EEE dd MMM yy',
-                          'el',
-                        ).format(sailor.dateInsert),
+                        dateFormat.format(sailor.dateInsert),
                         style: TextStyle(fontWeight: .bold, fontSize: 18),
                       ),
                     ),
-                    Gap(padding),
+                    const Gap(padding),
                     InfoLabel(
                       label: 'Άφιξη στην Υπηρεσία',
                       child: Text(
-                        DateFormat(
-                          'EEE dd MMM yy',
-                          'el',
-                        ).format(sailor.dateArrival),
+                        dateFormat.format(sailor.dateArrival),
                         style: TextStyle(fontWeight: .bold, fontSize: 18),
                       ),
                     ),
-                    Gap(padding),
+                    const Gap(padding),
                     InfoLabel(
                       label: 'Απόλυση',
                       child: Text(
-                        DateFormat(
-                          'EEE dd MMM yy',
-                          'el',
-                        ).format(sailor.dateRemoval),
+                        dateFormat.format(sailor.dateRemoval),
                         style: TextStyle(fontWeight: .bold, fontSize: 18),
                       ),
                     ),

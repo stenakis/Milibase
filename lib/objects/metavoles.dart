@@ -18,6 +18,12 @@ enum Metavoli {
         }[this] ??
         'Μειωμένη Θητεία';
   }
+
+  String get description => switch (this) {
+    Metavoli.meiomeni => 'Μεταφέρθηκε στους υπόχρεους ...',
+    Metavoli.ekkremei => 'Υπέχει στρατολογική εκκρεμότητα',
+    _ => 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
+  };
 }
 
 class Metavoles {

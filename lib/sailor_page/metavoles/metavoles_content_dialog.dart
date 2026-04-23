@@ -20,7 +20,6 @@ class ShowMetavolesDialog extends StatefulWidget {
 class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   bool isLoading = false;
   final metavoliKey = GlobalKey<ComboBoxState>(debugLabel: 'Metavoli Key');
-  final durationKey = GlobalKey<ComboBoxState>(debugLabel: 'Duration Key');
   final _formKey = GlobalKey<FormState>();
   late DateTime selectedDate;
   late Metavoli selectedMetavoli;
@@ -37,6 +36,12 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   }
 
   @override
+  void dispose() {
+    simaController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: Row(
@@ -49,7 +54,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
               maxLines: 1,
             ),
           ),
-          Gap(10),
+          const Gap(10),
           IconButton(
             icon: WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
@@ -62,7 +67,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Gap(10),
+            const Gap(10),
             InfoLabel(
               label: 'Τύπος',
               child: ComboBox<Metavoli>(
@@ -79,50 +84,36 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                 }).toList(),
               ),
             ),
-            Gap(5),
+            const Gap(5),
             Text(
-              (selectedMetavoli == .meiomeni)
-                  ? 'Μεταφέρθηκε στους υπόχρεους $selectedDurationμηνης θητείας'
-                  : selectedMetavoli == .ekkremei
-                  ? 'Υπέχει στρατολογική εκκρεμότητα'
-                  : 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
-              style: TextStyle(fontStyle: .italic),
+              selectedMetavoli.description,
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-
-            if (selectedMetavoli == .meiomeni) Gap(padding),
+            if (selectedMetavoli == .meiomeni) const Gap(padding),
             if (selectedMetavoli == .meiomeni)
               InfoLabel(
                 label: 'Διάρκεια Θητείας',
                 child: RadioGroup<int>(
-                  key: durationKey,
                   groupValue: selectedDuration,
                   onChanged: (int? newValue) {
                     setState(() {
                       selectedDuration = newValue ?? selectedDuration;
                     });
                   },
-                  child: Row(
+                  child: const Row(
                     spacing: padding,
                     children: [
-                      RadioButton<int>(
-                        value: 6,
-                        content: const Text('6 μήνες'),
-                      ),
-                      RadioButton<int>(
-                        value: 9,
-                        content: const Text('9 μήνες'),
-                      ),
+                      RadioButton<int>(value: 6, content: Text('6 μήνες')),
+                      RadioButton<int>(value: 9, content: Text('9 μήνες')),
                     ],
                   ),
                 ),
               ),
-            Gap(padding),
+            const Gap(padding),
             InfoLabel(
               label: 'Σήμα',
               child: TextFormBox(
-                placeholder: simaController.text.isEmpty
-                    ? 'Εισαγωγή σήματος'
-                    : widget.id?.sima ?? 'Εισαγωγή σήματος',
+                placeholder: 'Εισαγωγή σήματος',
                 controller: simaController,
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -132,7 +123,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                 },
               ),
             ),
-            Gap(padding),
+            const Gap(padding),
             InfoLabel(
               label: 'Ημερομηνία',
               child: CalendarDatePicker(
@@ -157,7 +148,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
       ),
       actions: [
         isLoading
-            ? Row(children: [ProgressRing(), Gap(10), Text(statusText)])
+            ? Row(children: [ProgressRing(), const Gap(10), Text(statusText)])
             : FilledButton(
                 child: const Text('Εισαγωγή'),
                 onPressed: () async {

@@ -16,7 +16,7 @@ class SailorWidgetVardies extends StatelessWidget {
           'Οι παρακάτω ρυθμίσεις εφαρμόζονται μόνιμα. Οι εβδομαδιαίες αλλαγές πραγματοποιούνται από το μενού “Βάρδιες”.',
           style: TextStyle(fontStyle: FontStyle.italic),
         ),
-        Gap(padding),
+        const Gap(padding),
         Row(
           children: [
             Expanded(
@@ -25,14 +25,14 @@ class SailorWidgetVardies extends StatelessWidget {
                 child: TextBox(placeholder: sailor.surname),
               ),
             ),
-            Gap(10),
+            const Gap(10),
             Expanded(
               child: InfoLabel(
                 label: 'Όνομα',
                 child: TextBox(placeholder: sailor.name),
               ),
             ),
-            Gap(10),
+            const Gap(10),
             Expanded(
               child: InfoLabel(
                 label: 'ΑΓΜ',

@@ -3,6 +3,9 @@ enum Apomakrynsi {
   apospasi,
   metathesi;
 
+  static const int maxDaysApospasi = 45;
+  static const int maxDaysDiathesi = 15;
+
   static Apomakrynsi fromString(String value) {
     return Apomakrynsi.values.firstWhere(
       (e) => e.name == value,
@@ -10,14 +13,11 @@ enum Apomakrynsi {
     );
   }
 
-  String get label {
-    return {
-          Apomakrynsi.apospasi: 'Απόσπαση',
-          Apomakrynsi.diathesi: 'Διάθεση',
-          Apomakrynsi.metathesi: 'Μετάθεση',
-        }[this] ??
-        'Απόσπαση';
-  }
+  String get label => switch (this) {
+    Apomakrynsi.apospasi => 'Απόσπαση',
+    Apomakrynsi.diathesi => 'Διάθεση',
+    Apomakrynsi.metathesi => 'Μετάθεση',
+  };
 }
 
 class Apomakrynseis {
