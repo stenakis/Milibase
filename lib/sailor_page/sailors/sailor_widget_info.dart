@@ -3,6 +3,9 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/create_nd.dart';
+import 'package:milibase/sailor_page/sailors/calendar_view.dart';
+import 'package:milibase/sailor_page/sailors/info_widget.dart';
+import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
 import '../../main.dart';
 
@@ -16,7 +19,6 @@ class SailorWidgetInfo extends StatefulWidget {
 class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
   final DateTime now = DateTime.now();
   late Stream<Sailor> _stream;
-  static final dateFormat = DateFormat('EEE dd MMM yy', 'el');
   @override
   void initState() {
     _stream =
@@ -34,172 +36,173 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
       initialData: widget.sailor,
       builder: (context, snapshot) {
         final sailor = snapshot.data!;
-        final int dateUntilRemoval = DateTime(
-          sailor.dateRemoval.year,
-          sailor.dateRemoval.month,
-          sailor.dateRemoval.day,
-        ).difference(now).inDays;
-        return ListView(
-          padding: .all(padding),
+
+        return Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  'Στοιχεία',
-                  style: FluentTheme.of(context).typography.title,
-                ),
-                Spacer(),
-                FilledButton(
-                  child: Row(
+            Expanded(
+              child: ListView(
+                padding: .all(padding),
+                children: [
+                  Row(
                     children: [
-                      WindowsIcon(WindowsIcons.edit),
-                      const Gap(10),
-                      Text('Επεξεργασία'),
-                    ],
-                  ),
-                  onPressed: () => showContentDialog(context),
-                ),
-              ],
-            ),
-            const Gap(padding * 2),
-            Row(
-              crossAxisAlignment: .start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: .start,
-                    children: [
-                      Row(
-                        children: [
-                          InfoLabel(
-                            label: 'Επώνυμο',
-                            child: Text(
-                              sailor.surname,
-                              style: TextStyle(fontWeight: .bold, fontSize: 24),
-                            ),
-                          ),
-                          const Gap(padding * 2),
-                          InfoLabel(
-                            label: 'Όνομα',
-                            child: Text(
-                              sailor.name,
-                              style: TextStyle(fontWeight: .bold, fontSize: 24),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        'Επισκόπηση',
+                        style: FluentTheme.of(context).typography.title,
                       ),
-                      const Gap(padding),
-                      Row(
-                        children: [
-                          InfoLabel(
-                            label: 'ΑΓΜ',
-                            child: Text(
-                              sailor.agm,
-                              style: TextStyle(fontWeight: .bold, fontSize: 24),
-                            ),
-                          ),
-                          const Gap(padding * 2),
-                          InfoLabel(
-                            label: 'Βαθμός',
-                            child: Text(
-                              '${sailor.rank.label} (${sailor.specialty.label})',
-                              style: TextStyle(fontWeight: .bold, fontSize: 24),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Gap(padding),
-                      InfoLabel(
-                        label: 'Κινητό Τηλέφωνο',
-                        child: Text(
-                          sailor.mobile,
-                          style: TextStyle(fontWeight: .bold, fontSize: 24),
+                      Spacer(),
+                      FilledButton(
+                        child: Row(
+                          children: [
+                            WindowsIcon(WindowsIcons.edit),
+                            const Gap(10),
+                            Text('Επεξεργασία'),
+                          ],
                         ),
-                      ),
-
-                      const Gap(padding),
-                      Row(
-                        crossAxisAlignment: .end,
-                        children: [
-                          Text('Σταθερό Τηλέφωνο: '),
-                          Text(
-                            sailor.landline,
-                            style: TextStyle(fontWeight: .bold, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                      const Gap(padding),
-                      Row(
-                        crossAxisAlignment: .end,
-                        children: [
-                          Text('Διεύθυνση: '),
-                          Text(
-                            sailor.address,
-                            style: TextStyle(fontWeight: .bold, fontSize: 16),
-                          ),
-                        ],
-                      ),
-
-                      const Gap(padding),
-                      Row(
-                        crossAxisAlignment: .end,
-                        children: [
-                          Text('Γνώσεις / Πτυχίο: '),
-                          Text(
-                            sailor.education,
-                            style: TextStyle(fontWeight: .bold, fontSize: 16),
-                          ),
-                        ],
+                        onPressed: () => showContentDialog(context),
                       ),
                     ],
                   ),
-                ),
-                const Gap(padding),
-                Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    InfoLabel(
-                      label: 'Μήνες Υπηρεσίας',
-                      child: Text(
-                        sailor.servingMonths.toString(),
-                        style: TextStyle(fontWeight: .bold, fontSize: 18),
-                      ),
+                  const Gap(padding),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+
+                      spacing: 10,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: .all(.circular(5)),
+                            child: Container(
+                              color: secColor,
+                              child: Column(
+                                mainAxisAlignment: .spaceBetween,
+                                children: [
+                                  Gap(10),
+                                  Text(
+                                    'Κατάταξη',
+                                    textAlign: .center,
+                                    style: FluentTheme.of(context)
+                                        .typography
+                                        .body
+                                        ?.copyWith(fontWeight: .bold),
+                                  ),
+                                  Gap(10),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: .symmetric(vertical: padding / 2),
+                                    color: Colors.white,
+                                    child: Text(
+                                      textAlign: .center,
+                                      DateFormat(
+                                        'dd/MM/yy',
+                                        'el',
+                                      ).format(sailor.dateInsert),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: .all(.circular(5)),
+                            child: Container(
+                              color: secColor,
+                              child: Column(
+                                mainAxisAlignment: .spaceBetween,
+                                children: [
+                                  Gap(10),
+                                  Text(
+                                    'Άφιξη στην Υπηρεσία',
+                                    textAlign: .center,
+                                    style: FluentTheme.of(context)
+                                        .typography
+                                        .body
+                                        ?.copyWith(fontWeight: .bold),
+                                  ),
+                                  Gap(10),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: .symmetric(vertical: padding / 2),
+                                    color: Colors.white,
+                                    child: Text(
+                                      textAlign: .center,
+                                      DateFormat(
+                                        'dd/MM/yy',
+                                        'el',
+                                      ).format(sailor.dateArrival),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: .all(.circular(5)),
+                            child: Container(
+                              color: secColor,
+                              child: Column(
+                                mainAxisAlignment: .spaceBetween,
+                                children: [
+                                  Gap(10),
+                                  Text(
+                                    'Απόλυση',
+                                    textAlign: .center,
+                                    style: FluentTheme.of(context)
+                                        .typography
+                                        .body
+                                        ?.copyWith(fontWeight: .bold),
+                                  ),
+                                  Gap(10),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: .symmetric(vertical: padding / 2),
+                                    color: Colors.white,
+                                    child: Text(
+                                      textAlign: .center,
+                                      DateFormat(
+                                        'dd/MM/yy',
+                                        'el',
+                                      ).format(sailor.dateRemoval),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const Gap(padding),
-                    InfoLabel(
-                      label: 'Κατάταξη',
-                      child: Text(
-                        locale: .new('el'),
-                        dateFormat.format(sailor.dateInsert),
-                        style: TextStyle(fontWeight: .bold, fontSize: 18),
-                      ),
-                    ),
-                    const Gap(padding),
-                    InfoLabel(
-                      label: 'Άφιξη στην Υπηρεσία',
-                      child: Text(
-                        dateFormat.format(sailor.dateArrival),
-                        style: TextStyle(fontWeight: .bold, fontSize: 18),
-                      ),
-                    ),
-                    const Gap(padding),
-                    InfoLabel(
-                      label: 'Απόλυση',
-                      child: Text(
-                        dateFormat.format(sailor.dateRemoval),
-                        style: TextStyle(fontWeight: .bold, fontSize: 18),
-                      ),
-                    ),
-                    Text(
-                      dateUntilRemoval > 0
-                          ? '$dateUntilRemoval μέρες μέχρι την απόλυση'
-                          : 'Απολύθηκε πριν ${dateUntilRemoval.abs()} ημέρες',
-                      style: TextStyle(color: primary),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                  const Gap(padding),
+                  InfoOverview(
+                    title: 'Στρατιωτικά στοιχεία',
+                    items: [
+                      {'ΑΓΜ': widget.sailor.agm},
+                      {
+                        'Βαθμός / Ειδικότητα':
+                            '${widget.sailor.rank.label} (${widget.sailor.specialty.label})',
+                      },
+                    ],
+                  ),
+                  const Gap(padding),
+                  InfoOverview(
+                    title: 'Προσωπικά στοιχεία',
+                    items: [
+                      {'Κινητό': sailor.mobile},
+                      {'Σταθερό': sailor.landline},
+                      {'Διεύθυνση': sailor.address},
+                      {'Γνώσεις/Πτυχίο': sailor.education},
+                    ],
+                  ),
+                ],
+              ),
             ),
+            Gap(padding),
+            Expanded(child: SailorCalendarOverview(sailor: sailor)),
           ],
         );
       },

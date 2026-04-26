@@ -9,36 +9,44 @@ import 'package:milibase/variables.dart';
 import 'package:uuid/uuid.dart';
 
 class ShowAdeiesDialog extends StatefulWidget {
-  const ShowAdeiesDialog({super.key, required this.sailor, this.id});
+  const ShowAdeiesDialog({super.key, required this.sailor, this.adeia});
   final Sailor sailor;
-  final Adeies? id;
+  final Adeies? adeia;
+
   @override
   State<ShowAdeiesDialog> createState() => _ShowAdeiesDialogState();
 }
 
 class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
-  static final dateFormat = DateFormat('dd/MM/yy', 'el');
-  bool isLoading = false;
-  final adeiaKey = GlobalKey<ComboBoxState>(debugLabel: 'Adeies Key');
+  static const _uuid = Uuid(); // static — no need to instantiate per call
+  static final _dateFormat = DateFormat('dd/MM/yy', 'el');
+
+  bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
-  late DateTime selectedStartDate, selectedEndDate;
-  late Adeia selectedAdeia;
-  late TextEditingController simaController;
+
+  late DateTime _startDate;
+  late DateTime _endDate;
+  late Adeia _selectedAdeia;
+  late TextEditingController _simaController;
+
+  bool get _isEditing => widget.adeia != null;
+  bool get _needsSima =>
+      _selectedAdeia == Adeia.oikos_nosileias ||
+      _selectedAdeia == Adeia.anarrotiki;
 
   @override
   void initState() {
-    selectedAdeia = widget.id == null ? Adeia.kanoniki : widget.id!.type;
-    selectedStartDate = widget.id == null
-        ? DateTime.now()
-        : widget.id!.dateStart;
-    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
-    simaController = TextEditingController(text: widget.id?.sima ?? '');
     super.initState();
+    final adeia = widget.adeia;
+    _selectedAdeia = adeia?.type ?? Adeia.kanoniki;
+    _startDate = adeia?.dateStart ?? DateTime.now();
+    _endDate = adeia?.dateEnd ?? DateTime.now();
+    _simaController = TextEditingController(text: adeia?.sima ?? '');
   }
 
   @override
   void dispose() {
-    simaController.dispose();
+    _simaController.dispose();
     super.dispose();
   }
 
@@ -46,19 +54,19 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
   Widget build(BuildContext context) {
     return ContentDialog(
       title: Row(
-        mainAxisAlignment: .spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
             child: Text(
-              widget.id == null ? 'Νέα Άδεια' : 'Επεξεργασία Άδειας',
-              overflow: .ellipsis,
+              _isEditing ? 'Επεξεργασία Άδειας' : 'Νέα Άδεια',
+              overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
           ),
           const Gap(10),
           IconButton(
-            icon: WindowsIcon(WindowsIcons.chrome_close),
-            onPressed: () => Navigator.pop(context),
+            icon: const WindowsIcon(WindowsIcons.chrome_close),
+            onPressed: _isLoading ? null : () => Navigator.pop(context),
           ),
         ],
       ),
@@ -73,136 +81,148 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
               label: 'Τύπος',
               child: ComboBox<Adeia>(
                 isExpanded: true,
-                value: selectedAdeia,
-                key: adeiaKey,
-                onChanged: (Adeia? newValue) {
-                  setState(() {
-                    selectedAdeia = newValue!;
-                    simaController.clear();
-                  });
-                },
-                items: Adeia.values.map((Adeia e) {
-                  return ComboBoxItem<Adeia>(value: e, child: Text(e.label));
-                }).toList(),
+                value: _selectedAdeia,
+                onChanged: _isLoading
+                    ? null
+                    : (Adeia? newValue) {
+                        setState(() {
+                          _selectedAdeia = newValue!;
+                          if (!_needsSima) _simaController.clear();
+                        });
+                      },
+                items: Adeia.values
+                    .map(
+                      (e) =>
+                          ComboBoxItem<Adeia>(value: e, child: Text(e.label)),
+                    )
+                    .toList(),
               ),
             ),
             const Gap(padding),
-            if (selectedAdeia == Adeia.oikos_nosileias ||
-                selectedAdeia == Adeia.anarrotiki)
+            if (_needsSima)
               InfoLabel(
                 label: 'Σήμα',
                 child: TextFormBox(
-                  controller: simaController,
+                  controller: _simaController,
                   placeholder: 'Εισαγωγή σήματος',
-                  validator: (text) {
-                    if (text == null || text.isEmpty) {
-                      return 'Παρακαλώ συμπληρώστε το σήμα';
-                    }
-                    return null;
-                  },
+                  validator: (text) => (text == null || text.trim().isEmpty)
+                      ? 'Παρακαλώ συμπληρώστε το σήμα'
+                      : null,
                 ),
               ),
             const Gap(10),
-            Row(
-              children: [
-                InfoLabel(
-                  label: 'Έναρξη',
-                  child: CalendarDatePicker(
-                    initialStart: selectedStartDate,
-                    isTodayHighlighted: false,
-                    locale: Locale('el'),
-                    placeholderText: dateFormat.format(
-                      widget.id?.dateStart ?? selectedStartDate,
-                    ),
-                    onSelectionChanged: (CalendarSelectionData data) {
-                      if (data.selectedDates.isNotEmpty) {
-                        setState(() {
-                          selectedStartDate = data.selectedDates.first;
-                          if (widget.id == null) {
-                            selectedEndDate = data.selectedDates.first;
-                          }
-                        });
-                      }
-                    },
+            // Date range validator lives here as a hidden FormField
+            FormField<void>(
+              validator: (_) => _startDate.isAfter(_endDate)
+                  ? 'Η ημερομηνία έναρξης πρέπει να είναι πριν την ημερομηνία λήξης.'
+                  : null,
+              builder: (field) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      InfoLabel(
+                        label: 'Έναρξη',
+                        child: CalendarDatePicker(
+                          initialStart: _startDate,
+                          isTodayHighlighted: false,
+                          locale: const Locale('el'),
+                          placeholderText: _dateFormat.format(_startDate),
+                          onSelectionChanged: (CalendarSelectionData data) {
+                            if (data.selectedDates.isNotEmpty) {
+                              setState(() {
+                                _startDate = data.selectedDates.first;
+                                // Auto-advance end date for new entries
+                                if (!_isEditing &&
+                                    _startDate.isAfter(_endDate)) {
+                                  _endDate = _startDate;
+                                }
+                              });
+                              field.didChange(null); // re-trigger validation
+                            }
+                          },
+                        ),
+                      ),
+                      const Gap(10),
+                      InfoLabel(
+                        label: 'Λήξη',
+                        child: CalendarDatePicker(
+                          initialStart: _endDate,
+                          isTodayHighlighted: false,
+                          locale: const Locale('el'),
+                          placeholderText: _dateFormat.format(_endDate),
+                          onSelectionChanged: (CalendarSelectionData data) {
+                            if (data.selectedDates.isNotEmpty) {
+                              setState(
+                                () => _endDate = data.selectedDates.first,
+                              );
+                              field.didChange(null);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const Gap(10),
-                InfoLabel(
-                  label: 'Λήξη',
-                  child: CalendarDatePicker(
-                    initialStart: selectedEndDate,
-                    isTodayHighlighted: false,
-                    locale: Locale('el'),
-                    placeholderText: dateFormat.format(
-                      widget.id?.dateEnd ?? selectedEndDate,
+                  if (field.errorText != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        field.errorText!,
+                        style: TextStyle(
+                          color: FluentTheme.of(
+                            context,
+                          ).resources.systemFillColorCritical,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
-                    onSelectionChanged: (CalendarSelectionData data) {
-                      if (data.selectedDates.isNotEmpty) {
-                        setState(() {
-                          selectedEndDate = data.selectedDates.first;
-                        });
-                      }
-                    },
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
       ),
       actions: [
-        isLoading
-            ? Row(
-                children: [
-                  ProgressRing(),
-                  const Gap(10),
-                  Text('Αποθήκευση Άδειας'),
-                ],
-              )
-            : FilledButton(
-                child: const Text('Εισαγωγή'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    if (selectedStartDate.isAfter(selectedEndDate)) {
-                      showCustomInfoBar(
-                        context: context,
-                        text:
-                            'Η ημερομηνία έναρξης πρέπει να είναι πριν την ημερομηνία λήξης.',
-                        severity: InfoBarSeverity.warning,
-                      );
-                      return;
-                    }
-                    setState(() {
-                      isLoading = true;
-                    });
-                    try {
-                      final newAdeia = Adeies(
-                        id: widget.id != null ? widget.id!.id : Uuid().v4(),
-                        type: selectedAdeia,
-                        dateStart: selectedStartDate,
-                        dateEnd: selectedEndDate,
-                        sailorId: widget.sailor.id,
-                        sima: simaController.text,
-                      );
-                      await addNewAdeia(newAdeia);
-                      if (context.mounted && mounted) Navigator.pop(context);
-                    } catch (e) {
-                      if (context.mounted && mounted) {
-                        showCustomInfoBar(
-                          context: context,
-                          text: e.toString(),
-                          severity: .error,
-                        );
-                      }
-                    } finally {
-                      setState(() {
-                        isLoading = false;
-                      });
-                    }
-                  }
-                },
-              ),
+        if (_isLoading)
+          const Row(
+            children: [ProgressRing(), Gap(10), Text('Αποθήκευση Άδειας')],
+          )
+        else
+          FilledButton(
+            onPressed: _submit,
+            child: Text(_isEditing ? 'Αποθήκευση' : 'Εισαγωγή'),
+          ),
       ],
     );
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+    try {
+      final adeia = Adeies(
+        id: widget.adeia?.id ?? _uuid.v4(),
+        type: _selectedAdeia,
+        dateStart: _startDate,
+        dateEnd: _endDate,
+        sailorId: widget.sailor.id,
+        sima: _needsSima
+            ? _simaController.text.trim()
+            : null, // null when unused
+      );
+      await addNewAdeia(adeia);
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        showCustomInfoBar(
+          context: context,
+          text: e.toString(),
+          severity: InfoBarSeverity.error,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 }

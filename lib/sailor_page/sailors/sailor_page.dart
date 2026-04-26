@@ -14,23 +14,37 @@ import 'package:milibase/variables.dart';
 class SailorPage extends StatefulWidget {
   const SailorPage({super.key, required this.sailor});
   final Sailor sailor;
+
   @override
   State<SailorPage> createState() => _SailorPageState();
 }
 
 class _SailorPageState extends State<SailorPage> {
-  int selectedIndex = 0;
-  late Widget screen;
-  @override
-  void initState() {
-    screen = SailorWidgetInfo(sailor: widget.sailor);
-    super.initState();
+  int _selectedIndex = 0;
+
+  Widget _buildScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        return SailorWidgetInfo(sailor: widget.sailor);
+      case 1:
+        return SailorWidgetAdeies(sailor: widget.sailor);
+      case 2:
+        return SailorWidgetApomakrynseis(sailor: widget.sailor);
+      case 3:
+        return SailorWidgetMetavoles(sailor: widget.sailor);
+      case 5:
+        return SailorWidgetSettings(sailor: widget.sailor);
+      default:
+        return SailorWidgetInfo(sailor: widget.sailor);
+    }
   }
+
+  void _select(int index) => setState(() => _selectedIndex = index);
 
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
-      padding: .zero,
+      padding: EdgeInsets.zero,
       content: Row(
         children: [
           Expanded(
@@ -38,15 +52,14 @@ class _SailorPageState extends State<SailorPage> {
             child: Stack(
               children: [
                 Container(
-                  margin: .only(top: 15, bottom: 15, left: 15),
+                  margin: const EdgeInsets.only(top: 15, bottom: 15, left: 15),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: .all(.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-
-                  padding: .symmetric(horizontal: 70),
+                  padding: const EdgeInsets.symmetric(horizontal: 70),
                   child: Column(
-                    mainAxisAlignment: .center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -56,96 +69,48 @@ class _SailorPageState extends State<SailorPage> {
                       AutoSizeText(
                         '${widget.sailor.surname}\n${widget.sailor.name}',
                         maxLines: 2,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 34,
-                          fontWeight: .bold,
+                          fontWeight: FontWeight.bold,
                           color: primary,
                         ),
                       ),
                       const Gap(padding * 2),
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: .all(.circular(5)),
-                          border: .all(color: Colors.black.withAlpha(60)),
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Colors.black.withAlpha(60)),
                         ),
                         child: Column(
-                          crossAxisAlignment: .start,
-                          mainAxisSize: .max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            /*Button(
-                              onPressed: () => setState(() {
-                                screen = SailorPagePreview();
-                              }),
-                              child: Container(
-                                padding: .all(10),
-                                child: Column(
-                                  mainAxisAlignment: .center,
-                                  children: [
-                                    WindowsIcon(WindowsIcons.smartcard),
-                                    const  Gap(10),
-                                    Text('Προεπισκόπηση'),
-                                  ],
-                                ),
-                              ),
-                            ),*/
                             FluentButton(
-                              onPressed: () => setState(() {
-                                selectedIndex = 0;
-                                screen = SailorWidgetInfo(
-                                  sailor: widget.sailor,
-                                );
-                              }),
-                              selected: selectedIndex == 0,
-                              icon: WindowsIcon(WindowsIcons.i_d_badge),
-                              text: 'Στοιχεία',
+                              onPressed: () => _select(0),
+                              selected: _selectedIndex == 0,
+                              icon: const WindowsIcon(WindowsIcons.i_d_badge),
+                              text: 'Επισκόπηση',
                             ),
-                            Divider(),
+                            const Divider(),
                             FluentButton(
-                              onPressed: () => setState(() {
-                                selectedIndex = 1;
-                                screen = SailorWidgetAdeies(
-                                  sailor: widget.sailor,
-                                );
-                              }),
-                              selected: selectedIndex == 1,
-                              icon: WindowsIcon(WindowsIcons.page_left),
+                              onPressed: () => _select(1),
+                              selected: _selectedIndex == 1,
+                              icon: const WindowsIcon(WindowsIcons.page_left),
                               text: 'Άδειες',
                             ),
-                            Divider(),
+                            const Divider(),
                             FluentButton(
-                              onPressed: () => setState(() {
-                                selectedIndex = 2;
-                                screen = SailorWidgetApomakrynseis(
-                                  sailor: widget.sailor,
-                                );
-                              }),
-                              selected: selectedIndex == 2,
-                              icon: WindowsIcon(WindowsIcons.remove),
+                              onPressed: () => _select(2),
+                              selected: _selectedIndex == 2,
+                              icon: const WindowsIcon(WindowsIcons.remove),
                               text: 'Απομακρύνσεις',
                             ),
-                            Divider(),
+                            const Divider(),
                             FluentButton(
-                              onPressed: () => setState(() {
-                                selectedIndex = 3;
-                                screen = SailorWidgetMetavoles(
-                                  sailor: widget.sailor,
-                                );
-                              }),
-                              selected: selectedIndex == 3,
-                              icon: WindowsIcon(WindowsIcons.shuffle),
+                              onPressed: () => _select(3),
+                              selected: _selectedIndex == 3,
+                              icon: const WindowsIcon(WindowsIcons.shuffle),
                               text: 'Μεταβολές',
                             ),
-                            /* FluentButton(
-                              onPressed: () => setState(() {
-                                selectedIndex = 4;
-                                screen = SailorWidgetVardies(
-                                  sailor: widget.sailor,
-                                );
-                              }),
-                              selected: selectedIndex == 4,
-                              icon: WindowsIcon(WindowsIcons.lock),
-                              text: 'Βάρδιες',
-                            ),*/
                           ],
                         ),
                       ),
@@ -157,24 +122,26 @@ class _SailorPageState extends State<SailorPage> {
                   left: 30,
                   right: 15,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: WindowsIcon(WindowsIcons.chrome_back, size: 24),
+                        icon: const WindowsIcon(
+                          WindowsIcons.chrome_back,
+                          size: 24,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       IconButton(
-                        icon: WindowsIcon(WindowsIcons.settings, size: 24),
+                        icon: const WindowsIcon(
+                          WindowsIcons.settings,
+                          size: 24,
+                        ),
                         style: ButtonStyle(
                           backgroundColor: WidgetStateProperty.all(
-                            selectedIndex == 5 ? secColor : null,
+                            _selectedIndex == 5 ? secColor : null,
                           ),
                         ),
-                        onPressed: () => setState(() {
-                          selectedIndex = 5;
-                          screen = SailorWidgetSettings(sailor: widget.sailor);
-                        }),
+                        onPressed: () => _select(5),
                       ),
                     ],
                   ),
@@ -182,7 +149,7 @@ class _SailorPageState extends State<SailorPage> {
               ],
             ),
           ),
-          Expanded(flex: 6, child: screen),
+          Expanded(flex: 6, child: _buildScreen()),
         ],
       ),
     );

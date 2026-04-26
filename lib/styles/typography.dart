@@ -9,7 +9,7 @@ Typography getTypography(Brightness brightness) {
 
   return Typography.raw(
     caption: GoogleFonts.inter(fontSize: 12, color: color.withOpacity(0.6)),
-    body: GoogleFonts.inter(fontSize: 14, color: color),
+    body: GoogleFonts.inter(fontSize: 16, color: color),
     subtitle: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold),
     title: GoogleFonts.inter(
       fontSize: 26,
