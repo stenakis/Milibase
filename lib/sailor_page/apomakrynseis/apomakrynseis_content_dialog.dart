@@ -141,13 +141,9 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                       widget.id?.dateStart ?? selectedStartDate,
                     ),
                     onSelectionChanged: (CalendarSelectionData data) {
-                      if (data.selectedDates.isNotEmpty) {
-                        setState(() {
-                          selectedStartDate = data.selectedDates.first;
-                          if (widget.id == null) {
-                            selectedEndDate = data.selectedDates.first;
-                          }
-                        });
+                      selectedStartDate = data.selectedDates.first;
+                      if (widget.id == null) {
+                        selectedEndDate = data.selectedDates.first;
                       }
                     },
                   ),
@@ -177,11 +173,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                               widget.id?.dateEnd ?? selectedEndDate,
                             ),
                             onSelectionChanged: (CalendarSelectionData data) {
-                              if (data.selectedDates.isNotEmpty) {
-                                setState(() {
-                                  selectedEndDate = data.selectedDates.first;
-                                });
-                              }
+                              selectedEndDate = data.selectedDates.first;
                             },
                           )
                         : const SizedBox.shrink(),
@@ -202,7 +194,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                 ],
               )
             : FilledButton(
-                child: const Text('Εισαγωγή'),
+                child: Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     if (selectedStartDate.isAfter(selectedEndDate)) {

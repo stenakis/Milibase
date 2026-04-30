@@ -136,9 +136,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                 ).format(widget.id?.date ?? selectedDate),
                 onSelectionChanged: (CalendarSelectionData data) {
                   if (data.selectedDates.isNotEmpty) {
-                    setState(() {
-                      selectedDate = data.selectedDates.first;
-                    });
+                    selectedDate = data.selectedDates.first;
                   }
                 },
               ),
@@ -150,7 +148,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
         isLoading
             ? Row(children: [ProgressRing(), const Gap(10), Text(statusText)])
             : FilledButton(
-                child: const Text('Εισαγωγή'),
+                child: Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     setState(() {

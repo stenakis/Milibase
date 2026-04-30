@@ -18,7 +18,6 @@ class ShowAdeiesDialog extends StatefulWidget {
 }
 
 class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
-  static const _uuid = Uuid(); // static — no need to instantiate per call
   static final _dateFormat = DateFormat('dd/MM/yy', 'el');
 
   bool _isLoading = false;
@@ -37,11 +36,10 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
   @override
   void initState() {
     super.initState();
-    final adeia = widget.adeia;
-    _selectedAdeia = adeia?.type ?? Adeia.kanoniki;
-    _startDate = adeia?.dateStart ?? DateTime.now();
-    _endDate = adeia?.dateEnd ?? DateTime.now();
-    _simaController = TextEditingController(text: adeia?.sima ?? '');
+    _selectedAdeia = widget.adeia?.type ?? Adeia.kanoniki;
+    _startDate = widget.adeia?.dateStart ?? DateTime.now();
+    _endDate = widget.adeia?.dateEnd ?? DateTime.now();
+    _simaController = TextEditingController(text: widget.adeia?.sima ?? '');
   }
 
   @override
@@ -55,13 +53,10 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
     return ContentDialog(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: .start,
         children: [
-          Flexible(
-            child: Text(
-              _isEditing ? 'Επεξεργασία Άδειας' : 'Νέα Άδεια',
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
+          Expanded(
+            child: Text(_isEditing ? 'Επεξεργασία Άδειας' : 'Νέα Άδεια'),
           ),
           const Gap(10),
           IconButton(
@@ -70,37 +65,35 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
           ),
         ],
       ),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Gap(10),
-            InfoLabel(
-              label: 'Τύπος',
-              child: ComboBox<Adeia>(
-                isExpanded: true,
-                value: _selectedAdeia,
-                onChanged: _isLoading
-                    ? null
-                    : (Adeia? newValue) {
-                        setState(() {
-                          _selectedAdeia = newValue!;
-                          if (!_needsSima) _simaController.clear();
-                        });
-                      },
-                items: Adeia.values
-                    .map(
-                      (e) =>
-                          ComboBoxItem<Adeia>(value: e, child: Text(e.label)),
-                    )
-                    .toList(),
-              ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Gap(10),
+          InfoLabel(
+            label: 'Τύπος',
+            child: ComboBox<Adeia>(
+              isExpanded: true,
+              value: _selectedAdeia,
+              onChanged: _isLoading
+                  ? null
+                  : (Adeia? newValue) {
+                      setState(() {
+                        _selectedAdeia = newValue!;
+                        if (!_needsSima) _simaController.clear();
+                      });
+                    },
+              items: Adeia.values
+                  .map(
+                    (e) => ComboBoxItem<Adeia>(value: e, child: Text(e.label)),
+                  )
+                  .toList(),
             ),
-            const Gap(padding),
-            if (_needsSima)
-              InfoLabel(
+          ),
+          const Gap(padding),
+          if (_needsSima)
+            Form(
+              key: _formKey,
+              child: InfoLabel(
                 label: 'Σήμα',
                 child: TextFormBox(
                   controller: _simaController,
@@ -110,77 +103,41 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                       : null,
                 ),
               ),
-            const Gap(10),
-            // Date range validator lives here as a hidden FormField
-            FormField<void>(
-              validator: (_) => _startDate.isAfter(_endDate)
-                  ? 'Η ημερομηνία έναρξης πρέπει να είναι πριν την ημερομηνία λήξης.'
-                  : null,
-              builder: (field) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      InfoLabel(
-                        label: 'Έναρξη',
-                        child: CalendarDatePicker(
-                          initialStart: _startDate,
-                          isTodayHighlighted: false,
-                          locale: const Locale('el'),
-                          placeholderText: _dateFormat.format(_startDate),
-                          onSelectionChanged: (CalendarSelectionData data) {
-                            if (data.selectedDates.isNotEmpty) {
-                              setState(() {
-                                _startDate = data.selectedDates.first;
-                                // Auto-advance end date for new entries
-                                if (!_isEditing &&
-                                    _startDate.isAfter(_endDate)) {
-                                  _endDate = _startDate;
-                                }
-                              });
-                              field.didChange(null); // re-trigger validation
-                            }
-                          },
-                        ),
-                      ),
-                      const Gap(10),
-                      InfoLabel(
-                        label: 'Λήξη',
-                        child: CalendarDatePicker(
-                          initialStart: _endDate,
-                          isTodayHighlighted: false,
-                          locale: const Locale('el'),
-                          placeholderText: _dateFormat.format(_endDate),
-                          onSelectionChanged: (CalendarSelectionData data) {
-                            if (data.selectedDates.isNotEmpty) {
-                              setState(
-                                () => _endDate = data.selectedDates.first,
-                              );
-                              field.didChange(null);
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (field.errorText != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        field.errorText!,
-                        style: TextStyle(
-                          color: FluentTheme.of(
-                            context,
-                          ).resources.systemFillColorCritical,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
             ),
-          ],
-        ),
+          const Gap(10),
+          Row(
+            children: [
+              InfoLabel(
+                label: 'Έναρξη',
+                child: CalendarDatePicker(
+                  initialStart: _startDate,
+                  isTodayHighlighted: false,
+                  locale: const Locale('el'),
+                  placeholderText: _dateFormat.format(_startDate),
+                  onSelectionChanged: (CalendarSelectionData data) {
+                    _startDate = data.selectedDates.first;
+                    if (!_isEditing && _startDate.isAfter(_endDate)) {
+                      _endDate = _startDate;
+                    }
+                  },
+                ),
+              ),
+              const Gap(10),
+              InfoLabel(
+                label: 'Λήξη',
+                child: CalendarDatePicker(
+                  initialStart: _endDate,
+                  isTodayHighlighted: false,
+                  locale: const Locale('el'),
+                  placeholderText: _dateFormat.format(_endDate),
+                  onSelectionChanged: (CalendarSelectionData data) {
+                    _endDate = data.selectedDates.first;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       actions: [
         if (_isLoading)
@@ -190,39 +147,37 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
         else
           FilledButton(
             onPressed: _submit,
-            child: Text(_isEditing ? 'Αποθήκευση' : 'Εισαγωγή'),
+            child: Text(widget.adeia == null ? 'Εισαγωγή' : 'Αποθήκευση'),
           ),
       ],
     );
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-    try {
-      final adeia = Adeies(
-        id: widget.adeia?.id ?? _uuid.v4(),
-        type: _selectedAdeia,
-        dateStart: _startDate,
-        dateEnd: _endDate,
-        sailorId: widget.sailor.id,
-        sima: _needsSima
-            ? _simaController.text.trim()
-            : null, // null when unused
-      );
-      await addNewAdeia(adeia);
-      if (mounted) Navigator.pop(context);
-    } catch (e) {
-      if (mounted) {
-        showCustomInfoBar(
-          context: context,
-          text: e.toString(),
-          severity: InfoBarSeverity.error,
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      try {
+        final adeia = Adeies(
+          id: widget.adeia?.id ?? Uuid().v4(),
+          type: _selectedAdeia,
+          dateStart: _startDate,
+          dateEnd: _endDate,
+          sailorId: widget.sailor.id,
+          sima: _needsSima ? _simaController.text.trim() : null,
         );
+        await addNewAdeia(adeia);
+        if (mounted) Navigator.pop(context);
+      } catch (e) {
+        if (mounted) {
+          showCustomInfoBar(
+            context: context,
+            text: e.toString(),
+            severity: InfoBarSeverity.error,
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
       }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
   }
 }
