@@ -452,13 +452,15 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                   );
                                   await addSailor(newSailor);
 
-                                  Navigator.pop(context);
+                                  if (context.mounted) Navigator.pop(context);
                                 } catch (error) {
-                                  await showCustomInfoBar(
-                                    context: context,
-                                    text: error.toString(),
-                                    severity: .error,
-                                  );
+                                  if (context.mounted) {
+                                    await showCustomInfoBar(
+                                      context: context,
+                                      text: error.toString(),
+                                      severity: .error,
+                                    );
+                                  }
                                 } finally {
                                   setState(() {
                                     isLoading = false;

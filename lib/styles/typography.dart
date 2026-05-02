@@ -8,8 +8,8 @@ Typography getTypography(Brightness brightness) {
       : Colors.white;
 
   return Typography.raw(
-    caption: GoogleFonts.inter(fontSize: 12, color: color.withOpacity(0.6)),
-    body: GoogleFonts.inter(fontSize: 16, color: color),
+    caption: GoogleFonts.inter(fontSize: 12, color: color.withAlpha(128)),
+    body: GoogleFonts.inter(fontSize: 14, color: color),
     subtitle: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold),
     title: GoogleFonts.inter(
       fontSize: 26,

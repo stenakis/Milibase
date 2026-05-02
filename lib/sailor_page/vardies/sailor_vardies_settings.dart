@@ -47,7 +47,7 @@ class _SailorWidgetVardiesState extends State<SailorWidgetVardies> {
                     setState(() {
                       avardiotos = avar;
                     });
-                    print(avardiotos);
+
                   },
                 ),
               ],

@@ -6,6 +6,7 @@ import 'package:milibase/templates/info_bar.dart';
 import 'package:milibase/variables.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../main.dart';
 import '../../objects/metavoles.dart';
 import 'metavoles_functions.dart';
 
@@ -23,16 +24,20 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   final _formKey = GlobalKey<FormState>();
   late DateTime selectedDate;
   late Metavoli selectedMetavoli;
-  String statusText = 'Αποθήκευση Μεταβολής';
   late TextEditingController simaController;
-  int selectedDuration = 9;
+  late int selectedDuration;
+  late Stream<bool> _meiomeniThiteia;
 
   @override
   void initState() {
+    super.initState();
     selectedDate = widget.id == null ? DateTime.now() : widget.id!.date;
     selectedMetavoli = widget.id == null ? Metavoli.meiomeni : widget.id!.type;
     simaController = TextEditingController(text: widget.id?.sima ?? "");
-    super.initState();
+    selectedDuration = (widget.id == null ? 9 : widget.id!.duration)!;
+    _meiomeniThiteia = (db.select(
+      db.vars,
+    )).watchSingle().map((row) => row.enableMeiomeniThiteia);
   }
 
   @override
@@ -46,12 +51,13 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
     return ContentDialog(
       title: Row(
         mainAxisAlignment: .spaceBetween,
+        crossAxisAlignment: .start,
         children: [
           Flexible(
             child: Text(
-              widget.id == null ? 'Νέα Μεταβολή' : 'Επεξεργασία Μεταβολή',
+              widget.id == null ? 'Νέα Μεταβολή' : 'Επεξεργασία Μεταβολής',
               overflow: .ellipsis,
-              maxLines: 1,
+              maxLines: 2,
             ),
           ),
           const Gap(10),
@@ -93,20 +99,52 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
             if (selectedMetavoli == .meiomeni)
               InfoLabel(
                 label: 'Διάρκεια Θητείας',
-                child: RadioGroup<int>(
-                  groupValue: selectedDuration,
-                  onChanged: (int? newValue) {
-                    setState(() {
-                      selectedDuration = newValue ?? selectedDuration;
-                    });
+                child: StreamBuilder<bool>(
+                  stream: _meiomeniThiteia,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == .waiting) {
+                      return ProgressBar();
+                    } else if (!snapshot.hasData) {
+                      return Text('Σφάλμα');
+                    } else if (snapshot.hasData) {
+                      bool isTrue = snapshot.data!;
+                      return RadioGroup<int>(
+                        groupValue: selectedDuration,
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            selectedDuration = newValue ?? selectedDuration;
+                          });
+                        },
+                        child: Wrap(
+                          runSpacing: 5,
+                          spacing: padding,
+                          children: [
+                            if (isTrue)
+                              RadioButton<int>(
+                                value: 5,
+                                content: Text('5 μήνες'),
+                              ),
+                            RadioButton<int>(
+                              value: 6,
+                              content: Text('6 μήνες'),
+                            ),
+                            if (isTrue)
+                              RadioButton<int>(
+                                value: 5,
+                                content: Text('8 μήνες'),
+                              ),
+
+                            RadioButton<int>(
+                              value: 9,
+                              content: Text('9 μήνες'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Text('Σφάλμα');
+                    }
                   },
-                  child: const Row(
-                    spacing: padding,
-                    children: [
-                      RadioButton<int>(value: 6, content: Text('6 μήνες')),
-                      RadioButton<int>(value: 9, content: Text('9 μήνες')),
-                    ],
-                  ),
                 ),
               ),
             const Gap(padding),
@@ -146,40 +184,85 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
       ),
       actions: [
         isLoading
-            ? Row(children: [ProgressRing(), const Gap(10), Text(statusText)])
-            : FilledButton(
-                child: Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    try {
-                      final newMetavoli = Metavoles(
-                        id: widget.id != null ? widget.id!.id : Uuid().v4(),
-                        type: selectedMetavoli,
-                        date: selectedDate,
-                        sailorId: widget.sailor.id,
-                        sima: simaController.text,
-                        duration: selectedDuration,
-                      );
-                      await addNewMetavoli(newMetavoli);
-                      if (context.mounted && mounted) Navigator.pop(context);
-                    } catch (e) {
-                      if (context.mounted && mounted) {
-                        showCustomInfoBar(
-                          context: context,
-                          text: e.toString(),
-                          severity: .error,
-                        );
+            ? const Row(
+                children: [
+                  ProgressRing(),
+                  const Gap(10),
+                  Text('Αποθήκευση Μεταβολής'),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: .end,
+                children: [
+                  if (widget.id != null)
+                    Button(
+                      onPressed: () async {
+                        try {
+                          await deleteMetavoli(widget.id!);
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        } catch (error) {
+                          if (context.mounted) {
+                            showCustomInfoBar(
+                              context: context,
+                              text: error.toString(),
+                            );
+                          }
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          WindowsIcon(WindowsIcons.delete),
+                          const Gap(5),
+                          const Text('Διαγραφή'),
+                        ],
+                      ),
+                    ),
+                  if (widget.id != null) const Gap(10),
+                  FilledButton(
+                    autofocus: true,
+                    child: Row(
+                      children: [
+                        WindowsIcon(WindowsIcons.save),
+                        const Gap(5),
+                        Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
+                      ],
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        try {
+                          final newMetavoli = Metavoles(
+                            id: widget.id != null ? widget.id!.id : Uuid().v4(),
+                            type: selectedMetavoli,
+                            date: selectedDate,
+                            sailorId: widget.sailor.id,
+                            sima: simaController.text,
+                            duration: selectedDuration,
+                          );
+                          await addNewMetavoli(newMetavoli);
+                          if (context.mounted && mounted)
+                            Navigator.pop(context);
+                        } catch (e) {
+                          if (context.mounted && mounted) {
+                            showCustomInfoBar(
+                              context: context,
+                              text: e.toString(),
+                              severity: .error,
+                            );
+                          }
+                        } finally {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }
                       }
-                    } finally {
-                      setState(() {
-                        isLoading = false;
-                      });
-                    }
-                  }
-                },
+                    },
+                  ),
+                ],
               ),
       ],
     );

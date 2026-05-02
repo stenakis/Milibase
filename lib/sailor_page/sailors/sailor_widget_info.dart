@@ -7,6 +7,7 @@ import 'package:milibase/sailor_page/sailors/calendar_view.dart';
 import 'package:milibase/sailor_page/sailors/info_widget.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
+
 import '../../main.dart';
 
 class SailorWidgetInfo extends StatefulWidget {
@@ -77,7 +78,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                               child: Column(
                                 mainAxisAlignment: .spaceBetween,
                                 children: [
-                                  Gap(10),
+                                  const Gap(10),
                                   Text(
                                     'Κατάταξη',
                                     textAlign: .center,
@@ -86,7 +87,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                                         .body
                                         ?.copyWith(fontWeight: .bold),
                                   ),
-                                  Gap(10),
+                                  const Gap(10),
                                   Container(
                                     width: double.infinity,
                                     padding: .symmetric(vertical: padding / 2),
@@ -112,7 +113,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                               child: Column(
                                 mainAxisAlignment: .spaceBetween,
                                 children: [
-                                  Gap(10),
+                                  const Gap(10),
                                   Text(
                                     'Άφιξη στην Υπηρεσία',
                                     textAlign: .center,
@@ -121,7 +122,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                                         .body
                                         ?.copyWith(fontWeight: .bold),
                                   ),
-                                  Gap(10),
+                                  const Gap(10),
                                   Container(
                                     width: double.infinity,
                                     padding: .symmetric(vertical: padding / 2),
@@ -147,7 +148,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                               child: Column(
                                 mainAxisAlignment: .spaceBetween,
                                 children: [
-                                  Gap(10),
+                                  const Gap(10),
                                   Text(
                                     'Απόλυση',
                                     textAlign: .center,
@@ -156,7 +157,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                                         .body
                                         ?.copyWith(fontWeight: .bold),
                                   ),
-                                  Gap(10),
+                                  const Gap(10),
                                   Container(
                                     width: double.infinity,
                                     padding: .symmetric(vertical: padding / 2),
@@ -201,7 +202,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                 ],
               ),
             ),
-            Gap(padding),
+            const Gap(padding),
             Expanded(child: SailorCalendarOverview(sailor: sailor)),
           ],
         );

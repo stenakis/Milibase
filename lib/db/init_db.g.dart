@@ -2165,8 +2165,26 @@ class $VarsTable extends Vars with TableInfo<$VarsTable, Var> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _enableMeiomeniThiteiaMeta =
+      const VerificationMeta('enableMeiomeniThiteia');
   @override
-  List<GeneratedColumn> get $columns => [prothemaShmatos];
+  late final GeneratedColumn<bool> enableMeiomeniThiteia =
+      GeneratedColumn<bool>(
+        'enable_meiomeni_thiteia',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("enable_meiomeni_thiteia" IN (0, 1))',
+        ),
+        defaultValue: const Constant(false),
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    prothemaShmatos,
+    enableMeiomeniThiteia,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2190,11 +2208,20 @@ class $VarsTable extends Vars with TableInfo<$VarsTable, Var> {
     } else if (isInserting) {
       context.missing(_prothemaShmatosMeta);
     }
+    if (data.containsKey('enable_meiomeni_thiteia')) {
+      context.handle(
+        _enableMeiomeniThiteiaMeta,
+        enableMeiomeniThiteia.isAcceptableOrUnknown(
+          data['enable_meiomeni_thiteia']!,
+          _enableMeiomeniThiteiaMeta,
+        ),
+      );
+    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {prothemaShmatos};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   Var map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -2202,6 +2229,10 @@ class $VarsTable extends Vars with TableInfo<$VarsTable, Var> {
       prothemaShmatos: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}prothema_shmatos'],
+      )!,
+      enableMeiomeniThiteia: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}enable_meiomeni_thiteia'],
       )!,
     );
   }
@@ -2214,16 +2245,24 @@ class $VarsTable extends Vars with TableInfo<$VarsTable, Var> {
 
 class Var extends DataClass implements Insertable<Var> {
   final String prothemaShmatos;
-  const Var({required this.prothemaShmatos});
+  final bool enableMeiomeniThiteia;
+  const Var({
+    required this.prothemaShmatos,
+    required this.enableMeiomeniThiteia,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['prothema_shmatos'] = Variable<String>(prothemaShmatos);
+    map['enable_meiomeni_thiteia'] = Variable<bool>(enableMeiomeniThiteia);
     return map;
   }
 
   VarsCompanion toCompanion(bool nullToAbsent) {
-    return VarsCompanion(prothemaShmatos: Value(prothemaShmatos));
+    return VarsCompanion(
+      prothemaShmatos: Value(prothemaShmatos),
+      enableMeiomeniThiteia: Value(enableMeiomeniThiteia),
+    );
   }
 
   factory Var.fromJson(
@@ -2233,6 +2272,9 @@ class Var extends DataClass implements Insertable<Var> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Var(
       prothemaShmatos: serializer.fromJson<String>(json['prothemaShmatos']),
+      enableMeiomeniThiteia: serializer.fromJson<bool>(
+        json['enableMeiomeniThiteia'],
+      ),
     );
   }
   @override
@@ -2240,59 +2282,80 @@ class Var extends DataClass implements Insertable<Var> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'prothemaShmatos': serializer.toJson<String>(prothemaShmatos),
+      'enableMeiomeniThiteia': serializer.toJson<bool>(enableMeiomeniThiteia),
     };
   }
 
-  Var copyWith({String? prothemaShmatos}) =>
-      Var(prothemaShmatos: prothemaShmatos ?? this.prothemaShmatos);
+  Var copyWith({String? prothemaShmatos, bool? enableMeiomeniThiteia}) => Var(
+    prothemaShmatos: prothemaShmatos ?? this.prothemaShmatos,
+    enableMeiomeniThiteia: enableMeiomeniThiteia ?? this.enableMeiomeniThiteia,
+  );
   Var copyWithCompanion(VarsCompanion data) {
     return Var(
       prothemaShmatos: data.prothemaShmatos.present
           ? data.prothemaShmatos.value
           : this.prothemaShmatos,
+      enableMeiomeniThiteia: data.enableMeiomeniThiteia.present
+          ? data.enableMeiomeniThiteia.value
+          : this.enableMeiomeniThiteia,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('Var(')
-          ..write('prothemaShmatos: $prothemaShmatos')
+          ..write('prothemaShmatos: $prothemaShmatos, ')
+          ..write('enableMeiomeniThiteia: $enableMeiomeniThiteia')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => prothemaShmatos.hashCode;
+  int get hashCode => Object.hash(prothemaShmatos, enableMeiomeniThiteia);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Var && other.prothemaShmatos == this.prothemaShmatos);
+      (other is Var &&
+          other.prothemaShmatos == this.prothemaShmatos &&
+          other.enableMeiomeniThiteia == this.enableMeiomeniThiteia);
 }
 
 class VarsCompanion extends UpdateCompanion<Var> {
   final Value<String> prothemaShmatos;
+  final Value<bool> enableMeiomeniThiteia;
   final Value<int> rowid;
   const VarsCompanion({
     this.prothemaShmatos = const Value.absent(),
+    this.enableMeiomeniThiteia = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   VarsCompanion.insert({
     required String prothemaShmatos,
+    this.enableMeiomeniThiteia = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : prothemaShmatos = Value(prothemaShmatos);
   static Insertable<Var> custom({
     Expression<String>? prothemaShmatos,
+    Expression<bool>? enableMeiomeniThiteia,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (prothemaShmatos != null) 'prothema_shmatos': prothemaShmatos,
+      if (enableMeiomeniThiteia != null)
+        'enable_meiomeni_thiteia': enableMeiomeniThiteia,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  VarsCompanion copyWith({Value<String>? prothemaShmatos, Value<int>? rowid}) {
+  VarsCompanion copyWith({
+    Value<String>? prothemaShmatos,
+    Value<bool>? enableMeiomeniThiteia,
+    Value<int>? rowid,
+  }) {
     return VarsCompanion(
       prothemaShmatos: prothemaShmatos ?? this.prothemaShmatos,
+      enableMeiomeniThiteia:
+          enableMeiomeniThiteia ?? this.enableMeiomeniThiteia,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2302,6 +2365,11 @@ class VarsCompanion extends UpdateCompanion<Var> {
     final map = <String, Expression>{};
     if (prothemaShmatos.present) {
       map['prothema_shmatos'] = Variable<String>(prothemaShmatos.value);
+    }
+    if (enableMeiomeniThiteia.present) {
+      map['enable_meiomeni_thiteia'] = Variable<bool>(
+        enableMeiomeniThiteia.value,
+      );
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2313,6 +2381,7 @@ class VarsCompanion extends UpdateCompanion<Var> {
   String toString() {
     return (StringBuffer('VarsCompanion(')
           ..write('prothemaShmatos: $prothemaShmatos, ')
+          ..write('enableMeiomeniThiteia: $enableMeiomeniThiteia, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4141,9 +4210,17 @@ typedef $$TableApomakrynseisTableProcessedTableManager =
       PrefetchHooks Function({bool sailorId})
     >;
 typedef $$VarsTableCreateCompanionBuilder =
-    VarsCompanion Function({required String prothemaShmatos, Value<int> rowid});
+    VarsCompanion Function({
+      required String prothemaShmatos,
+      Value<bool> enableMeiomeniThiteia,
+      Value<int> rowid,
+    });
 typedef $$VarsTableUpdateCompanionBuilder =
-    VarsCompanion Function({Value<String> prothemaShmatos, Value<int> rowid});
+    VarsCompanion Function({
+      Value<String> prothemaShmatos,
+      Value<bool> enableMeiomeniThiteia,
+      Value<int> rowid,
+    });
 
 class $$VarsTableFilterComposer extends Composer<_$AppDatabase, $VarsTable> {
   $$VarsTableFilterComposer({
@@ -4155,6 +4232,11 @@ class $$VarsTableFilterComposer extends Composer<_$AppDatabase, $VarsTable> {
   });
   ColumnFilters<String> get prothemaShmatos => $composableBuilder(
     column: $table.prothemaShmatos,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get enableMeiomeniThiteia => $composableBuilder(
+    column: $table.enableMeiomeniThiteia,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4171,6 +4253,11 @@ class $$VarsTableOrderingComposer extends Composer<_$AppDatabase, $VarsTable> {
     column: $table.prothemaShmatos,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get enableMeiomeniThiteia => $composableBuilder(
+    column: $table.enableMeiomeniThiteia,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$VarsTableAnnotationComposer
@@ -4184,6 +4271,11 @@ class $$VarsTableAnnotationComposer
   });
   GeneratedColumn<String> get prothemaShmatos => $composableBuilder(
     column: $table.prothemaShmatos,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get enableMeiomeniThiteia => $composableBuilder(
+    column: $table.enableMeiomeniThiteia,
     builder: (column) => column,
   );
 }
@@ -4217,15 +4309,21 @@ class $$VarsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> prothemaShmatos = const Value.absent(),
+                Value<bool> enableMeiomeniThiteia = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) =>
-                  VarsCompanion(prothemaShmatos: prothemaShmatos, rowid: rowid),
+              }) => VarsCompanion(
+                prothemaShmatos: prothemaShmatos,
+                enableMeiomeniThiteia: enableMeiomeniThiteia,
+                rowid: rowid,
+              ),
           createCompanionCallback:
               ({
                 required String prothemaShmatos,
+                Value<bool> enableMeiomeniThiteia = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => VarsCompanion.insert(
                 prothemaShmatos: prothemaShmatos,
+                enableMeiomeniThiteia: enableMeiomeniThiteia,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

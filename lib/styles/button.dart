@@ -31,7 +31,7 @@ class FluentButton extends StatelessWidget {
             color: (selected == true)
                 ? (color ?? secColor)
                 : state.isHovered
-                ? secColor.withOpacity(0.5)
+                ? secColor.withAlpha(128)
                 : Colors.transparent,
           ),
           width: width,

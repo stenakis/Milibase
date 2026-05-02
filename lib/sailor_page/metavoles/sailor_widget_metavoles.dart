@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
-import 'package:milibase/templates/delete_button.dart';
 import 'package:milibase/variables.dart';
 
 import '../../main.dart';
@@ -10,7 +9,6 @@ import '../../objects/metavoles.dart';
 import '../../styles/colors.dart';
 import '../../templates/info_bar.dart';
 import 'metavoles_content_dialog.dart';
-import 'metavoles_functions.dart';
 
 class SailorWidgetMetavoles extends StatefulWidget {
   const SailorWidgetMetavoles({super.key, required this.sailor});
@@ -56,16 +54,17 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
         }
         if (snapshot.hasError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted)
+            if (context.mounted) {
               showCustomInfoBar(
                 context: context,
                 text: snapshot.error.toString(),
               );
+            }
           });
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
+            if (context.mounted) {
               setState(() {
                 _allMetavoles = snapshot.data!;
                 _applyFilter();
@@ -96,7 +95,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       ),
                       onPressed: () => showContentDialog(context, null),
                     ),
-                    const Gap(padding),
+                    if (_allMetavoles.isNotEmpty) const Gap(padding),
                     if (_allMetavoles.isNotEmpty)
                       ComboBox<Metavoli>(
                         placeholder: Row(
@@ -136,8 +135,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       ),
                   ],
                 ),
-                if (_allMetavoles.isNotEmpty) const Gap(padding * 1.5),
-                const Gap(10),
+                const Gap(padding),
                 _allMetavoles.isEmpty
                     ? Text('Δεν υπάρχουν καταχωρημένες μεταβολές.')
                     : Container(
@@ -173,17 +171,9 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                                 style: TextStyle(fontWeight: .bold),
                               ),
                             ),
-                            Expanded(
-                              flex: col6Flex,
-                              child: Text(
-                                '',
-                                style: TextStyle(fontWeight: .bold),
-                              ),
-                            ),
                           ],
                         ),
                       ),
-
                 Expanded(
                   child: ListView.separated(
                     padding: .only(bottom: padding),
@@ -193,61 +183,57 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       final metavoli = _displayedMetavoles[index];
                       final isLast = index == _allMetavoles.length - 1;
                       final bottomRadius = Radius.circular(isLast ? 5 : 0);
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: .only(
-                            bottomLeft: bottomRadius,
-                            bottomRight: bottomRadius,
-                          ),
-                        ),
+                      return HoverButton(
+                        onPressed: () => showContentDialog(context, metavoli),
+                        builder: (context, state) {
+                          final isHovered = state.isHovered;
+                          final isPressed = state.isPressed;
+                          return Container(
+                            height: 55,
+                            decoration: BoxDecoration(
+                              color: isPressed
+                                  ? Colors.white.withAlpha(150)
+                                  : isHovered
+                                  ? Colors.white.withAlpha(200)
+                                  : Colors.white,
+                              borderRadius: .only(
+                                bottomLeft: bottomRadius,
+                                bottomRight: bottomRadius,
+                              ),
+                            ),
 
-                        padding: .symmetric(
-                          horizontal: padding,
-                          vertical: padding - 5,
-                        ),
-                        child: Row(
-                          spacing: 5,
-                          children: [
-                            Expanded(
-                              flex: col1Flex,
-                              child: Text(metavoli.type.description),
+                            padding: .symmetric(
+                              horizontal: padding,
+                              vertical: padding - 5,
                             ),
-                            Expanded(
-                              flex: col2Flex,
-                              child: Text(
-                                DateFormat(
-                                  'EEE dd MMM yy',
-                                  'el',
-                                ).format(metavoli.date),
-                              ),
-                            ),
-                            Expanded(
-                              flex: col3Flex,
-                              child: Text(metavoli.sima),
-                            ),
-                            Expanded(
-                              flex: col6Flex,
-                              child: Row(
-                                mainAxisAlignment: .end,
-                                children: [
-                                  IconButton(
-                                    icon: const WindowsIcon(WindowsIcons.edit),
-                                    onPressed: () =>
-                                        showContentDialog(context, metavoli),
+                            child: Row(
+                              spacing: 5,
+                              children: [
+                                Expanded(
+                                  flex: col1Flex,
+                                  child: Text(
+                                    metavoli.type.description,
+                                    maxLines: 2,
+                                    overflow: .ellipsis,
                                   ),
-                                  const Gap(5),
-                                  DeleteFlyout(
-                                    title: 'Διαγραφή μεταβολής;',
-                                    onPressed: () async {
-                                      await deleteMetavoli(metavoli.id);
-                                    },
+                                ),
+                                Expanded(
+                                  flex: col2Flex,
+                                  child: Text(
+                                    DateFormat(
+                                      'EEE dd MMM yy',
+                                      'el',
+                                    ).format(metavoli.date),
                                   ),
-                                ],
-                              ),
+                                ),
+                                Expanded(
+                                  flex: col3Flex,
+                                  child: Text(metavoli.sima),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       );
                     },
                   ),

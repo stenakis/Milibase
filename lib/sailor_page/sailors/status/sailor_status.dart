@@ -17,14 +17,14 @@ extension DateRangeCheck on DateTime {
 }
 
 Stream<(bool, bool)> checkStatus(Sailor sailor) {
-  Stream<List<Adeies>> _adeies =
+  Stream<List<Adeies>> adeies =
       (db.select(
         db.tableAdeies,
       )..where((t) => t.sailorId.equals(sailor.id))).watch().map(
         (rows) => rows.map((row) => Adeies.fromJson(row.toJson())).toList(),
       );
 
-  Stream<List<Apomakrynseis>> _apomakrynseis =
+  Stream<List<Apomakrynseis>> apomakrynseis =
       (db.select(
         db.tableApomakrynseis,
       )..where((t) => t.sailorId.equals(sailor.id))).watch().map(
@@ -33,8 +33,8 @@ Stream<(bool, bool)> checkStatus(Sailor sailor) {
       );
 
   Stream<(bool, bool)> hasActiveRecords = Rx.combineLatest2(
-    _adeies,
-    _apomakrynseis,
+    adeies,
+    apomakrynseis,
 
     (List<Adeies> adeies, List<Apomakrynseis> apomakrynseis) => (
       adeies.any((a) => today.isWithin(a.dateStart, a.dateEnd)),

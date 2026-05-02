@@ -45,9 +45,8 @@ class TableAdeies extends Table {
 
 class Vars extends Table {
   TextColumn get prothemaShmatos => text()();
-
-  @override
-  Set<Column> get primaryKey => {prothemaShmatos};
+  BoolColumn get enableMeiomeniThiteia =>
+      boolean().withDefault(const Constant(false))(); // add withDefault
 }
 
 class TableApomakrynseis extends Table {

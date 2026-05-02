@@ -6,11 +6,13 @@ import 'package:milibase/db/tables.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+
 import '../objects/adeies.dart';
 import '../objects/apomakrynseis.dart';
 import '../objects/metavoles.dart';
 import '../objects/rank.dart';
 import '../objects/specialty.dart';
+
 part 'init_db.g.dart';
 
 String dbLocation = 'Φόρτωση...';
@@ -22,7 +24,20 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) async {
+      await m.createAll(); // fresh install
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        // only adds the new column, all existing data is safe
+        await m.addColumn(vars, vars.enableMeiomeniThiteia);
+      }
+    },
+  );
 }
 
 LazyDatabase _openConnection() {

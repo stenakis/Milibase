@@ -43,7 +43,7 @@ class InfoOverview extends StatelessWidget {
                           maxLines: 2,
                         ),
                       ),
-                      Gap(10),
+                      const Gap(10),
                       Expanded(
                         child: Text(
                           item.values.first,

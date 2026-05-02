@@ -56,6 +56,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
     return ContentDialog(
       title: Row(
         mainAxisAlignment: .spaceBetween,
+        crossAxisAlignment: .start,
         children: [
           Flexible(
             child: Text(
@@ -63,7 +64,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                   ? 'Νέα Απομάκρυνση'
                   : 'Επεξεργασία Απομάκρυνσης',
               overflow: .ellipsis,
-              maxLines: 1,
+              maxLines: 2,
             ),
           ),
           const Gap(10),
@@ -186,57 +187,99 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
       ),
       actions: [
         isLoading
-            ? Row(
+            ? const Row(
                 children: [
                   ProgressRing(),
-                  const Gap(10),
+                  Gap(10),
                   Text('Αποθήκευση Απομάκρυνσης'),
                 ],
               )
-            : FilledButton(
-                child: Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    if (selectedStartDate.isAfter(selectedEndDate)) {
-                      showCustomInfoBar(
-                        context: context,
-                        text:
-                            'Η ημερομηνία έναρξης πρέπει να είναι πριν την ημερομηνία λήξης.',
-                        severity: .warning,
-                      );
-                    } else {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      try {
-                        final newApomakrynsi = Apomakrynseis(
-                          id: widget.id != null ? widget.id!.id : Uuid().v4(),
-                          type: selectedApomakrynsi,
-                          dateStart: selectedStartDate,
-                          dateEnd: enableEnd
-                              ? selectedEndDate
-                              : widget.sailor.dateRemoval,
-                          sailorId: widget.sailor.id,
-                          sima: simaController.text,
-                          ypiresia: ypiresiaController.text,
-                        );
-                        await addNewApomakrynsi(newApomakrynsi);
-                        if (context.mounted && mounted) Navigator.pop(context);
-                      } catch (e) {
-                        if (context.mounted && mounted) {
+            : Row(
+                mainAxisAlignment: .end,
+                children: [
+                  if (widget.id != null)
+                    Button(
+                      onPressed: () async {
+                        try {
+                          await deleteApomakrynsi(widget.id!);
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        } catch (error) {
+                          if (context.mounted) {
+                            showCustomInfoBar(
+                              context: context,
+                              text: error.toString(),
+                            );
+                          }
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          WindowsIcon(WindowsIcons.delete),
+                          Gap(5),
+                          const Text('Διαγραφή'),
+                        ],
+                      ),
+                    ),
+                  if (widget.id != null) Gap(10),
+                  FilledButton(
+                    autofocus: true,
+                    child: Row(
+                      children: [
+                        WindowsIcon(WindowsIcons.save),
+                        Gap(5),
+                        Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
+                      ],
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        if (selectedStartDate.isAfter(selectedEndDate)) {
                           showCustomInfoBar(
                             context: context,
-                            text: e.toString(),
+                            text:
+                                'Η ημερομηνία έναρξης πρέπει να είναι πριν την ημερομηνία λήξης.',
+                            severity: .warning,
                           );
+                        } else {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          try {
+                            final newApomakrynsi = Apomakrynseis(
+                              id: widget.id != null
+                                  ? widget.id!.id
+                                  : Uuid().v4(),
+                              type: selectedApomakrynsi,
+                              dateStart: selectedStartDate,
+                              dateEnd: enableEnd
+                                  ? selectedEndDate
+                                  : widget.sailor.dateRemoval,
+                              sailorId: widget.sailor.id,
+                              sima: simaController.text,
+                              ypiresia: ypiresiaController.text,
+                            );
+                            await addNewApomakrynsi(newApomakrynsi);
+                            if (context.mounted && mounted) {
+                              Navigator.pop(context);
+                            }
+                          } catch (e) {
+                            if (context.mounted && mounted) {
+                              showCustomInfoBar(
+                                context: context,
+                                text: e.toString(),
+                              );
+                            }
+                          } finally {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
                         }
-                      } finally {
-                        setState(() {
-                          isLoading = false;
-                        });
                       }
-                    }
-                  }
-                },
+                    },
+                  ),
+                ],
               ),
       ],
     );

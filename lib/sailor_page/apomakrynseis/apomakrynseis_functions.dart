@@ -1,7 +1,8 @@
-import 'package:drift/src/runtime/data_class.dart';
-import '../../objects/apomakrynseis.dart';
+import 'package:drift/drift.dart';
+
 import '../../db/init_db.dart';
 import '../../main.dart';
+import '../../objects/apomakrynseis.dart';
 
 Future<void> addNewApomakrynsi(Apomakrynseis apomakrynsi) async {
   await db
@@ -19,6 +20,8 @@ Future<void> addNewApomakrynsi(Apomakrynseis apomakrynsi) async {
       );
 }
 
-Future<void> deleteApomakrynsi(String id) async {
-  await (db.delete(db.tableApomakrynseis)..where((t) => t.id.equals(id))).go();
+Future<void> deleteApomakrynsi(Apomakrynseis apomakrynsi) async {
+  await (db.delete(
+    db.tableApomakrynseis,
+  )..where((t) => t.id.equals(apomakrynsi.id))).go();
 }

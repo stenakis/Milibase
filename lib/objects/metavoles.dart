@@ -20,7 +20,7 @@ enum Metavoli {
   }
 
   String get description => switch (this) {
-    Metavoli.meiomeni => 'Μεταφέρθηκε στους υπόχρεους ...',
+    Metavoli.meiomeni => 'Μεταφέρθηκε στους υπόχρεους μειωμένης θητείας',
     Metavoli.ekkremei => 'Υπέχει στρατολογική εκκρεμότητα',
     _ => 'Πραγματοποιήθηκε εξαγορά 1 μήνα θητείας',
   };

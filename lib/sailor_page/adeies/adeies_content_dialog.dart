@@ -56,7 +56,11 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
         crossAxisAlignment: .start,
         children: [
           Expanded(
-            child: Text(_isEditing ? 'Επεξεργασία Άδειας' : 'Νέα Άδεια'),
+            child: Text(
+              _isEditing ? 'Επεξεργασία Άδειας' : 'Νέα Άδεια',
+              maxLines: 2,
+              overflow: .ellipsis,
+            ),
           ),
           const Gap(10),
           IconButton(
@@ -104,7 +108,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                 ),
               ),
             ),
-          const Gap(10),
+          if (_needsSima) const Gap(padding),
           Row(
             children: [
               InfoLabel(
@@ -140,44 +144,79 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
         ],
       ),
       actions: [
-        if (_isLoading)
-          const Row(
-            children: [ProgressRing(), Gap(10), Text('Αποθήκευση Άδειας')],
-          )
-        else
-          FilledButton(
-            onPressed: _submit,
-            child: Text(widget.adeia == null ? 'Εισαγωγή' : 'Αποθήκευση'),
-          ),
+        _isLoading
+            ? const Row(
+                children: [ProgressRing(), Gap(10), Text('Αποθήκευση Άδειας')],
+              )
+            : Row(
+                mainAxisAlignment: .end,
+                children: [
+                  if (widget.adeia != null)
+                    Button(
+                      onPressed: () async {
+                        try {
+                          await deleteAdeia(widget.adeia!);
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        } catch (error) {
+                          if (context.mounted) {
+                            showCustomInfoBar(
+                              context: context,
+                              text: error.toString(),
+                            );
+                          }
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          WindowsIcon(WindowsIcons.delete),
+                          Gap(5),
+                          const Text('Διαγραφή'),
+                        ],
+                      ),
+                    ),
+                  if (widget.adeia != null) Gap(10),
+                  FilledButton(
+                    autofocus: true,
+                    onPressed: _submit,
+                    child: Row(
+                      children: [
+                        WindowsIcon(WindowsIcons.save),
+                        Gap(5),
+                        Text(widget.adeia == null ? 'Εισαγωγή' : 'Αποθήκευση'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
       ],
     );
   }
 
   Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      try {
-        final adeia = Adeies(
-          id: widget.adeia?.id ?? Uuid().v4(),
-          type: _selectedAdeia,
-          dateStart: _startDate,
-          dateEnd: _endDate,
-          sailorId: widget.sailor.id,
-          sima: _needsSima ? _simaController.text.trim() : null,
+    setState(() => _isLoading = true);
+    try {
+      final adeia = Adeies(
+        id: widget.adeia?.id ?? Uuid().v4(),
+        type: _selectedAdeia,
+        dateStart: _startDate,
+        dateEnd: _endDate,
+        sailorId: widget.sailor.id,
+        sima: _needsSima ? _simaController.text.trim() : null,
+      );
+      await addNewAdeia(adeia);
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        showCustomInfoBar(
+          context: context,
+          text: e.toString(),
+          severity: InfoBarSeverity.error,
         );
-        await addNewAdeia(adeia);
-        if (mounted) Navigator.pop(context);
-      } catch (e) {
-        if (mounted) {
-          showCustomInfoBar(
-            context: context,
-            text: e.toString(),
-            severity: InfoBarSeverity.error,
-          );
-        }
-      } finally {
-        if (mounted) setState(() => _isLoading = false);
       }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 }

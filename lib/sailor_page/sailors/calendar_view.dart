@@ -75,6 +75,24 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
 
   static final _monthFormat = DateFormat('MMMM yyyy', 'el');
   static const _weekDays = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'];
+  static String formatDateGreek(DateTime date) {
+    const months = [
+      'Ιανουάριος',
+      'Φεβρουάριος',
+      'Μάρτιος',
+      'Απρίλιος',
+      'Μάιος',
+      'Ιούνιος',
+      'Ιούλιος',
+      'Αύγουστος',
+      'Σεπτέμβριος',
+      'Οκτώβριος',
+      'Νοέμβριος',
+      'Δεκέμβριος',
+    ];
+    return '${months[date.month - 1]} ${date.year}';
+  }
+
   static const _cellBorderColor = Color(0x14000000); // black @ alpha 20
 
   @override
@@ -287,7 +305,8 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
     return Row(
       children: [
         Text(
-          _monthFormat.format(_focusedMonth),
+          formatDateGreek(_focusedMonth),
+
           style: FluentTheme.of(context).typography.title,
         ),
         const Spacer(),
@@ -358,6 +377,7 @@ class _DayCell extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
+        borderRadius: .all(.circular(5)),
         border: Border.all(
           color: _SailorCalendarOverviewState._cellBorderColor,
         ),
@@ -365,7 +385,6 @@ class _DayCell extends StatelessWidget {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Day number badge
           Container(
@@ -389,8 +408,13 @@ class _DayCell extends StatelessWidget {
             ),
           ),
           const Gap(4),
-          // Chips — no scroll, fixed count based on available height
-          ...visibleEvents.map((e) => _EventChip(event: e)),
+          // Chips
+          Expanded(
+            child: ListView(
+              children: visibleEvents.map((e) => _EventChip(event: e)).toList(),
+            ),
+          ),
+
           if (overflow > 0)
             Padding(
               padding: const EdgeInsets.only(top: 2),
@@ -420,9 +444,9 @@ class _EventChip extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 2),
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: event.type.color.withOpacity(0.15),
+        color: event.type.color.withAlpha(38),
         borderRadius: BorderRadius.circular(3),
-        border: Border.all(color: event.type.color.withOpacity(0.4)),
+        border: Border.all(color: event.type.color.withAlpha(77)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

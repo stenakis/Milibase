@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -10,6 +11,8 @@ import 'package:open_folder/open_folder.dart';
 import 'package:super_bullet_list/bullet_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../main.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -19,9 +22,14 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   late Future<bool> checkUpdate;
+  late Stream<bool> _meiomeniThiteia;
+
   @override
   void initState() {
     checkUpdate = checkVersion();
+    _meiomeniThiteia = (db.select(
+      db.vars,
+    )).watchSingle().map((row) => row.enableMeiomeniThiteia);
     super.initState();
   }
 
@@ -52,9 +60,47 @@ class _SettingsPageState extends State<SettingsPage> {
                     ],
                   ),
                   const Gap(padding),
+                  Row(
+                    children: [
+                      Text(
+                        'Επιπλέον επιλογές μειωμένης θητείας (5 & 8 μήνες)',
+                        style: TextStyle(fontSize: 18, fontWeight: .bold),
+                      ),
+                      Spacer(),
+                      StreamBuilder<bool>(
+                        stream: _meiomeniThiteia,
+                        builder:
+                            (
+                              BuildContext context,
+                              AsyncSnapshot<bool> snapshot,
+                            ) {
+                              if (snapshot.connectionState == .waiting) {
+                                return ProgressRing();
+                              } else if (!snapshot.hasData) {
+                                return Text('Σφάλμα');
+                              } else if (snapshot.hasData) {
+                                bool checked = snapshot.data!;
+                                return ToggleSwitch(
+                                  checked: checked,
+                                  onChanged: (v) async {
+                                    await (db.update(db.vars)).write(
+                                      VarsCompanion(
+                                        enableMeiomeniThiteia: Value(v),
+                                      ),
+                                    );
+                                  },
+                                );
+                              } else {
+                                return Text('Σφάλμα');
+                              }
+                            },
+                      ),
+                    ],
+                  ),
+                  const Gap(padding),
                   Text(
                     'Βάση',
-                    style: TextStyle(fontSize: 20, fontWeight: .bold),
+                    style: TextStyle(fontSize: 18, fontWeight: .bold),
                   ),
                   const Gap(5),
                   Text('$dbLocation\\sailors_database.sqlite'),
@@ -124,7 +170,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     'Έκδοση $appVersion',
                     style: TextStyle(fontSize: 20, fontWeight: .bold),
                   ),
-
                   const Gap(10),
                   FutureBuilder<bool>(
                     future: checkUpdate,
@@ -138,8 +183,20 @@ class _SettingsPageState extends State<SettingsPage> {
                           ],
                         );
                       } else if (snapshot.hasError) {
-                        return Text(
-                          'Σφάλμα εύρεσης καινούργιας έδκοσης: ${snapshot.error}',
+                        return Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            Text('Σφάλμα επικοινωνίας με τον σέρβερ.'),
+                            const Gap(10),
+                            FilledButton(
+                              child: Text('Έλεγχος για ενημερώσεις'),
+                              onPressed: () async {
+                                setState(() {
+                                  checkUpdate = checkVersion();
+                                });
+                              },
+                            ),
+                          ],
                         );
                       } else if (snapshot.hasData) {
                         if (snapshot.data == false) {
@@ -191,21 +248,35 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
                   const Gap(padding),
-                  Text('Σε αυτή την έκδοση:'),
-                  const Gap(5),
-                  SuperBulletList(
-                    iconSize: 5,
-                    separator: const Gap(0),
-                    gap: 5,
-                    items: [
-                      Text('Νέο! Επανασχεδιασμός των στοιχείων Ν/Δ'),
-                      Text('Προσθήκη ημερολογίου στην Επισκόπηση Ν/Δ'),
-                      Text('Παράκαμψη τόνου στην αναζήτηση Ν/Δ'),
-                      Text('Προσαρμογή μεγεθους κειμένων'),
-                      Text('Βελτίωση ταχύτητας'),
-                    ],
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Text('Σε αυτή την έκδοση:'),
+                        const Gap(5),
+                        SuperBulletList(
+                          iconSize: 5,
+                          separator: const Gap(0),
+                          gap: 5,
+                          items: [
+                            Text(
+                              'Η αποθήκευση μεταβολών γίνεται πλέον και με το πλήκτρο Enter',
+                            ),
+                            Text(
+                              'Προσαρμογή λειτουργιών επεξεργασίας και διαγραφής μεταβολών σε ένα ενιαίο περιβάλλον',
+                            ),
+                            Text(
+                              'Προσθήκη προεραιτικής επιπλέον επιλογής μειωμένης θητείας',
+                            ),
+                            Text(
+                              'Διόρθωση σφάλματος όπου οι μήνες στο ημερολόγιο Ν/Δ ήταν σε γενική πτώση',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Spacer(),
+
+                  Gap(10),
                   Text('Σχεδιασμός & Υλοποίηση'),
                   const Gap(padding),
                   Row(

@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
-import '../../objects/adeies.dart';
+
 import '../../db/init_db.dart';
 import '../../main.dart';
+import '../../objects/adeies.dart';
 
 Future<void> addNewAdeia(Adeies adeia) async {
   await db
@@ -18,6 +19,6 @@ Future<void> addNewAdeia(Adeies adeia) async {
       );
 }
 
-Future<void> deleteAdeia(String id) async {
-  await (db.delete(db.tableAdeies)..where((t) => t.id.equals(id))).go();
+Future<void> deleteAdeia(Adeies adeia) async {
+  await (db.delete(db.tableAdeies)..where((t) => t.id.equals(adeia.id))).go();
 }

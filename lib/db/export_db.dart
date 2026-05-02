@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:milibase/main.dart';
 import 'package:milibase/templates/info_bar.dart';
@@ -30,14 +31,18 @@ Future<void> exportBackup(BuildContext context) async {
     final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/backup.json');
     await file.writeAsString(jsonEncode(backup));
-    await showCustomInfoBar(
-      context: context,
-      title: 'Επιτυχές:',
-      text: 'Δημιουργία backup: ${file.path}',
-      severity: .success,
-    );
+    if (context.mounted) {
+      await showCustomInfoBar(
+        context: context,
+        title: 'Επιτυχές:',
+        text: 'Δημιουργία backup: ${file.path}',
+        severity: .success,
+      );
+    }
   } catch (e) {
-    await showCustomInfoBar(context: context, text: e.toString());
+    if (context.mounted) {
+      await showCustomInfoBar(context: context, text: e.toString());
+    }
   }
 }
 
@@ -70,13 +75,17 @@ Future<void> importBackup(BuildContext context) async {
 
       await db.customStatement('PRAGMA foreign_keys = ON');
     });
-    await showCustomInfoBar(
-      context: context,
-      title: 'Επιτυχές:',
-      text: 'Επιτυχής εισαγωγή',
-      severity: .success,
-    );
+    if (context.mounted) {
+      await showCustomInfoBar(
+        context: context,
+        title: 'Επιτυχές:',
+        text: 'Επιτυχής εισαγωγή',
+        severity: .success,
+      );
+    }
   } catch (e) {
-    await showCustomInfoBar(context: context, text: e.toString());
+    if (context.mounted) {
+      await showCustomInfoBar(context: context, text: e.toString());
+    }
   }
 }

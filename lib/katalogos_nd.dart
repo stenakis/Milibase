@@ -136,7 +136,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
 
                 return ListView.separated(
                   padding: EdgeInsets.only(bottom: padding),
-                  separatorBuilder: (_, __) => const Divider(),
+                  separatorBuilder: (_, _) => const Divider(),
                   itemCount: displayed.length,
                   itemBuilder: (context, index) {
                     final sailor = displayed[index];
