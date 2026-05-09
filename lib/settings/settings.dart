@@ -42,14 +42,14 @@ class _SettingsPageState extends State<SettingsPage> {
           Expanded(
             flex: 7,
             child: Padding(
-              padding: const .all(padding),
+              padding: .all(padding),
               child: Column(
                 crossAxisAlignment: .start,
                 children: [
                   Row(
                     children: [
                       IconButton(
-                        icon: const WindowsIcon(WindowsIcons.chrome_back, size: 24),
+                        icon: WindowsIcon(WindowsIcons.chrome_back, size: 24),
                         onPressed: () => Navigator.pop(context),
                       ),
                       const Gap(10),
@@ -62,11 +62,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   const Gap(padding),
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Επιπλέον επιλογές μειωμένης θητείας (5 & 8 μήνες)',
                         style: TextStyle(fontSize: 18, fontWeight: .bold),
                       ),
-                      const Spacer(),
+                      Spacer(),
                       StreamBuilder<bool>(
                         stream: _meiomeniThiteia,
                         builder:
@@ -75,9 +75,9 @@ class _SettingsPageState extends State<SettingsPage> {
                               AsyncSnapshot<bool> snapshot,
                             ) {
                               if (snapshot.connectionState == .waiting) {
-                                return const ProgressRing();
+                                return ProgressRing();
                               } else if (!snapshot.hasData) {
-                                return const Text('Σφάλμα');
+                                return Text('Σφάλμα');
                               } else if (snapshot.hasData) {
                                 bool checked = snapshot.data!;
                                 return ToggleSwitch(
@@ -91,14 +91,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                   },
                                 );
                               } else {
-                                return const Text('Σφάλμα');
+                                return Text('Σφάλμα');
                               }
                             },
                       ),
                     ],
                   ),
                   const Gap(padding),
-                  const Text(
+                  Text(
                     'Βάση',
                     style: TextStyle(fontSize: 18, fontWeight: .bold),
                   ),
@@ -109,10 +109,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     spacing: 5,
                     children: [
                       Button(
-                        child: const Row(
+                        child: Row(
                           children: [
                             WindowsIcon(WindowsIcons.file_explorer),
-                            Gap(5),
+                            const Gap(5),
                             Text('Άνοιγμα θέσης αρχείου'),
                           ],
                         ),
@@ -122,10 +122,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         onPressed: () async {
                           await exportBackup(context);
                         },
-                        child: const Row(
+                        child: Row(
                           children: [
                             WindowsIcon(WindowsIcons.export),
-                            Gap(5),
+                            const Gap(5),
                             Text('Εξαγωγή σε .json'),
                           ],
                         ),
@@ -135,10 +135,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         onPressed: () async {
                           await importBackup(context);
                         },
-                        child: const Row(
+                        child: Row(
                           children: [
                             WindowsIcon(WindowsIcons.import),
-                            Gap(5),
+                            const Gap(5),
                             Text('Εισαγωγή από .json'),
                           ],
                         ),
@@ -152,8 +152,8 @@ class _SettingsPageState extends State<SettingsPage> {
           Expanded(
             flex: 4,
             child: Container(
-              margin: const .all(padding),
-              padding: const .all(padding * 2),
+              margin: .all(padding),
+              padding: .all(padding * 2),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
@@ -162,11 +162,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 crossAxisAlignment: .start,
                 children: [
                   ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 200),
+                    constraints: BoxConstraints(maxWidth: 200),
                     child: SvgPicture.asset('assets/logo_large.svg'),
                   ),
                   const Gap(padding),
-                  const Text(
+                  Text(
                     'Έκδοση $appVersion',
                     style: TextStyle(fontSize: 20, fontWeight: .bold),
                   ),
@@ -175,10 +175,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     future: checkUpdate,
                     builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                       if (snapshot.connectionState == .waiting) {
-                        return const Row(
+                        return Row(
                           children: [
                             ProgressRing(),
-                            Gap(10),
+                            const Gap(10),
                             Text('Γίνεται έλεγχος για ενημερώσεις'),
                           ],
                         );
@@ -186,10 +186,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         return Column(
                           crossAxisAlignment: .start,
                           children: [
-                            const Text('Σφάλμα επικοινωνίας με τον σέρβερ.'),
+                            Text('Σφάλμα επικοινωνίας με τον σέρβερ.'),
                             const Gap(10),
                             FilledButton(
-                              child: const Text('Έλεγχος για ενημερώσεις'),
+                              child: Text('Έλεγχος για ενημερώσεις'),
                               onPressed: () async {
                                 setState(() {
                                   checkUpdate = checkVersion();
@@ -203,10 +203,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           return Column(
                             crossAxisAlignment: .start,
                             children: [
-                              const Text('Δεν υπάρχει διαθέσιμη ενημέρωση'),
+                              Text('Δεν υπάρχει διαθέσιμη ενημέρωση'),
                               const Gap(10),
                               FilledButton(
-                                child: const Text('Έλεγχος για ενημερώσεις'),
+                                child: Text('Έλεγχος για ενημερώσεις'),
                                 onPressed: () async {
                                   setState(() {
                                     checkUpdate = checkVersion();
@@ -219,14 +219,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           return Column(
                             crossAxisAlignment: .start,
                             children: [
-                              const Text('Υπάρχει διαθέσιμη ενημέρωση!'),
+                              Text('Υπάρχει διαθέσιμη ενημέρωση!'),
                               const Gap(10),
                               FilledButton(
-                                child: const Text('Εγκατάσταση'),
+                                child: Text('Εγκατάσταση'),
                                 onPressed: () async {
                                   showDialog(
                                     context: context,
-                                    builder: (context) => const ContentDialog(
+                                    builder: (context) => ContentDialog(
                                       title: Text('Προετοιμασία για ενημέρωση'),
                                       content: Text(
                                         'Όταν ολοκληρωθεί η λήψη του αρχείου εγκατάστασης, η εφαρμογή θα κλείσει και μετά την εγκατάσταση θα γίνει αυτόματη εκκίνηση.',
@@ -235,7 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ),
                                   );
 
-                                  Future.delayed(const Duration(seconds: 2));
+                                  Future.delayed(Duration(seconds: 2));
                                   await downloadAndInstallUpdate();
                                 },
                               ),
@@ -243,7 +243,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           );
                         }
                       } else {
-                        return const Text('Σφάλμα εύρεσης καινούργιας έδκοσης');
+                        return Text('Σφάλμα εύρεσης καινούργιας έδκοσης');
                       }
                     },
                   ),
@@ -251,11 +251,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   Expanded(
                     child: ListView(
                       children: [
-                        const Text('Σε αυτή την έκδοση:'),
+                        Text('Σε αυτή την έκδοση:'),
                         const Gap(5),
-                        const SuperBulletList(
+                        SuperBulletList(
                           iconSize: 5,
-                          separator: Gap(0),
+                          separator: const Gap(0),
                           gap: 5,
                           items: [
                             Text(
@@ -279,14 +279,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
 
-                  const Gap(10),
-                  const Text('Σχεδιασμός & Υλοποίηση'),
+                  Gap(10),
+                  Text('Σχεδιασμός & Υλοποίηση'),
                   const Gap(padding),
                   Row(
                     mainAxisAlignment: .spaceBetween,
                     children: [
                       SvgPicture.asset('assets/evans_logo.svg', height: 30),
-                      const Spacer(),
+                      Spacer(),
                       const Gap(10),
                       IconButton(
                         onPressed: () async {

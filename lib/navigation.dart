@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:milibase/main.dart';
 import 'package:milibase/settings/settings.dart';
+import 'package:milibase/settings/update_func.dart';
+import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
 
 final GlobalKey<NavigatorState> mainInnerKey = GlobalKey<NavigatorState>();
@@ -16,6 +18,14 @@ class Navigation extends StatefulWidget {
 }
 
 class _NavigationState extends State<Navigation> {
+  late Future<bool> checkUpdate;
+
+  @override
+  void initState() {
+    super.initState();
+    checkUpdate = checkVersion();
+  }
+
   int selected = 1;
   @override
   Widget build(BuildContext context) {
@@ -34,13 +44,8 @@ class _NavigationState extends State<Navigation> {
           children: [
             const Gap(padding),
             SvgPicture.asset('assets/logo_large.svg', height: 25),
-            Text(
-              'Milibase',
-              style: FluentTheme.of(
-                context,
-              ).typography.title?.copyWith(color: Colors.white),
-            ),
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),
+
             /* FluentButton(
               selected: selected == 0,
               text: 'Βάρδιες',
@@ -75,6 +80,50 @@ class _NavigationState extends State<Navigation> {
               },
             ),
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),*/
+            FutureBuilder<bool>(
+              future: checkUpdate,
+              builder: (context, snapshot) {
+                bool hasUpdate = snapshot.hasData && snapshot.data! == true;
+                return Row(
+                  children: [
+                    Button(
+                      style: ButtonStyle(
+                        backgroundColor: hasUpdate
+                            ? WidgetStateProperty.all(secColor)
+                            : null,
+                      ),
+                      onPressed: () {
+                        mainInnerKey.currentState?.push(
+                          FluentPageRoute(
+                            builder: (context) {
+                              return const SettingsPage();
+                            },
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          const WindowsIcon(WindowsIcons.settings, size: 20),
+                          if (snapshot.connectionState == .waiting) ...[
+                            const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: ProgressRing(strokeWidth: 3),
+                            ),
+                            const Gap(10),
+                            const Text('Έλεγχος για ενημερώσεις...'),
+                          ] else if (hasUpdate) ...[
+                            const Gap(10),
+                            const Text('Διαθέσιμη ενημέρωση!'),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            const Gap(padding),
             Image.asset('assets/faron.png', height: 25),
             const Gap(5),
             const Text('Υπηρεσία Φάρων'),
