@@ -128,22 +128,7 @@ class _NavigationState extends State<Navigation> {
             const Gap(5),
             const Text('Υπηρεσία Φάρων'),
             const Gap(padding),
-            IconButton(
-              onPressed: () {
-                mainInnerKey.currentState?.push(
-                  FluentPageRoute(
-                    builder: (context) {
-                      return const SettingsPage();
-                    },
-                  ),
-                );
-              },
-              icon: const WindowsIcon(WindowsIcons.settings, size: 20),
-            ),
-            SizedBox(
-              width: padding,
-              child: WindowTitleBarBox(child: MoveWindow()),
-            ),
+
             SizedBox(
               width: 138,
               height: 60,

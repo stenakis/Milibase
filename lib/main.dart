@@ -17,11 +17,12 @@ void main() async {
   databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
   doWhenWindowReady(() {
-    final win = appWindow;
-    win.minSize = const Size(600, 450);
-    const initialSize = Size(1280, 720);
-    win.size = initialSize;
-    win.show();
+    appWindow.minSize = const Size(600, 450);
+    appWindow.size = const Size(1280, 721);
+    appWindow.show();
+    Future.delayed(Duration.zero, () {
+      appWindow.size = const Size(1280, 720);
+    });
   });
 }
 

@@ -125,21 +125,15 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                           runSpacing: 5,
                           spacing: padding,
                           children: [
-                            if (isTrue)
-                              const RadioButton<int>(
-                                value: 5,
-                                content: Text('5 μήνες'),
-                              ),
                             const RadioButton<int>(
                               value: 6,
                               content: Text('6 μήνες'),
                             ),
                             if (isTrue)
                               const RadioButton<int>(
-                                value: 5,
+                                value: 8,
                                 content: Text('8 μήνες'),
                               ),
-
                             const RadioButton<int>(
                               value: 9,
                               content: Text('9 μήνες'),
@@ -242,7 +236,9 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                         });
                         try {
                           final newMetavoli = Metavoles(
-                            id: widget.isEditing ? widget.id!.id : const Uuid().v4(),
+                            id: widget.isEditing
+                                ? widget.id!.id
+                                : const Uuid().v4(),
                             type: selectedMetavoli,
                             date: selectedDate,
                             sailorId: widget.sailor.id,

@@ -77,13 +77,9 @@ class _KatalogosNdState extends State<KatalogosNd> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage.withPadding(
-      padding: const EdgeInsets.only(
-        left: padding + 10,
-        right: padding + 10,
-        top: 15,
-      ),
+      padding: const .only(left: padding + 10, right: padding + 10, top: 15),
       content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           _buildToolbar(context),
           const Gap(padding),
@@ -129,19 +125,17 @@ class _KatalogosNdState extends State<KatalogosNd> {
                 final displayed = _filter(snapshot.data!);
 
                 if (displayed.isEmpty) {
-                  return const Center(
-                    child: Text('Δεν βρέθηκαν αποτελέσματα.'),
-                  );
+                  return const Center(child: Text('Δεν βρέθηκαν αποτελέσματα'));
                 }
 
                 return ListView.separated(
-                  padding: const EdgeInsets.only(bottom: padding),
+                  padding: const .only(bottom: padding),
                   separatorBuilder: (_, _) => const Divider(),
                   itemCount: displayed.length,
                   itemBuilder: (context, index) {
-                    final sailor = displayed[index];
-                    final isLast = index == displayed.length - 1;
-                    final bottomRadius = Radius.circular(isLast ? 5 : 0);
+                    final Sailor sailor = displayed[index];
+                    final bool isLast = index == displayed.length - 1;
+                    final Radius bottomRadius = .circular(isLast ? 5 : 0);
                     return HoverButton(
                       onPressed: () => Navigator.push(
                         context,
@@ -152,12 +146,12 @@ class _KatalogosNdState extends State<KatalogosNd> {
                       builder: (context, states) => Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: .only(
                             bottomLeft: bottomRadius,
                             bottomRight: bottomRadius,
                           ),
                         ),
-                        padding: const EdgeInsets.symmetric(
+                        padding: const .symmetric(
                           horizontal: padding + 5,
                           vertical: padding,
                         ),
@@ -206,11 +200,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
           onPressed: () => _showCreateNDDialog(context),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(FluentIcons.add),
-              Gap(5),
-              Text('Προσθήκη Ν/Δ'),
-            ],
+            children: [Icon(FluentIcons.add), Gap(5), Text('Προσθήκη Ν/Δ')],
           ),
         ),
         const Gap(10),
@@ -219,7 +209,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
           child: TextBox(
             controller: _searchController,
             prefix: const Padding(
-              padding: EdgeInsets.only(left: 10),
+              padding: .only(left: 10),
               child: WindowsIcon(WindowsIcons.search),
             ),
             placeholder: 'Αναζήτηση Ν/Δ',
@@ -244,12 +234,12 @@ class _KatalogosNdState extends State<KatalogosNd> {
     return Container(
       decoration: BoxDecoration(
         color: secColor,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(5),
-          topLeft: Radius.circular(5),
+        borderRadius: const .only(
+          topRight: .circular(5),
+          topLeft: .circular(5),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: padding, vertical: 10),
+      padding: const .symmetric(horizontal: padding, vertical: 10),
       child: const Row(
         spacing: 5,
         children: [
