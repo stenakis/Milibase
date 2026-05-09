@@ -67,7 +67,7 @@ class _VardiesPageState extends State<VardiesPage> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage.withPadding(
-      padding: .only(left: padding + 10, right: padding + 10, top: 15),
+      padding: const .only(left: padding + 10, right: padding + 10, top: 15),
       content: FutureBuilder<List<Sailor>>(
         future: _future,
         builder: (context, snapshot) {
@@ -90,13 +90,13 @@ class _VardiesPageState extends State<VardiesPage> {
                       'Βάρδιες',
                       style: FluentTheme.of(context).typography.title,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     FilledButton(
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: .min,
                         children: [
                           Icon(FluentIcons.add),
-                          const Gap(5),
+                          Gap(5),
                           Text('Δημιουργία βάρδιας'),
                         ],
                       ),
@@ -127,7 +127,7 @@ class _VardiesPageState extends State<VardiesPage> {
                   child: ListView.separated(
                     itemCount: weeks.length + 1,
                     itemBuilder: (context, index) {
-                      if (index == weeks.length) return SizedBox.shrink();
+                      if (index == weeks.length) return const SizedBox.shrink();
                       final DateTime weekStart = weeks[index];
                       final List<DateTime> days = generateWeekDays(weekStart);
                       // Check if we need to show month header
@@ -148,7 +148,7 @@ class _VardiesPageState extends State<VardiesPage> {
                           if (showMonthHeader)
                             Text(
                               DateFormat('MMMM yyyy', 'el').format(weekStart),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -186,7 +186,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                         crossAxisAlignment: .start,
                                         children: [
                                           Container(
-                                            padding: .symmetric(
+                                            padding: const .symmetric(
                                               horizontal: 10,
                                               vertical: 5,
                                             ),
@@ -202,7 +202,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                                 const Gap(5),
                                                 Text(
                                                   date.day.toString(),
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -211,7 +211,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                           ),
                                           const Gap(7),
                                           Padding(
-                                            padding: .symmetric(horizontal: 12),
+                                            padding: const .symmetric(horizontal: 12),
                                             child:
                                                 vardies.isNotEmpty &&
                                                     absoluteIndex <
@@ -228,7 +228,7 @@ class _VardiesPageState extends State<VardiesPage> {
                                                             )
                                                             .toList(),
                                                   )
-                                                : Text('Home'),
+                                                : const Text('Home'),
                                           ),
 
                                           const Gap(10),

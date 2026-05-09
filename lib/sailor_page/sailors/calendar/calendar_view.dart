@@ -1,15 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 import 'package:milibase/objects/adeies.dart';
 import 'package:milibase/objects/apomakrynseis.dart';
 import 'package:milibase/objects/metavoles.dart';
 import 'package:milibase/objects/sailor.dart';
+import 'package:milibase/styles/colors.dart';
 import 'package:milibase/templates/info_bar.dart';
 import 'package:milibase/variables.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../main.dart';
+import '../../../main.dart';
+import 'flyout_items.dart';
 
 // ── Event model ───────────────────────────────────────────────────────────────
 
@@ -73,7 +74,6 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
   DateTime get _maxMonth =>
       DateTime(widget.sailor.dateRemoval.year, widget.sailor.dateRemoval.month);
 
-  static final _monthFormat = DateFormat('MMMM yyyy', 'el');
   static const _weekDays = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'];
   static String formatDateGreek(DateTime date) {
     const months = [
@@ -94,12 +94,12 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
   }
 
   static const _cellBorderColor = Color(0x14000000); // black @ alpha 20
-
+  late DateTime current;
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
-    final current = DateTime(now.year, now.month);
+    current = DateTime(now.year, now.month);
     // Start on today's month, but clamped to the sailor's service range
     _focusedMonth = current.isBefore(_minMonth)
         ? _minMonth
@@ -156,16 +156,24 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
     final apomakStream =
         (db.select(
           db.tableApomakrynseis,
-        )..where((t) => t.sailorId.equals(id))).watch().map(
-          (rows) => rows.map((row) {
+        )..where((t) => t.sailorId.equals(id))).watch().map((rows) {
+          final events = <CalendarEvent>[];
+          for (final row in rows) {
             final a = Apomakrynseis.fromJson(row.toJson());
-            return CalendarEvent(
-              date: a.dateStart,
-              type: CalendarEventType.apomakrynsi,
-              label: a.type.label,
-            );
-          }).toList(),
-        );
+            DateTime cursor = a.dateStart;
+            while (!cursor.isAfter(a.dateEnd)) {
+              events.add(
+                CalendarEvent(
+                  date: cursor,
+                  type: CalendarEventType.apomakrynsi,
+                  label: a.type.label,
+                ),
+              );
+              cursor = cursor.add(const Duration(days: 1));
+            }
+          }
+          return events;
+        });
 
     final metavolesStream =
         (db.select(
@@ -255,17 +263,15 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
         final rowCount = ((leadingBlanks + daysInMonth) / 7).ceil();
 
         return Padding(
-          padding: .only(bottom: padding, right: padding),
+          padding: const .only(bottom: padding, right: padding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Gap(padding),
               _buildHeader(context),
               const Gap(padding),
-
               _buildWeekDayLabels(context),
               const Gap(8),
-
               // LayoutBuilder so cell height is based on actual available space
               Expanded(
                 child: LayoutBuilder(
@@ -283,8 +289,9 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
                         if (day < 1 || day > daysInMonth) {
                           return const SizedBox.shrink();
                         }
-                        return _DayCell(
-                          day: day,
+                        return DayCell(
+                          sailor: widget.sailor,
+                          date: DateTime(current.year, current.month, day),
                           isToday: _isToday(day),
                           events: eventsByDay[day] ?? [],
                           cellHeight: cellHeight,
@@ -306,7 +313,6 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
       children: [
         Text(
           formatDateGreek(_focusedMonth),
-
           style: FluentTheme.of(context).typography.title,
         ),
         const Spacer(),
@@ -350,83 +356,83 @@ class _SailorCalendarOverviewState extends State<SailorCalendarOverview> {
 
 // ── Day cell ──────────────────────────────────────────────────────────────────
 
-class _DayCell extends StatelessWidget {
-  const _DayCell({
-    required this.day,
+class DayCell extends StatefulWidget {
+  const DayCell({
+    super.key,
+    required this.date,
     required this.isToday,
     required this.events,
     required this.cellHeight,
+    required this.sailor,
   });
 
-  final int day;
+  final DateTime date;
   final bool isToday;
   final List<CalendarEvent> events;
   final double cellHeight;
+  final Sailor sailor;
+  @override
+  State<DayCell> createState() => _DayCellState();
+}
 
-  // Reserve space for: day number (26) + gap (4) + bottom padding (4)
-  // Each chip is ~20px tall with 2px margin
-  static const _chipHeight = 22.0;
-  static const _headerHeight = 34.0;
-
+class _DayCellState extends State<DayCell> {
+  final menuController = FlyoutController();
   @override
   Widget build(BuildContext context) {
-    final theme = FluentTheme.of(context);
-    final maxChips = ((cellHeight - _headerHeight) / _chipHeight).floor();
-    final visibleEvents = events.take(maxChips).toList();
-    final overflow = events.length - visibleEvents.length;
+    return FlyoutTarget(
+      controller: menuController,
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: .all(.circular(5)),
-        border: Border.all(
-          color: _SailorCalendarOverviewState._cellBorderColor,
+      child: GestureDetector(
+        onSecondaryTap: () {
+          menuController.showFlyout(
+            autoModeConfiguration: FlyoutAutoConfiguration(
+              preferredMode: FlyoutPlacementMode.topCenter,
+            ),
+            barrierDismissible: true,
+            dismissOnPointerMoveAway: false,
+            dismissWithEsc: true,
+            builder: (context) {
+              return MenuFlyoutWidget(dayCell: widget);
+            },
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const .all(.circular(5)),
+            border: .all(color: _SailorCalendarOverviewState._cellBorderColor),
+            color: Colors.white,
+          ),
+
+          child: Column(
+            children: [
+              // Day number badge
+              Container(
+                height: 22,
+                decoration: widget.isToday
+                    ? BoxDecoration(
+                        color: secColor,
+                        shape: .rectangle,
+                        borderRadius: const .only(
+                          topLeft: .circular(5),
+                          topRight: .circular(5),
+                        ),
+                      )
+                    : null,
+                child: Center(child: Text('${widget.date.day}')),
+              ),
+              // Chips
+              const Gap(5),
+              Expanded(
+                child: ListView(
+                  padding: const .only(left: 5, right: 5, bottom: 2),
+                  children: widget.events
+                      .map((e) => _EventChip(event: e))
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
         ),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-      child: Column(
-        children: [
-          // Day number badge
-          Container(
-            width: 26,
-            height: 26,
-            decoration: isToday
-                ? BoxDecoration(
-                    color: theme.accentColor,
-                    shape: BoxShape.circle,
-                  )
-                : null,
-            child: Center(
-              child: Text(
-                '$day',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                  color: isToday ? Colors.white : null,
-                ),
-              ),
-            ),
-          ),
-          const Gap(4),
-          // Chips
-          Expanded(
-            child: ListView(
-              children: visibleEvents.map((e) => _EventChip(event: e)).toList(),
-            ),
-          ),
-
-          if (overflow > 0)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                '+$overflow ακόμη',
-                style: TextStyle(
-                  fontSize: 9,
-                  color: theme.resources.textFillColorSecondary,
-                ),
-              ),
-            ),
-        ],
       ),
     );
   }
@@ -442,7 +448,7 @@ class _EventChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 2),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
         color: event.type.color.withAlpha(38),
         borderRadius: BorderRadius.circular(3),
@@ -455,12 +461,13 @@ class _EventChip extends StatelessWidget {
             child: Text(
               event.label,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 color: event.type.color,
                 fontWeight: FontWeight.w500,
               ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 3,
+              overflow: .fade,
+              softWrap: false,
+              maxLines: 1,
             ),
           ),
         ],

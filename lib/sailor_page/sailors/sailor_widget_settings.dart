@@ -22,23 +22,23 @@ class _SailorWidgetSettingsState extends State<SailorWidgetSettings> {
       crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: .all(padding),
+          padding: const .all(padding),
           child: Text(
             'Ρυθμίσεις',
             style: FluentTheme.of(context).typography.title,
           ),
         ),
         Padding(
-          padding: .symmetric(horizontal: padding),
+          padding: const .symmetric(horizontal: padding),
           child: Row(
             children: [
-              Text('Διαγραφή Ν/Δ'),
-              Spacer(),
+              const Text('Διαγραφή Ν/Δ'),
+              const Spacer(),
               Button(
-                child: Row(
+                child: const Row(
                   children: [
                     WindowsIcon(WindowsIcons.delete),
-                    const Gap(5),
+                    Gap(5),
                     Text('Διαγραφή'),
                   ],
                 ),

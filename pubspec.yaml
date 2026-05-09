@@ -17,11 +17,11 @@ dependencies:
   intl: ^0.20.2
   sqflite_common_ffi: ^2.4.0+3
   path_provider: ^2.1.5
-  drift: ^2.32.1
+  drift: ^2.33.0
   drift_flutter: ^0.3.0
   uuid: ^4.5.3
   bitsdojo_window: ^0.1.6
-  flutter_svg: ^2.2.4
+  flutter_svg: ^2.3.0
   open_folder: ^0.0.3
   url_launcher: ^6.3.2
   super_bullet_list: ^0.0.3
@@ -35,7 +35,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^6.0.0
-  drift_dev: ^2.32.1
+  drift_dev: ^2.33.0
   build_runner: ^2.15.0
 flutter:
   uses-material-design: true

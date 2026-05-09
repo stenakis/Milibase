@@ -9,10 +9,15 @@ import 'package:milibase/variables.dart';
 import 'package:uuid/uuid.dart';
 
 class ShowAdeiesDialog extends StatefulWidget {
-  const ShowAdeiesDialog({super.key, required this.sailor, this.adeia});
+  const ShowAdeiesDialog({
+    super.key,
+    required this.sailor,
+    this.adeia,
+    this.isEditing = false,
+  });
   final Sailor sailor;
   final Adeies? adeia;
-
+  final bool isEditing;
   @override
   State<ShowAdeiesDialog> createState() => _ShowAdeiesDialogState();
 }
@@ -28,7 +33,6 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
   late Adeia _selectedAdeia;
   late TextEditingController _simaController;
 
-  bool get _isEditing => widget.adeia != null;
   bool get _needsSima =>
       _selectedAdeia == Adeia.oikos_nosileias ||
       _selectedAdeia == Adeia.anarrotiki;
@@ -57,7 +61,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
         children: [
           Expanded(
             child: Text(
-              _isEditing ? 'Επεξεργασία Άδειας' : 'Νέα Άδεια',
+              widget.isEditing ? 'Επεξεργασία Άδειας' : 'Νέα Άδεια',
               maxLines: 2,
               overflow: .ellipsis,
             ),
@@ -120,7 +124,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                   placeholderText: _dateFormat.format(_startDate),
                   onSelectionChanged: (CalendarSelectionData data) {
                     _startDate = data.selectedDates.first;
-                    if (!_isEditing && _startDate.isAfter(_endDate)) {
+                    if (widget.isEditing && _startDate.isAfter(_endDate)) {
                       _endDate = _startDate;
                     }
                   },
@@ -151,7 +155,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
             : Row(
                 mainAxisAlignment: .end,
                 children: [
-                  if (widget.adeia != null)
+                  if (widget.isEditing)
                     Button(
                       onPressed: () async {
                         try {
@@ -168,22 +172,22 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
                           }
                         }
                       },
-                      child: Row(
+                      child: const Row(
                         children: [
                           WindowsIcon(WindowsIcons.delete),
                           Gap(5),
-                          const Text('Διαγραφή'),
+                          Text('Διαγραφή'),
                         ],
                       ),
                     ),
-                  if (widget.adeia != null) Gap(10),
+                  if (widget.isEditing) const Gap(10),
                   FilledButton(
                     autofocus: true,
                     onPressed: _submit,
                     child: Row(
                       children: [
-                        WindowsIcon(WindowsIcons.save),
-                        Gap(5),
+                        const WindowsIcon(WindowsIcons.save),
+                        const Gap(5),
                         Text(widget.adeia == null ? 'Εισαγωγή' : 'Αποθήκευση'),
                       ],
                     ),
@@ -198,7 +202,7 @@ class _ShowAdeiesDialogState extends State<ShowAdeiesDialog> {
     setState(() => _isLoading = true);
     try {
       final adeia = Adeies(
-        id: widget.adeia?.id ?? Uuid().v4(),
+        id: widget.adeia?.id ?? const Uuid().v4(),
         type: _selectedAdeia,
         dateStart: _startDate,
         dateEnd: _endDate,

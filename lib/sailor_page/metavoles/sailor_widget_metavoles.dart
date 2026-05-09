@@ -72,7 +72,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
             }
           });
           return Padding(
-            padding: .symmetric(horizontal: padding),
+            padding: const .symmetric(horizontal: padding),
             child: Column(
               crossAxisAlignment: .start,
               children: [
@@ -84,12 +84,12 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       'Μεταβολές',
                       style: FluentTheme.of(context).typography.title,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     FilledButton(
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(FluentIcons.add),
-                          const Gap(5),
+                          Gap(5),
                           Text('Νέα Μεταβολή'),
                         ],
                       ),
@@ -100,7 +100,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       ComboBox<Metavoli>(
                         placeholder: Row(
                           children: [
-                            WindowsIcon(WindowsIcons.filter),
+                            const WindowsIcon(WindowsIcons.filter),
                             const Gap(5),
                             Text(selectedMetavoli?.label ?? 'Όλες'),
                           ],
@@ -131,23 +131,23 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                           selectedMetavoli = null;
                           _applyFilter();
                         }),
-                        icon: WindowsIcon(WindowsIcons.clear),
+                        icon: const WindowsIcon(WindowsIcons.clear),
                       ),
                   ],
                 ),
                 const Gap(padding),
                 _allMetavoles.isEmpty
-                    ? Text('Δεν υπάρχουν καταχωρημένες μεταβολές.')
+                    ? const Text('Δεν υπάρχουν καταχωρημένες μεταβολές.')
                     : Container(
                         decoration: BoxDecoration(
                           color: secColor,
-                          borderRadius: .only(
+                          borderRadius: const .only(
                             topRight: .circular(5),
                             topLeft: .circular(5),
                           ),
                         ),
-                        padding: .symmetric(horizontal: padding, vertical: 10),
-                        child: Row(
+                        padding: const .symmetric(horizontal: padding, vertical: 10),
+                        child: const Row(
                           spacing: 5,
                           children: [
                             Expanded(
@@ -176,8 +176,8 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                       ),
                 Expanded(
                   child: ListView.separated(
-                    padding: .only(bottom: padding),
-                    separatorBuilder: (context, _) => Divider(),
+                    padding: const .only(bottom: padding),
+                    separatorBuilder: (context, _) => const Divider(),
                     itemCount: _allMetavoles.length,
                     itemBuilder: (BuildContext context, int index) {
                       final metavoli = _displayedMetavoles[index];
@@ -202,7 +202,7 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
                               ),
                             ),
 
-                            padding: .symmetric(
+                            padding: const .symmetric(
                               horizontal: padding,
                               vertical: padding - 5,
                             ),
@@ -251,8 +251,11 @@ class _SailorWidgetMetavolesState extends State<SailorWidgetMetavoles> {
   void showContentDialog(BuildContext context, Metavoles? metavoli) async {
     await showDialog<String>(
       context: context,
-      builder: (context) =>
-          ShowMetavolesDialog(sailor: widget.sailor, id: metavoli),
+      builder: (context) => ShowMetavolesDialog(
+        sailor: widget.sailor,
+        id: metavoli,
+        isEditing: metavoli != null,
+      ),
     );
   }
 }

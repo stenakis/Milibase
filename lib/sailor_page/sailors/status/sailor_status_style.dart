@@ -11,9 +11,9 @@ class SailorStatusStyle extends StatelessWidget {
       mainAxisSize: .min,
       children: [
         Container(
-          padding: .symmetric(horizontal: 10, vertical: 5),
+          padding: const .symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            borderRadius: .all(.circular(5)),
+            borderRadius: const .all(.circular(5)),
             color: () {
               switch (status) {
                 case Status.stinYphresia:

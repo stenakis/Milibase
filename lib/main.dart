@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: background,
         typography: getTypography(Brightness.light),
         visualDensity: VisualDensity.standard,
-        navigationPaneTheme: NavigationPaneThemeData(
+        navigationPaneTheme: const NavigationPaneThemeData(
           backgroundColor: Colors.white,
         ),
       ),
@@ -53,6 +53,6 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return KatalogosNd();
+    return const KatalogosNd();
   }
 }

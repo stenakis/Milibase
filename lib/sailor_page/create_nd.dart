@@ -89,9 +89,9 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
       title: Row(
         children: [
           Text(widget.sailor == null ? 'Προσθήκη Ν/Δ' : 'Επεξεργασία Ν/Δ'),
-          Spacer(),
+          const Spacer(),
           IconButton(
-            icon: WindowsIcon(WindowsIcons.chrome_close),
+            icon: const WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -131,7 +131,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                             Tooltip(
                               message: 'Εναλλαγή ονόματος-επωνύμου',
                               child: IconButton(
-                                icon: WindowsIcon(WindowsIcons.switch_widget),
+                                icon: const WindowsIcon(WindowsIcons.switch_widget),
                                 onPressed: () {
                                   setState(() {
                                     if (surnameController.text ==
@@ -312,7 +312,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                       child: CalendarDatePicker(
                         initialStart: selectedEntryDate,
                         isTodayHighlighted: false,
-                        locale: Locale('el'),
+                        locale: const Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
                         ).format(selectedEntryDate),
@@ -336,7 +336,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                       child: CalendarDatePicker(
                         initialStart: selectedArrivalDate,
                         isTodayHighlighted: false,
-                        locale: Locale('el'),
+                        locale: const Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
                         ).format(selectedArrivalDate),
@@ -388,7 +388,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         initialStart: selectedRemovalDate,
                         isTodayHighlighted: false,
 
-                        locale: Locale('el'),
+                        locale: const Locale('el'),
                         placeholderText: DateFormat(
                           'dd/MM/yyyy',
                         ).format(selectedRemovalDate),
@@ -403,10 +403,10 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                     ),
                     const Gap(padding * 4),
                     isLoading
-                        ? Row(
+                        ? const Row(
                             children: [
                               ProgressRing(),
-                              const Gap(10),
+                              Gap(10),
                               Text('Καταχώρηση...'),
                             ],
                           )
@@ -435,7 +435,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                                   final newSailor = Sailor(
                                     id: widget.sailor != null
                                         ? widget.sailor!.id
-                                        : Uuid().v4(),
+                                        : const Uuid().v4(),
                                     name: nameController.text,
                                     surname: surnameController.text,
                                     agm: agmController.text,

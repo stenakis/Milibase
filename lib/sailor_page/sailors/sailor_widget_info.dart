@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:milibase/objects/sailor.dart';
 import 'package:milibase/sailor_page/create_nd.dart';
-import 'package:milibase/sailor_page/sailors/calendar_view.dart';
+import 'package:milibase/sailor_page/sailors/calendar/calendar_view.dart';
 import 'package:milibase/sailor_page/sailors/info_widget.dart';
 import 'package:milibase/styles/colors.dart';
 import 'package:milibase/variables.dart';
@@ -41,8 +41,9 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
         return Row(
           children: [
             Expanded(
+              flex: 3,
               child: ListView(
-                padding: .all(padding),
+                padding: const .all(padding),
                 children: [
                   Row(
                     children: [
@@ -50,12 +51,12 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         'Επισκόπηση',
                         style: FluentTheme.of(context).typography.title,
                       ),
-                      Spacer(),
+                      const Spacer(),
                       FilledButton(
-                        child: Row(
+                        child: const Row(
                           children: [
                             WindowsIcon(WindowsIcons.edit),
-                            const Gap(10),
+                            Gap(10),
                             Text('Επεξεργασία'),
                           ],
                         ),
@@ -67,12 +68,11 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                   IntrinsicHeight(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-
                       spacing: 10,
                       children: [
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: .all(.circular(5)),
+                            borderRadius: const .all(.circular(5)),
                             child: Container(
                               color: secColor,
                               child: Column(
@@ -90,7 +90,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                                   const Gap(10),
                                   Container(
                                     width: double.infinity,
-                                    padding: .symmetric(vertical: padding / 2),
+                                    padding: const .symmetric(vertical: padding / 2),
                                     color: Colors.white,
                                     child: Text(
                                       textAlign: .center,
@@ -107,7 +107,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         ),
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: .all(.circular(5)),
+                            borderRadius: const .all(.circular(5)),
                             child: Container(
                               color: secColor,
                               child: Column(
@@ -125,7 +125,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                                   const Gap(10),
                                   Container(
                                     width: double.infinity,
-                                    padding: .symmetric(vertical: padding / 2),
+                                    padding: const .symmetric(vertical: padding / 2),
                                     color: Colors.white,
                                     child: Text(
                                       textAlign: .center,
@@ -142,7 +142,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                         ),
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: .all(.circular(5)),
+                            borderRadius: const .all(.circular(5)),
                             child: Container(
                               color: secColor,
                               child: Column(
@@ -160,7 +160,7 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                                   const Gap(10),
                                   Container(
                                     width: double.infinity,
-                                    padding: .symmetric(vertical: padding / 2),
+                                    padding: const .symmetric(vertical: padding / 2),
                                     color: Colors.white,
                                     child: Text(
                                       textAlign: .center,
@@ -202,8 +202,8 @@ class _SailorWidgetInfoState extends State<SailorWidgetInfo> {
                 ],
               ),
             ),
-            const Gap(padding),
-            Expanded(child: SailorCalendarOverview(sailor: sailor)),
+
+            Expanded(flex: 4, child: SailorCalendarOverview(sailor: sailor)),
           ],
         );
       },

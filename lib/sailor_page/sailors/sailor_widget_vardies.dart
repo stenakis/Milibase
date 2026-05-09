@@ -9,10 +9,10 @@ class SailorWidgetVardies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: .all(padding),
+      padding: const .all(padding),
       children: [
         Text('Βάρδιες', style: FluentTheme.of(context).typography.title),
-        Text(
+        const Text(
           'Οι παρακάτω ρυθμίσεις εφαρμόζονται μόνιμα. Οι εβδομαδιαίες αλλαγές πραγματοποιούνται από το μενού “Βάρδιες”.',
           style: TextStyle(fontStyle: FontStyle.italic),
         ),

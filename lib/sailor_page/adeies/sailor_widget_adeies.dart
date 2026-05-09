@@ -66,7 +66,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
           final displayed = _applyFilter(allAdeies);
           final daysKanoniki = _daysKanoniki;
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: padding),
+            padding: const EdgeInsets.symmetric(horizontal: padding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -78,13 +78,13 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                       'Άδειες',
                       style: FluentTheme.of(context).typography.title,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     FilledButton(
                       onPressed: () => _showContentDialog(context, null),
-                      child: Row(
+                      child: const Row(
                         children: [
-                          const Icon(FluentIcons.add),
-                          const Gap(5),
+                          Icon(FluentIcons.add),
+                          Gap(5),
                           Text('Νέα Άδεια'),
                         ],
                       ),
@@ -94,7 +94,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                       ComboBox<Adeia>(
                         placeholder: Row(
                           children: [
-                            WindowsIcon(WindowsIcons.filter),
+                            const WindowsIcon(WindowsIcons.filter),
                             const Gap(5),
                             Text(_selectedAdeia?.label ?? 'Όλες'),
                           ],
@@ -117,7 +117,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                     if (_selectedAdeia != null)
                       IconButton(
                         onPressed: () => setState(() => _selectedAdeia = null),
-                        icon: WindowsIcon(WindowsIcons.clear),
+                        icon: const WindowsIcon(WindowsIcons.clear),
                       ),
                   ],
                 ),
@@ -165,20 +165,20 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                 ),
                 if (allAdeies.isNotEmpty) const Gap(padding),
                 allAdeies.isEmpty
-                    ? Text('Δεν υπάρχουν καταχωρημένες άδειες.')
+                    ? const Text('Δεν υπάρχουν καταχωρημένες άδειες.')
                     : Container(
                         decoration: BoxDecoration(
                           color: secColor,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(5),
                             topLeft: Radius.circular(5),
                           ),
                         ),
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: padding,
                           vertical: 10,
                         ),
-                        child: Row(
+                        child: const Row(
                           spacing: 5,
                           children: [
                             Expanded(
@@ -215,8 +215,8 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                 Expanded(
                   child: ListView.separated(
                     itemCount: displayed.length,
-                    separatorBuilder: (context, _) => Divider(),
-                    padding: EdgeInsets.only(bottom: padding),
+                    separatorBuilder: (context, _) => const Divider(),
+                    padding: const EdgeInsets.only(bottom: padding),
                     itemBuilder: (BuildContext context, int index) {
                       final adeia = displayed[index];
                       final isLast = index == displayed.length - 1;
@@ -239,7 +239,7 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
                                 bottomRight: bottomRadius,
                               ),
                             ),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: padding,
                               vertical: padding - 5,
                             ),
@@ -287,8 +287,11 @@ class _SailorWidgetAdeiesState extends State<SailorWidgetAdeies> {
   void _showContentDialog(BuildContext context, Adeies? adeia) async {
     await showDialog<String>(
       context: context,
-      builder: (context) =>
-          ShowAdeiesDialog(sailor: widget.sailor, adeia: adeia),
+      builder: (context) => ShowAdeiesDialog(
+        sailor: widget.sailor,
+        adeia: adeia,
+        isEditing: adeia != null,
+      ),
     );
   }
 }

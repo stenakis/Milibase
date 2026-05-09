@@ -10,13 +10,13 @@ class InfoOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: .all(.circular(5)),
+      borderRadius: const .all(.circular(5)),
       child: Container(
         color: Colors.white,
         child: Column(
           children: [
             Container(
-              padding: .symmetric(horizontal: padding, vertical: padding / 2),
+              padding: const .symmetric(horizontal: padding, vertical: padding / 2),
               width: double.infinity,
               color: secColor,
               child: Text(
@@ -27,7 +27,7 @@ class InfoOverview extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: .all(padding),
+              padding: const .all(padding),
               child: Column(
                 spacing: 15,
                 children: items.map((item) {

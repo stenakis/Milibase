@@ -28,7 +28,7 @@ class _SailorWidgetVardiesState extends State<SailorWidgetVardies> {
     return ScaffoldPage(
       padding: .zero,
       content: Padding(
-        padding: .symmetric(horizontal: padding, vertical: padding),
+        padding: const .symmetric(horizontal: padding, vertical: padding),
         child: Column(
           crossAxisAlignment: .start,
           children: [
@@ -36,7 +36,7 @@ class _SailorWidgetVardiesState extends State<SailorWidgetVardies> {
             const Gap(padding),
             Row(
               children: [
-                Text('Απαλλαγή βαρδιών'),
+                const Text('Απαλλαγή βαρδιών'),
                 const Gap(10),
                 Checkbox(
                   checked: avardiotos,

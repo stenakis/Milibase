@@ -10,9 +10,15 @@ import 'package:uuid/uuid.dart';
 import '../../variables.dart';
 
 class ShowApomakrynseisDialog extends StatefulWidget {
-  const ShowApomakrynseisDialog({super.key, required this.sailor, this.id});
+  const ShowApomakrynseisDialog({
+    super.key,
+    required this.sailor,
+    this.id,
+    this.isEditing = false,
+  });
   final Sailor sailor;
   final Apomakrynseis? id;
+  final bool isEditing;
   @override
   State<ShowApomakrynseisDialog> createState() => _ShowApomakrynseisDialog();
 }
@@ -32,13 +38,13 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
 
   @override
   void initState() {
-    selectedApomakrynsi = widget.id == null
+    selectedApomakrynsi = !widget.isEditing
         ? Apomakrynsi.apospasi
         : widget.id!.type;
-    selectedStartDate = widget.id == null
+    selectedStartDate = !widget.isEditing
         ? DateTime.now()
         : widget.id!.dateStart;
-    selectedEndDate = widget.id == null ? DateTime.now() : widget.id!.dateEnd;
+    selectedEndDate = !widget.isEditing ? DateTime.now() : widget.id!.dateEnd;
     simaController = TextEditingController(text: widget.id?.sima ?? "");
     ypiresiaController = TextEditingController(text: widget.id?.ypiresia ?? "");
     super.initState();
@@ -60,7 +66,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
         children: [
           Flexible(
             child: Text(
-              widget.id == null
+              !widget.isEditing
                   ? 'Νέα Απομάκρυνση'
                   : 'Επεξεργασία Απομάκρυνσης',
               overflow: .ellipsis,
@@ -69,7 +75,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
           ),
           const Gap(10),
           IconButton(
-            icon: WindowsIcon(WindowsIcons.chrome_close),
+            icon: const WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -137,13 +143,13 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                   child: CalendarDatePicker(
                     initialStart: selectedStartDate,
                     isTodayHighlighted: false,
-                    locale: Locale('el'),
+                    locale: const Locale('el'),
                     placeholderText: dateFormat.format(
                       widget.id?.dateStart ?? selectedStartDate,
                     ),
                     onSelectionChanged: (CalendarSelectionData data) {
                       selectedStartDate = data.selectedDates.first;
-                      if (widget.id == null) {
+                      if (!widget.isEditing) {
                         selectedEndDate = data.selectedDates.first;
                       }
                     },
@@ -155,7 +161,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                   children: [
                     Row(
                       children: [
-                        Text('Λήξη'),
+                        const Text('Λήξη'),
                         const Gap(10),
                         ToggleSwitch(
                           checked: enableEnd,
@@ -169,7 +175,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                         ? CalendarDatePicker(
                             initialStart: selectedEndDate,
                             isTodayHighlighted: false,
-                            locale: Locale('el'),
+                            locale: const Locale('el'),
                             placeholderText: dateFormat.format(
                               widget.id?.dateEnd ?? selectedEndDate,
                             ),
@@ -197,7 +203,7 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
             : Row(
                 mainAxisAlignment: .end,
                 children: [
-                  if (widget.id != null)
+                  if (widget.isEditing)
                     Button(
                       onPressed: () async {
                         try {
@@ -214,22 +220,22 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                           }
                         }
                       },
-                      child: Row(
+                      child: const Row(
                         children: [
                           WindowsIcon(WindowsIcons.delete),
                           Gap(5),
-                          const Text('Διαγραφή'),
+                          Text('Διαγραφή'),
                         ],
                       ),
                     ),
-                  if (widget.id != null) Gap(10),
+                  if (widget.isEditing) const Gap(10),
                   FilledButton(
                     autofocus: true,
                     child: Row(
                       children: [
-                        WindowsIcon(WindowsIcons.save),
-                        Gap(5),
-                        Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
+                        const WindowsIcon(WindowsIcons.save),
+                        const Gap(5),
+                        Text(!widget.isEditing ? 'Εισαγωγή' : 'Αποθήκευση'),
                       ],
                     ),
                     onPressed: () async {
@@ -247,9 +253,9 @@ class _ShowApomakrynseisDialog extends State<ShowApomakrynseisDialog> {
                           });
                           try {
                             final newApomakrynsi = Apomakrynseis(
-                              id: widget.id != null
+                              id: widget.isEditing
                                   ? widget.id!.id
-                                  : Uuid().v4(),
+                                  : const Uuid().v4(),
                               type: selectedApomakrynsi,
                               dateStart: selectedStartDate,
                               dateEnd: enableEnd

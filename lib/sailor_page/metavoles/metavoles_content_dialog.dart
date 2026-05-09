@@ -11,9 +11,15 @@ import '../../objects/metavoles.dart';
 import 'metavoles_functions.dart';
 
 class ShowMetavolesDialog extends StatefulWidget {
-  const ShowMetavolesDialog({super.key, required this.sailor, this.id});
+  const ShowMetavolesDialog({
+    super.key,
+    required this.sailor,
+    this.id,
+    this.isEditing = false,
+  });
   final Sailor sailor;
   final Metavoles? id;
+  final bool isEditing;
   @override
   State<ShowMetavolesDialog> createState() => _ShowMetavolesDialog();
 }
@@ -31,10 +37,10 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
   @override
   void initState() {
     super.initState();
-    selectedDate = widget.id == null ? DateTime.now() : widget.id!.date;
-    selectedMetavoli = widget.id == null ? Metavoli.meiomeni : widget.id!.type;
+    selectedDate = !widget.isEditing ? DateTime.now() : widget.id!.date;
+    selectedMetavoli = !widget.isEditing ? Metavoli.meiomeni : widget.id!.type;
     simaController = TextEditingController(text: widget.id?.sima ?? "");
-    selectedDuration = (widget.id == null ? 9 : widget.id!.duration)!;
+    selectedDuration = (!widget.isEditing ? 9 : widget.id!.duration)!;
     _meiomeniThiteia = (db.select(
       db.vars,
     )).watchSingle().map((row) => row.enableMeiomeniThiteia);
@@ -55,14 +61,14 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
         children: [
           Flexible(
             child: Text(
-              widget.id == null ? 'Νέα Μεταβολή' : 'Επεξεργασία Μεταβολής',
+              !widget.isEditing ? 'Νέα Μεταβολή' : 'Επεξεργασία Μεταβολής',
               overflow: .ellipsis,
               maxLines: 2,
             ),
           ),
           const Gap(10),
           IconButton(
-            icon: WindowsIcon(WindowsIcons.chrome_close),
+            icon: const WindowsIcon(WindowsIcons.chrome_close),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -93,7 +99,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
             const Gap(5),
             Text(
               selectedMetavoli.description,
-              style: TextStyle(fontStyle: FontStyle.italic),
+              style: const TextStyle(fontStyle: FontStyle.italic),
             ),
             if (selectedMetavoli == .meiomeni) const Gap(padding),
             if (selectedMetavoli == .meiomeni)
@@ -103,9 +109,9 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                   stream: _meiomeniThiteia,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == .waiting) {
-                      return ProgressBar();
+                      return const ProgressBar();
                     } else if (!snapshot.hasData) {
-                      return Text('Σφάλμα');
+                      return const Text('Σφάλμα');
                     } else if (snapshot.hasData) {
                       bool isTrue = snapshot.data!;
                       return RadioGroup<int>(
@@ -120,21 +126,21 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                           spacing: padding,
                           children: [
                             if (isTrue)
-                              RadioButton<int>(
+                              const RadioButton<int>(
                                 value: 5,
                                 content: Text('5 μήνες'),
                               ),
-                            RadioButton<int>(
+                            const RadioButton<int>(
                               value: 6,
                               content: Text('6 μήνες'),
                             ),
                             if (isTrue)
-                              RadioButton<int>(
+                              const RadioButton<int>(
                                 value: 5,
                                 content: Text('8 μήνες'),
                               ),
 
-                            RadioButton<int>(
+                            const RadioButton<int>(
                               value: 9,
                               content: Text('9 μήνες'),
                             ),
@@ -142,7 +148,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                         ),
                       );
                     } else {
-                      return Text('Σφάλμα');
+                      return const Text('Σφάλμα');
                     }
                   },
                 ),
@@ -167,7 +173,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
               child: CalendarDatePicker(
                 initialStart: selectedDate,
                 isTodayHighlighted: false,
-                locale: Locale('el'),
+                locale: const Locale('el'),
                 placeholderText: DateFormat(
                   'dd/MM/yy',
                   'el',
@@ -187,14 +193,14 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
             ? const Row(
                 children: [
                   ProgressRing(),
-                  const Gap(10),
+                  Gap(10),
                   Text('Αποθήκευση Μεταβολής'),
                 ],
               )
             : Row(
                 mainAxisAlignment: .end,
                 children: [
-                  if (widget.id != null)
+                  if (widget.isEditing)
                     Button(
                       onPressed: () async {
                         try {
@@ -211,22 +217,22 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                           }
                         }
                       },
-                      child: Row(
+                      child: const Row(
                         children: [
                           WindowsIcon(WindowsIcons.delete),
-                          const Gap(5),
-                          const Text('Διαγραφή'),
+                          Gap(5),
+                          Text('Διαγραφή'),
                         ],
                       ),
                     ),
-                  if (widget.id != null) const Gap(10),
+                  if (widget.isEditing) const Gap(10),
                   FilledButton(
                     autofocus: true,
                     child: Row(
                       children: [
-                        WindowsIcon(WindowsIcons.save),
+                        const WindowsIcon(WindowsIcons.save),
                         const Gap(5),
-                        Text(widget.id == null ? 'Εισαγωγή' : 'Αποθήκευση'),
+                        Text(!widget.isEditing ? 'Εισαγωγή' : 'Αποθήκευση'),
                       ],
                     ),
                     onPressed: () async {
@@ -236,7 +242,7 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                         });
                         try {
                           final newMetavoli = Metavoles(
-                            id: widget.id != null ? widget.id!.id : Uuid().v4(),
+                            id: widget.isEditing ? widget.id!.id : const Uuid().v4(),
                             type: selectedMetavoli,
                             date: selectedDate,
                             sailorId: widget.sailor.id,
@@ -244,10 +250,11 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
                             duration: selectedDuration,
                           );
                           await addNewMetavoli(newMetavoli);
-                          if (context.mounted && mounted)
+                          if (context.mounted) {
                             Navigator.pop(context);
+                          }
                         } catch (e) {
-                          if (context.mounted && mounted) {
+                          if (context.mounted) {
                             showCustomInfoBar(
                               context: context,
                               text: e.toString(),

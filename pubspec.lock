@@ -221,18 +221,18 @@ packages:
     dependency: "direct main"
     description:
       name: drift
-      sha256: "055c249d1f91be5a47fe447f88afc24c4ca6f4cd6c5ed66767b4797d48acc2e5"
+      sha256: "8033500116b24398fba0cca0369cc31678cd627c01e41753a61186911cea743e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.32.1"
+    version: "2.33.0"
   drift_dev:
     dependency: "direct dev"
     description:
       name: drift_dev
-      sha256: "88a9de3af8571518148a6d8a513b57779fd1e60a026d3ab8a481a878fba01d91"
+      sha256: b3dd5b75e30522a91da8abda9f5bb17230cb038097f6d15fa75d42bb563428aa
       url: "https://pub.dev"
     source: hosted
-    version: "2.32.1"
+    version: "2.33.0"
   drift_flutter:
     dependency: "direct main"
     description:
@@ -311,10 +311,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
-      sha256: "1ded017b39c8e15c8948ea855070a5ff8ff8b3d5e83f3446e02d6bb12add7ad9"
+      sha256: "35882981abcbfb8c15b286f0cd690ff25bac12d95eff3e25ee207f37d4c42e7f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.4"
+    version: "2.3.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -894,10 +894,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics
-      sha256: "7076216a10d5c390315fbe536a30f1254c341e7543e6c4c8a815e591307772b1"
+      sha256: "6409a25046024f0f8c5d8a59fec314081e81f9d436b66ca4015a8b49772bf445"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.20"
+    version: "1.2.0"
   vector_graphics_codec:
     dependency: transitive
     description:

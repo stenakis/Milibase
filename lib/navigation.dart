@@ -77,7 +77,7 @@ class _NavigationState extends State<Navigation> {
             Expanded(child: WindowTitleBarBox(child: MoveWindow())),*/
             Image.asset('assets/faron.png', height: 25),
             const Gap(5),
-            Text('Υπηρεσία Φάρων'),
+            const Text('Υπηρεσία Φάρων'),
             const Gap(padding),
             IconButton(
               onPressed: () {

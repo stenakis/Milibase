@@ -77,7 +77,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage.withPadding(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: padding + 10,
         right: padding + 10,
         top: 15,
@@ -135,14 +135,13 @@ class _KatalogosNdState extends State<KatalogosNd> {
                 }
 
                 return ListView.separated(
-                  padding: EdgeInsets.only(bottom: padding),
+                  padding: const EdgeInsets.only(bottom: padding),
                   separatorBuilder: (_, _) => const Divider(),
                   itemCount: displayed.length,
                   itemBuilder: (context, index) {
                     final sailor = displayed[index];
                     final isLast = index == displayed.length - 1;
                     final bottomRadius = Radius.circular(isLast ? 5 : 0);
-
                     return HoverButton(
                       onPressed: () => Navigator.push(
                         context,
@@ -158,7 +157,7 @@ class _KatalogosNdState extends State<KatalogosNd> {
                             bottomRight: bottomRadius,
                           ),
                         ),
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: padding + 5,
                           vertical: padding,
                         ),
@@ -205,12 +204,12 @@ class _KatalogosNdState extends State<KatalogosNd> {
         const Spacer(),
         FilledButton(
           onPressed: () => _showCreateNDDialog(context),
-          child: Row(
+          child: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(FluentIcons.add),
-              const Gap(5),
-              const Text('Προσθήκη Ν/Δ'),
+              Icon(FluentIcons.add),
+              Gap(5),
+              Text('Προσθήκη Ν/Δ'),
             ],
           ),
         ),
@@ -250,18 +249,18 @@ class _KatalogosNdState extends State<KatalogosNd> {
           topLeft: Radius.circular(5),
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: padding, vertical: 10),
-      child: Row(
+      padding: const EdgeInsets.symmetric(horizontal: padding, vertical: 10),
+      child: const Row(
         spacing: 5,
         children: [
           Expanded(
             flex: 3,
             child: Text(
               'Ονοματεπώνυμο',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          const Expanded(
+          Expanded(
             flex: 1,
             child: Text('ΑΓΜ', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
@@ -269,21 +268,21 @@ class _KatalogosNdState extends State<KatalogosNd> {
             flex: col3Flex,
             child: Text(
               'Βαθμός/Ειδικότητα',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
             flex: col4Flex,
             child: Text(
               'Τηλέφωνο',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
             flex: col5Flex,
             child: Text(
               'Κατάσταση',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

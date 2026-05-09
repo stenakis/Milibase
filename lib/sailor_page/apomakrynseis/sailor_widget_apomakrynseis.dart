@@ -79,7 +79,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
             }
           });
           return Padding(
-            padding: .symmetric(horizontal: padding),
+            padding: const .symmetric(horizontal: padding),
             child: Column(
               crossAxisAlignment: .start,
               children: [
@@ -91,12 +91,12 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                       'Απομακρύνσεις',
                       style: FluentTheme.of(context).typography.title,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     FilledButton(
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(FluentIcons.add),
-                          const Gap(5),
+                          Gap(5),
                           Text('Νέα Απομάκρυνση'),
                         ],
                       ),
@@ -107,7 +107,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                       ComboBox<Apomakrynsi>(
                         placeholder: Row(
                           children: [
-                            WindowsIcon(WindowsIcons.filter),
+                            const WindowsIcon(WindowsIcons.filter),
                             const Gap(5),
                             Text(selectedApomakrynsi?.label ?? 'Όλες'),
                           ],
@@ -139,7 +139,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                           selectedApomakrynsi = null;
                           _applyFilter();
                         }),
-                        icon: WindowsIcon(WindowsIcons.clear),
+                        icon: const WindowsIcon(WindowsIcons.clear),
                       ),
                   ],
                 ),
@@ -169,7 +169,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                             : '${apomakrynsiType.label}: $totalDays/${Apomakrynsi.maxDaysApospasi} ημέρες';
 
                         return Container(
-                          margin: .only(right: 5),
+                          margin: const .only(right: 5),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 5,
@@ -195,17 +195,17 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                 ),
                 if (_allApomakrynseis.isNotEmpty) const Gap(padding),
                 _allApomakrynseis.isEmpty
-                    ? Text('Δεν υπάρχουν καταχωρημένες απομακρύνσεις.')
+                    ? const Text('Δεν υπάρχουν καταχωρημένες απομακρύνσεις.')
                     : Container(
                         decoration: BoxDecoration(
                           color: secColor,
-                          borderRadius: .only(
+                          borderRadius: const .only(
                             topRight: .circular(5),
                             topLeft: .circular(5),
                           ),
                         ),
-                        padding: .symmetric(horizontal: padding, vertical: 10),
-                        child: Row(
+                        padding: const .symmetric(horizontal: padding, vertical: 10),
+                        child: const Row(
                           spacing: 5,
                           children: [
                             Expanded(
@@ -249,8 +249,8 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                 Expanded(
                   child: ListView.separated(
                     itemCount: _allApomakrynseis.length,
-                    separatorBuilder: (context, _) => Divider(),
-                    padding: .only(bottom: padding),
+                    separatorBuilder: (context, _) => const Divider(),
+                    padding: const .only(bottom: padding),
                     itemBuilder: (BuildContext context, int index) {
                       final apomakrynsi = _displayedApomakrynseis[index];
                       final isLast = index == _allApomakrynseis.length - 1;
@@ -275,7 +275,7 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
                               ),
                             ),
 
-                            padding: .symmetric(
+                            padding: const .symmetric(
                               horizontal: padding,
                               vertical: padding - 5,
                             ),
@@ -336,8 +336,11 @@ class _SailorWidgetApomakrynseisState extends State<SailorWidgetApomakrynseis> {
   ) async {
     await showDialog<String>(
       context: context,
-      builder: (context) =>
-          ShowApomakrynseisDialog(sailor: widget.sailor, id: apomakrynsi),
+      builder: (context) => ShowApomakrynseisDialog(
+        sailor: widget.sailor,
+        id: apomakrynsi,
+        isEditing: apomakrynsi != null,
+      ),
     );
   }
 }

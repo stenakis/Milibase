@@ -48,7 +48,7 @@ class _SailorPageState extends State<SailorPage> {
       content: Row(
         children: [
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Stack(
               children: [
                 Container(
@@ -57,7 +57,7 @@ class _SailorPageState extends State<SailorPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 70),
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +149,7 @@ class _SailorPageState extends State<SailorPage> {
               ],
             ),
           ),
-          Expanded(flex: 6, child: _buildScreen()),
+          Expanded(flex: 5, child: _buildScreen()),
         ],
       ),
     );
