@@ -251,7 +251,6 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                           },
                         ),
                       ),
-
                       const Gap(padding),
                       Row(
                         children: [
@@ -330,7 +329,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         }),
                       ),
                     ),
-                    const Gap(10),
+                    const Gap(padding),
                     InfoLabel(
                       label: 'Άφιξη στην Υπηρεσία',
                       child: CalendarDatePicker(
@@ -349,7 +348,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         }),
                       ),
                     ),
-                    const Gap(10),
+                    const Gap(padding),
                     InfoLabel(
                       label: 'Μήνες Υπηρεσίας',
                       child: ComboBox<int>(
@@ -381,7 +380,7 @@ class _ShowCreateNdDialogState extends State<ShowCreateNdDialog> {
                         ],
                       ),
                     ),
-                    const Gap(10),
+                    const Gap(padding),
                     InfoLabel(
                       label: 'Απόλυση',
                       child: CalendarDatePicker(
