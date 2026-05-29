@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/svg.dart';
@@ -128,7 +130,7 @@ class _NavigationState extends State<Navigation> {
             const Gap(5),
             const Text('Υπηρεσία Φάρων'),
             const Gap(padding),
-
+            if(!Platform.isLinux)
             SizedBox(
               width: 138,
               height: 60,

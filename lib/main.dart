@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:milibase/katalogos_nd.dart';
@@ -16,7 +18,8 @@ void main() async {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
-  doWhenWindowReady(() {
+  if(!Platform.isLinux) {
+    doWhenWindowReady(() {
     appWindow.minSize = const Size(600, 450);
     appWindow.size = const Size(1280, 721);
     appWindow.show();
@@ -24,6 +27,7 @@ void main() async {
       appWindow.size = const Size(1280, 720);
     });
   });
+  }
 }
 
 class MyApp extends StatelessWidget {
