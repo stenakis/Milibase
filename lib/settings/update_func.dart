@@ -27,8 +27,8 @@ Future<String?> getLatestGitHubVersion() async {
 
   if (response.statusCode == 200) {
     final json = jsonDecode(response.body);
-    final tag = json['tag_name'] as String; // e.g. "v0.7"
-    return tag.replaceAll('v', ''); // strip the "v" → "0.7"
+    final tag = json['tag_name'] as String;
+    return tag.replaceAll('v', '');
   }
 
   return null;
@@ -38,7 +38,6 @@ bool _isVersionLower(String current, String remote) {
   final currentParts = current.split('.').map(int.parse).toList();
   final remoteParts = remote.split('.').map(int.parse).toList();
 
-  // Pad shorter list with zeros (e.g. "1.0" vs "1.0.1")
   final length = [
     currentParts.length,
     remoteParts.length,
@@ -55,5 +54,5 @@ bool _isVersionLower(String current, String remote) {
     if (currentParts[i] > remoteParts[i]) return false;
   }
 
-  return false; // They're equal
+  return false;
 }

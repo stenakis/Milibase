@@ -15,7 +15,7 @@ dependencies:
   gap: ^3.0.1
   google_fonts: ^8.1.0
   intl: ^0.20.2
-  sqflite_common_ffi: ^2.4.0+3
+  sqflite_common_ffi: ^2.4.1
   path_provider: ^2.1.5
   drift: ^2.33.0
   drift_flutter: ^0.3.0

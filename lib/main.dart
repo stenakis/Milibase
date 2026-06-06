@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:milibase/katalogos_nd.dart';
@@ -8,7 +7,6 @@ import 'package:milibase/styles/colors.dart';
 import 'package:milibase/styles/typography.dart';
 import 'package:milibase/variables.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
 import 'db/init_db.dart';
 
 final db = AppDatabase();
