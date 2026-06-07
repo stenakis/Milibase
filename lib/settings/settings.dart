@@ -143,7 +143,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           children: [
                             WindowsIcon(WindowsIcons.import),
                             Gap(5),
-                            Text('Εισαγωγή από .json'),
+                            Text('Εισαγωγή .json'),
                           ],
                         ),
                       ),
@@ -255,19 +255,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   Expanded(
                     child: ListView(
                       children: [
-                        const Text('Σε αυτή την έκδοση:'),
-                        const Gap(5),
-                        const SuperBulletList(
+                        //const Text('Σε αυτή την έκδοση:'),
+                        // const Gap(5),
+                        Text(
+                          'Ευχαριστούμε που χρησιμοποιείτε το Milibase!\nΗ έκδοση 1.0 σηματοδοτεί το τέλος της πρώτης δημόσιας διάθεσης.',
+                        ),
+                        /*const SuperBulletList(
                           iconSize: 5,
                           separator: Gap(0),
                           gap: 5,
                           items: [
-                            Text(
-                              'Ευχαριστούμε που χρησιμοποιείτε το Milibase!\nΗ έκδοση 1.0 σηματοδοτεί το τέλος της πρώτης δημόσιας διάθεσης. \n- Σ. Δίοπος (Τ/ΗΝ) Στενάκης Ευάγγελος',
-                            ),
+
 
                           ],
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
