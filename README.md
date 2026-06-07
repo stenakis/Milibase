@@ -1,6 +1,6 @@
 ![Milibase Logo](assets/logo_large.svg)
 
-A Windows desktop application for **soldier management**, built during military service at **Ypiresia Faron**. Milibase tracks all essential soldier information throughout their service period — including leaves, transfers between service centers, and status changes.
+A Windows desktop application for **soldier management**, built during military service at **Ypiresia Faron**. Milibase tracks all essential soldier information throughout their service period — including leaves, transfers between service centers, and status changes. Available for Windows and Linux.
 
 > ℹ️ **This application is in Greek only** and is tailored for use within the Greek military administrative context.
 
