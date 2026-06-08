@@ -255,20 +255,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   Expanded(
                     child: ListView(
                       children: [
-                        //const Text('Σε αυτή την έκδοση:'),
-                        // const Gap(5),
+                        const Text('Σε αυτή την έκδοση:'),
+                       const Gap(5),
                         Text(
                           'Ευχαριστούμε που χρησιμοποιείτε το Milibase!\nΗ έκδοση 1.0 σηματοδοτεί το τέλος της πρώτης δημόσιας διάθεσης.',
                         ),
-                        /*const SuperBulletList(
+                        const SuperBulletList(
                           iconSize: 5,
                           separator: Gap(0),
                           gap: 5,
                           items: [
-
-
                           ],
-                        ),*/
+                        ),
                       ],
                     ),
                   ),

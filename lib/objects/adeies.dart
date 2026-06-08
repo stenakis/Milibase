@@ -4,7 +4,8 @@ enum Adeia {
   proforiki,
   timitiki,
   anarrotiki,
-  oikos_nosileias;
+  oikos_nosileias,
+  foititiki;
 
   static int kanonikiDays(int servingMonths) => switch (servingMonths) {
     6 => 9,
@@ -26,6 +27,7 @@ enum Adeia {
     Adeia.timitiki => 'Τιμητική',
     Adeia.anarrotiki => 'Αναρρωτική',
     Adeia.oikos_nosileias => 'Οίκος Νοσηλείας',
+    Adeia.foititiki => 'Φοιτητική',
   };
 }
 
