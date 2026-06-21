@@ -207,7 +207,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           return Column(
                             crossAxisAlignment: .start,
                             children: [
-                              const Text('Δεν υπάρχει διαθέσιμη ενημέρωση'),
+                              const Text('Χρησιμοποιείτε την πιο πρόσφατη έκδοση'),
                               const Gap(10),
                               FilledButton(
                                 child: const Text('Έλεγχος για ενημερώσεις'),
@@ -256,15 +256,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: ListView(
                       children: [
                         const Text('Σε αυτή την έκδοση:'),
-                       const Gap(5),
-                        Text(
-                          'Ευχαριστούμε που χρησιμοποιείτε το Milibase!\nΗ έκδοση 1.0 σηματοδοτεί το τέλος της πρώτης δημόσιας διάθεσης.',
-                        ),
+                        const Gap(5),
                         const SuperBulletList(
                           iconSize: 5,
                           separator: Gap(0),
                           gap: 5,
                           items: [
+                            Text('Προσθήκη φοιτητικής άδειας'),
+                            Text(
+                              'Διόρθωση σφάλματος όπου η επιλογή διάρκειας θητείας επιστρέφει "Σφάλμα"',
+                            ),
                           ],
                         ),
                       ],

@@ -41,9 +41,9 @@ class _ShowMetavolesDialog extends State<ShowMetavolesDialog> {
     selectedMetavoli = !widget.isEditing ? Metavoli.meiomeni : widget.id!.type;
     simaController = TextEditingController(text: widget.id?.sima ?? "");
     selectedDuration = (!widget.isEditing ? 9 : widget.id!.duration)!;
-    _meiomeniThiteia = (db.select(
-      db.vars,
-    )).watchSingle().map((row) => row.enableMeiomeniThiteia);
+    _meiomeniThiteia = (db.select(db.vars))
+        .watch()
+        .map((rows) => rows.first.enableMeiomeniThiteia);
   }
 
   @override
