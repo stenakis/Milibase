@@ -1,8 +1,8 @@
 ![Milibase Logo](assets/logo_large.svg)
 
-A Windows desktop application for soldier management. Milibase tracks all essential soldier information throughout their service period — including leaves, transfers between service centers, and status changes. Available for Windows.
+A Windows desktop application for soldier management, during my military service. Milibase tracks all essential soldier information throughout their service period — including leaves, transfers between service centers, and status changes. Available for Windows.
 
-> ℹ️ **This application is in Greek only** and is tailored for use within the Greek military administrative context.
+> ℹ️ This application is tailored for use within the Greek military administrative context.
 
 ---
 
